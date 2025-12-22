@@ -1,0 +1,66 @@
+# =====================================
+# Laravel
+# =====================================
+
+/vendor/
+/node_modules/
+
+/.env
+.env.*
+!.env.example
+
+# Storage
+/storage/*.key
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/framework/*
+!/storage/framework/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Cache
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# =====================================
+# Logs
+# =====================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================================
+# OS / Editor
+# =====================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =====================================
+# Build / Frontend
+# =====================================
+/public/hot
+/public/storage
+/public/build
+mix-manifest.json
+
+# =====================================
+# Testing / Coverage
+# =====================================
+/coverage
+.phpunit.result.cache
+
+# =====================================
+# Laravel Sail
+# =====================================
+/docker-compose.override.yml
+
+# =====================================
+# Temporary files
+# =====================================
+*.tmp
+*.bak

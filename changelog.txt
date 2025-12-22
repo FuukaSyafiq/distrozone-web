@@ -1,0 +1,9 @@
+-adding view page for Rented Room and user.
+-minor addition on icon
+-create tagihan and create new rented room is 'partially' working
+   L--> Bug on update Rented Room
+        •Rented Room still can't decrement User Balance
+        •Rented Room didn't show current data when in update page
+-Minor fix on header,now "KELOLA KOS" option redirect to the correct panel
+
+note:sementara User,review,imageSeeder menggunakan static foreignId.
