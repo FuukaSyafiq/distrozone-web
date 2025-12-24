@@ -91,8 +91,9 @@ services:
     image: postgres:18.1-alpine3.23
     container_name: postgres-docker
     environment:
-      POSTGRES_USER: postgres           # Username PostgreSQL
-      POSTGRES_PASSWORD: root   # Password untuk user
+      - POSTGRES_DB=${DB_DATABASE:-distrozone}
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-root}
     networks:
       - laravel-development
     ports:

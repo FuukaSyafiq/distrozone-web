@@ -13,8 +13,9 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Filament\Models\Contracts\HasName;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasName
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -29,15 +30,15 @@ class User extends Authenticatable
 
     protected $keyType = 'int';
     protected $fillable = [
-        'name',
+        'nama',
         'username',
         'password',
         'email',
         'role_id',
+        'nik',
         "password",
-        "contact",
-        "address",
-        "foto_id"
+        "no_telepon",
+        "alamat",
     ];
 
     /**
@@ -56,6 +57,12 @@ class User extends Authenticatable
      */
     protected $casts = [];
 
+    public function getFilamentName(): string
+    {
+        // Return the desired attribute, with a fallback (e.g., to 'username' or a default string)
+        return $this->nama ?? $this->username ?? 'Unknown User';
+    }
+
     public static function getUserByUsername($username)
     {
         return self::where('username', $username)->first();
@@ -68,5 +75,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function image()
+    {
+        return $this->belongsTo(Image::class);
     }
 }

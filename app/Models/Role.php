@@ -33,14 +33,6 @@ class Role extends Model
         return self::get();
     }
 
-    public static function getAllRoleExceptWargaAdmin()
-    {
-        return Role::where('role', '!=', 'WARGA')
-            ->where('role', '!=', 'ADMIN')
-            ->pluck('id');
-    }
-
-
     public static function createRole($role)
     {
         return self::create(["role" => $role]);
@@ -55,9 +47,4 @@ class Role extends Model
     {
         return $this->hasOne(User::class);
     }
-
-    // public function AuthorityItem()
-    // {
-    //     return $this->hasMany(AuthorityItem::class);
-    // }
 }

@@ -13,25 +13,21 @@
 <!-- Dropdown menu -->
 <div id="dropdownDots"
     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-    <li>
-        <a href="{{ url('/roomlist') }}"
-            class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0 hover:text-white text-black"
-            aria-current="page">List Tipe Kamar</a>
-    </li>
+  
     @if ($user)
-        @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
+        @if ($user->role_id === \App\Models\Role::getIdByRole('ADMIN'))
             <li>
-                <a href="{{ url('/penyewa') }}"
+                <a href="{{ url('/admin') }}"
                     class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0 hover:text-white text-black"
-                    aria-current="page">Kamar Anda</a>
+                    aria-current="page">Dashboard</a>
             </li>
         @endif
 
-        @if ($user->role_id == \App\Models\Role::getIdByRole('OWNER'))
+        @if ($user->role_id === \App\Models\Role::getIdByRole('KASIR'))
             <li>
-                <a href="{{ url('/owner') }}"
+                <a href="{{ url('/kasir') }}"
                     class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0hover:text-white text-black"
-                    aria-current="page">Kelola KOS</a>
+                    aria-current="page">Dashboard</a>
             </li>
         @endif
         <li>
@@ -44,12 +40,6 @@
             </form>
         </li>
     @elseif (!$user)
-        <li>
-            <a href="{{ url('/denah') }}">
-                <button id="dropdownDefaultButton" class="text-black text-center px-4 py-2" type="button">Denah
-                </button>
-            </a>
-        </li>
         <li>
             <a href="{{ route('login') }}">
                 <button id="dropdownDefaultButton" class="text-black text-center px-4 py-2" type="button">Login

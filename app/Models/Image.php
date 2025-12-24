@@ -31,4 +31,9 @@ class Image extends Model
     {
         return self::where("file_name", $filename)->first();
     }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
 }

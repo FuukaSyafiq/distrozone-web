@@ -193,10 +193,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\Filament\OperatorPanelProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
-        App\Providers\Filament\OwnerPanelProvider::class,
-        App\Providers\Filament\PenyewaPanelProvider::class,
+        App\Providers\Filament\KasirPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],

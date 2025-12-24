@@ -18,8 +18,8 @@ class InitSeeder extends Seeder
         $this->call(KaosSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(PermissionNameSeeder::class);
-        // $this->call(PermissionOwnerSeeder::class);
-        // $this->call(PermissionPenyewaSeeder::class);
+        $this->call(PermissionAdminSeeder::class);
+        $this->call(PermissionKasirSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(ReviewSeeder::class);
     }
@@ -27,10 +27,9 @@ class InitSeeder extends Seeder
 
     public static function down()
     {
-        Storage::disk('s3')->deleteDirectory('foto_karyawan');
         ReviewSeeder::down();
-        // PermissionOwnerSeeder::down();
-        // PermissionPenyewaSeeder::down();
+        PermissionAdminSeeder::down();
+        PermissionKasirSeeder::down();
         UserSeeder::down();
         PermissionNameSeeder::down();
         ImageSeeder::down();

@@ -35,28 +35,19 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
+        $validated = $request->validated();
         // dd($request);
-        DB::beginTransaction();
-        $ktp = (new ImageController())->store($request, "ktp");
-        try {
-           
+        $user = User::create([
+            "nama" => $request->nama,
+            "email" => $request->email,
+            "nik" => $request->nik,
+            "username" => $request->username,
+            "role_id" => Role::getIdByRole("CUSTOMER"),
+            "no_telepon" => $request->no_telepon,
+            "alamat" => $request->alamat,
+            "password" => Hash::make($request->password)
+        ]);
 
-            User::create([
-                "name" => $request->name,
-                "email" => $request->email,
-                "role_id" => Role::getIdByRole("PENYEWA"),
-                "contact" => $request->contact,
-                "address" => $request->address,
-                "ktp_id" => $ktp->id,
-                "password" => Hash::make($request->password)
-            ]);
-            DB::commit();
-
-            return redirect()->to('/login');
-        } catch (\Exception $exception) {
-            DeleteFromStorage($ktp->file_name);
-            DB::rollBack();
-          throw $exception;
-        }
+        return redirect('/login');
     }
 }

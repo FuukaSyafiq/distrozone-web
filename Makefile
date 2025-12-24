@@ -14,6 +14,18 @@ install:
 	npm install
 	composer install
 
+dev:
+	docker compose -f compose.dev.yml up -d
+
+dev-down:
+	docker compose -f compose.dev.yml down
+
+prod:
+	docker compose -f compose.prod.yml up -d
+
+prod-down:
+	docker compose -f compose.prod.yml up -d
+
 clear: 
 	php artisan cache:clear
 	php artisan view:clear

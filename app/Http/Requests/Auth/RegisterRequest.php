@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use App\Models\User;
 use Illuminate\Validation\Rules;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -23,15 +24,24 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],  // 'lowercase' tidak ada dalam aturan validasi default, dihapus.
-            'password' => ['required', 'string', 'min:8'],  // Biasanya tambahkan 'min:8' untuk keamanan kata sandi
-            'contact' => ['nullable', 'string'],  // Set ke nullable karena mungkin tidak selalu diisi
-            'address' => ['nullable', 'string'],  // Sama dengan 'contact'
-            'password_confirmation' => ['required', 'string', 'same:password'],
-            // 'ktp' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:2048']  // Dipisahkan menjadi beberapa aturan yang benar
+            'nama' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'lowercase', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email', 'lowercase'],
+            'password' => [
+                'required',
+                'confirmed', // otomatis cek password_confirmation
+                Password::defaults(),
+            ],
+            'nik' => ['required', 'string', 'digits:16'],
+            'alamat' => ['required', 'string'],
+            'no_telepon' => [
+                'required',
+                'string',
+                'regex:/^[0-9]+$/',
+                'min:9',
+                'max:15',
+            ],
         ];
     }
 }

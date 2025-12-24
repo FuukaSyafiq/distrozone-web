@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Helpers\DeleteImages;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
 use App\Models\Permission;
 use App\Models\Role;
@@ -33,107 +34,19 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    public static function getNavigationLabel(): string
-    {
-        if (auth()->user()->role->id === Role::getIdByRole('PENYEWA')) {
-            return 'Profile'; // Change label for PENYEWA users
-        }
-        return 'users';
-    }
-
-
-    private static function checkPermission(string $action): bool
-    {
-        $permission = Permission::getPermissionByUserAndPermissionAndAction('User', $action);
-        return isset($permission) && $permission->action;
-    }
-
-    public static function canView(Model $record): bool
-    {
-
-        $canSeeProfile = self::checkPermission('VIEWPAGE');
-
-        if ($canSeeProfile) {
-            return true;
-        }
-        return false;
-    }
-
-    public static function canAccess(): bool
-    {
-        $canView = self::checkPermission('ACCESS');
-
-        if ($canView) {
-            return true;
-        }
-        return true;
-    }
-
-    // Check if the user can view any data
-    public static function canViewAny(): bool
-    {
-        $canView = self::checkPermission('READ');
-
-        if (!$canView) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // Check if the user can create
-    public static function canCreate(): bool
-    {
-        if (!self::canViewAny()) {
-            return false;
-        }
-        return self::checkPermission('CREATE');
-    }
-
-    // Check if the user can edit
-    public static function canEdit(Model $record): bool
-    {
-        if (!self::canViewAny()) {
-            return false;
-        }
-        return self::checkPermission('UPDATE');
-    }
-
-    // Check if the user can delete
-    public static function canDeleteAny(): bool
-    {
-        if (!self::canViewAny()) {
-            return false;
-        }
-        return self::checkPermission('DELETE');
-    }
-    public static function canDelete(Model $record): bool
-    {
-        if (!self::canViewAny()) {
-            return false;
-        }
-        return self::checkPermission('DELETE');
-    }
-
-    public static function getTitle(): string
-    {
-        $user = request()->route('record'); // Get the current record
-        return "{$user->name} Data"; // Customize the title
-    }
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Section::make('Data diri')
                     ->schema([
-                        TextInput::make('name')
+                        TextInput::make('nama')
                             ->label('nama penyewa')
                             ->required(),
-                        TextInput::make('address')
+                        TextInput::make('alamat')
                             ->label('Alamat')
                             ->required(),
-                        TextInput::make('contact')
+                        TextInput::make('no_telepon')
                             ->label('Kontak')
                             ->required(),
                         TextInput::make('email')
@@ -143,19 +56,19 @@ class UserResource extends Resource
                             ->password()
                             ->required(),
                     ])->columns(2),
-                Section::make('lampiran')
-                    ->schema([
-                        FileUpload::make('ktp_id')
-                            ->label('KTP')
-                            ->required()->directory("KTP")
-                            ->required(fn($livewire) => !$livewire->record)
-                            ->default(function ($record) {
-                                // Check if the KTP ID exists and retrieve the path
-                                $image = Image::where('id', $record->ktp_id)->first();
-                                // Debugging untuk melihat nilai yang didapat
-                                return url($image->path) ?? null;
-                            })
-                    ]),
+                // Section::make('lampiran')
+                //     ->schema([
+                //         FileUpload::make('ktp_id')
+                //             ->label('KTP')
+                //             ->required()->directory("KTP")
+                //             ->required(fn($livewire) => !$livewire->record)
+                //             ->default(function ($record) {
+                //                 // Check if the KTP ID exists and retrieve the path
+                //                 $image = Image::where('id', $record->ktp_id)->first();
+                //                 // Debugging untuk melihat nilai yang didapat
+                //                 return url($image->path) ?? null;
+                //             })
+                //     ]),
             ]);
     }
 
@@ -163,24 +76,27 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                return $query->where('role_id', Role::getIdByRole("PENYEWA"));
+                return $query->where('role_id', Role::getIdByRole("KASIR"));
             })
             ->columns([
-                TextColumn::make('name')
-                    ->label('nama penyewa'),
+                TextColumn::make('nama')
+                    ->label('Nama'),
+                TextColumn::make('username')
+                    ->label('Username'),
                 TextColumn::make('email')
-                    ->label('email'),
-                TextColumn::make('address')
+                    ->label('Email'),
+                TextColumn::make('role.role')
+                    ->label('Role'),
+                TextColumn::make('no_telepon')
+                    ->label('No telepon'),
+                TextColumn::make('nik')
+                    ->label('NIK'),
+                TextColumn::make('alamat')
                     ->label('Alamat'),
-                TextColumn::make('contact')
-                    ->label('Kontak'),
-                ImageColumn::make('ktp_id')
-                    ->label('KTP')->getStateUsing(callback: function ($record) {
-                        // dd($record->id);
-                        $image = Image::where('id', $record->ktp_id)->first();
-                        // Debugging untuk melihat nilai yang didapat
-                        return url($image->path) ?? null;
-                    })
+                ImageColumn::make('images.path')
+                    ->disk('s3')->label("tes"),
+                ImageColumn::make('images.path')
+                    ->label('Foto'),
             ])
             ->filters([
                 //
@@ -193,18 +109,7 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->requiresConfirmation()->color('danger')
                         ->action(function (Collection $records) {
-                            foreach ($records as $record) {
-                                // Temukan gambar terkait berdasarkan tipe_room_id
-                                $image = Image::where('room_id', $record->id)->first();
 
-                                // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
-                                if ($image) {
-                                    DeleteImages::DeleteImages($image->file_name);
-                                }
-
-                                // Hapus record dari tabel
-                                $record->delete();
-                            }
                         }),
                 ]),
             ]);
@@ -233,22 +138,22 @@ class UserResource extends Resource
             ->schema([
                 // Section::make('')
                 //     ->schema([
-                TextEntry::make('name')
+                TextEntry::make('nama')
                     ->label('nama'),
                 TextEntry::make('email')
                     ->label('email'),
-                TextEntry::make('contact')
+                TextEntry::make('no_telepon')
                     ->label('contact'),
-                TextEntry::make('address')
+                TextEntry::make('alamat')
                     ->label('Alamat'),
-                ImageEntry::make('ktp_id')
-                    ->label('KTP')->getStateUsing(callback: function ($record) {
-                        $image = Image::where('id', $record->ktp_id)->first();
-                        // Debugging untuk melihat nilai yang didapat
-                        return url($image->path) ?? null;
-                    })
-                    ->width('100')
-                    ->height('50'),
+                // ImageEntry::make('ktp_id')
+                //     ->label('KTP')->getStateUsing(callback: function ($record) {
+                //         $image = Image::where('id', $record->ktp_id)->first();
+                //         // Debugging untuk melihat nilai yang didapat
+                //         return url($image->path) ?? null;
+                //     })
+                //     ->width('100')
+                //     ->height('50'),
                 // ])
             ]);
     }

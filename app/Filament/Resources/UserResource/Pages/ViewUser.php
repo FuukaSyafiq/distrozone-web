@@ -13,6 +13,6 @@ class ViewUser extends ViewRecord
     public function getTitle(): string
     {
         $user = $this->record; // Access the current record
-        return "Profil {$user->name}"; // Customize the title
+        return "Profil {$user->nama}"; // Customize the title
     }
 }

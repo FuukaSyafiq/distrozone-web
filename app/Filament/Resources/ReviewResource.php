@@ -54,21 +54,6 @@ class ReviewResource extends Resource
 
     public static function canViewAny(): bool
     {
-        $user = auth()->user();
-
-        // Check if the user is a "PENYEWA"
-        if ($user->role->id === Role::getIdByRole('PENYEWA')) {
-            // Check if the user has left a review
-            $hasLeftReview = Review::where('user_id', $user->id)->exists();
-
-            if ($hasLeftReview) {
-                return true; // Allow viewing the Review module if a review exists
-            }
-
-            return false; // Deny access if no review has been left
-        }
-
-        // If the role is "OWNER", allow viewing all rented rooms
         return true;
     }
 

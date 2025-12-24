@@ -18,39 +18,39 @@ class PermissionAdminSeeder extends Seeder
     {
         $datas = [
             [
-                "role_id" => Role::getIdByRole("OWNER"),
-                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Room", "CREATE")
+                "role_id" => Role::getIdByRole("ADMIN"),
+                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Transaction", "CREATE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
-                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Room", "UPDATE")
+                "role_id" => Role::getIdByRole("ADMIN"),
+                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Transaction", "UPDATE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
-                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Room", "READ")
+                "role_id" => Role::getIdByRole("ADMIN"),
+                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Transaction", "READ")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
-                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Room", "DELETE")
+                "role_id" => Role::getIdByRole("ADMIN"),
+                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Transaction", "DELETE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
+                "role_id" => Role::getIdByRole("ADMIN"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "CREATE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
+                "role_id" => Role::getIdByRole("ADMIN"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "VIEWPAGE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
+                "role_id" => Role::getIdByRole("ADMIN"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "UPDATE")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
+                "role_id" => Role::getIdByRole("ADMIN"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "READ")
             ],
             [
-                "role_id" => Role::getIdByRole("OWNER"),
+                "role_id" => Role::getIdByRole("ADMIN"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "DELETE")
             ],
 
@@ -63,6 +63,6 @@ class PermissionAdminSeeder extends Seeder
 
     public static function down()
     {
-        Permission::where('role_id', Role::getIdByRole("OWNER"))->delete();
+        Permission::where('role_id', Role::getIdByRole("ADMIN"))->delete();
     }
 }
