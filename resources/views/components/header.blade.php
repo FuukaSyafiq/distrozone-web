@@ -27,21 +27,28 @@
                 <div class="flex items-center mr-3 justify-center">
                     {{-- <img class="mt-2 max-w-24 text-center" src="/assets/logomadura-removebg-preview.png" --}}
                         {{-- alt="Your Company"> --}}
-                    <h2 class="font-bold -ml-7 md:block hidden">Bumi <span class="text-red-700">Madura</span>
+                    <h2 class="font-bold text-md -ml-7 md:block hidden">Distrozone
                     </h2>
                 </div>
             </div>
 
             <!-- Input Search -->
-            <div class="flex items-center flex-col justify-center w-4/5 ml-sm-0 ml-10 sm:w-3/5 md:w-5/5 relative">
+            <div class="flex items-center flex-col justify-center w-4/5 sm:w-3/5 md:w-5/5 relative">
                 <div class="bg-white flex w-full rounded-lg  border border-black ">
-                    <input id="searchInput" class="w-full rounded-md py-sm-2 py-1 px-1 px-sm-2" autocomplete="on"
+                    <input id="searchInput" class="w-full rounded-md border-none py-sm-2 py-1 px-1 px-sm-2" autocomplete="on"
                         placeholder="Search ..." />
-                    <x-bi-search class="hover:cursor-pointer m-auto mx-2" />
+                    <x-bi-search class="hover:cursor-pointer mx-[-10px] m-auto" />
                 </div>
             </div>
 
-
+            <div class="flex gap-3 mx-2">
+                <a href="/login"
+                    class="rounded-md text-center hover:cursor-pointer bg-gray-900 text-xs sm:text-md px-3 py-2  font-medium text-white"
+                    aria-current="page">Login</a>
+                <a href="/register"
+                    class="rounded-md  text-center hover:cursor-pointer bg-gray-900 px-3 py-2   text-xs sm:text-md font-medium text-white"
+                    aria-current="page">Register</a>
+            </div>
         </div>
 
     </div>

@@ -8,7 +8,9 @@ use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,16 +27,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+
         $request->authenticate();
+
+        if (!$request->user()->verified) {
+            throw ValidationException::withMessages([
+                'auth' => 'Akun Anda belum diverifikasi.',
+            ]);
+        }
 
         $request->session()->regenerate();
 
         if ($request->user()->role_id === Role::getIdByRole("ADMIN")) {
-            // dd("lah");
             return redirect('/admin');
         } else if ($request->user()->role_id === Role::getIdByRole("KASIR")) {
             return redirect('/kasir');
-
         }
 
         return redirect('/');

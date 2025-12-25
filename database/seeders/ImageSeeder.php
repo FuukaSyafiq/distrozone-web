@@ -25,11 +25,10 @@ class ImageSeeder extends Seeder
             $absolutePath = Storage::disk('public')->path($filePath);
 
             // upload ke S3
-            $path = Storage::disk('s3')->putFile(
+            $path = Storage::disk('s3')->put(
                 'foto_karyawan',
                 new File($absolutePath)
             );
-
             // contoh simpan ke DB
             Image::create([
                 'path' => $path,                       // path S3

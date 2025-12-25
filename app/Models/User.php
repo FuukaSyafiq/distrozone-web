@@ -14,11 +14,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable implements HasName
+class User extends Authenticatable implements HasName, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -79,6 +79,6 @@ class User extends Authenticatable implements HasName
 
     public function image()
     {
-        return $this->belongsTo(Image::class);
+        return $this->belongsTo(Image::class, 'foto_id');
     }
 }

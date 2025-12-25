@@ -15,9 +15,12 @@ return new class extends Migration {
             $table->string('username')->index();
             $table->string('email');
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('nama');
+            $table->enum("status", ["ACTIVE", "SUSPENDED", "BANNED"])->default("ACTIVE");
             $table->string('alamat');
             $table->string('no_telepon');
+            $table->boolean('verified')->default(false)->nullable();
             $table->string('nik')->unique();
             $table->unsignedInteger('role_id');
             $table->unsignedInteger('foto_id')->nullable();

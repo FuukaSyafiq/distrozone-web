@@ -1,4 +1,10 @@
 <x-app-layout>
+    @if ($errors->has('auth'))
+    <div class="bg-red-100 text-red-700 p-2 rounded mb-4">
+        {{ $errors->first('auth') }}
+    </div>
+@endif
+
 
     <div class="w-full justify-center min-h-screen align-center">
         <div class="text-start mt-3 ml-3" id="backButton">

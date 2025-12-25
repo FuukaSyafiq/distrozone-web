@@ -3,11 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Helpers\DeleteImages;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Image;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Form;
@@ -15,16 +10,19 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action as ActionTable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-use Filament\Resources\Components\Tab;
-use Filament\Forms\Components\Section;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Infolists\Components\Section;
+use Filament\Forms\Components\Section as SectionForm;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Columns\IconColumn;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -34,49 +32,41 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $label = "Customer";
+
+    protected static ?string $navigationGroup = 'User management';
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return true;
+    }
+
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Section::make('Data diri')
-                    ->schema([
-                        TextInput::make('nama')
-                            ->label('nama penyewa')
-                            ->required(),
-                        TextInput::make('alamat')
-                            ->label('Alamat')
-                            ->required(),
-                        TextInput::make('no_telepon')
-                            ->label('Kontak')
-                            ->required(),
-                        TextInput::make('email')
-                            ->email()
-                            ->required(),
-                        TextInput::make('password')
-                            ->password()
-                            ->required(),
-                    ])->columns(2),
-                // Section::make('lampiran')
-                //     ->schema([
-                //         FileUpload::make('ktp_id')
-                //             ->label('KTP')
-                //             ->required()->directory("KTP")
-                //             ->required(fn($livewire) => !$livewire->record)
-                //             ->default(function ($record) {
-                //                 // Check if the KTP ID exists and retrieve the path
-                //                 $image = Image::where('id', $record->ktp_id)->first();
-                //                 // Debugging untuk melihat nilai yang didapat
-                //                 return url($image->path) ?? null;
-                //             })
-                //     ]),
-            ]);
+        return $form;
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                return $query->where('role_id', Role::getIdByRole("KASIR"));
+                return $query->where('role_id', Role::getIdByRole("CUSTOMER"));
             })
             ->columns([
                 TextColumn::make('nama')
@@ -85,32 +75,71 @@ class UserResource extends Resource
                     ->label('Username'),
                 TextColumn::make('email')
                     ->label('Email'),
-                TextColumn::make('role.role')
-                    ->label('Role'),
                 TextColumn::make('no_telepon')
                     ->label('No telepon'),
                 TextColumn::make('nik')
                     ->label('NIK'),
                 TextColumn::make('alamat')
                     ->label('Alamat'),
-                ImageColumn::make('images.path')
-                    ->disk('s3')->label("tes"),
-                ImageColumn::make('images.path')
-                    ->label('Foto'),
+                IconColumn::make('verified')->boolean()
+                    ->label('Terverifikasi'),
+                TextColumn::make('status')
+                    ->label('Status'),
+                ImageColumn::make('image.path')
+                    ->label('Foto')
+                    ->disk('s3')
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                ActionTable::make('verified')
+                    ->label(fn($record) => match (true) {
+                        $record->verified && $record->status === 'ACTIVE' => 'Suspend',
+                        $record->verified && $record->status === 'SUSPENDED' => 'Activate',
+                        default => 'Verifikasi',
+                    })
+                    ->icon(
+                        fn($record) =>
+                        $record->status === 'ACTIVE'  && $record->verified
+                            ? 'heroicon-o-check-circle'
+                            : 'heroicon-o-pause-circle'
+                    )
+                    ->color(
+                        fn($record) =>
+                        $record->status === 'ACTIVE'  && $record->verified
+                            ? 'warning'
+                            : 'success'
+                    )
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        if ($record->status === 'ACTIVE' && $record->verified) {
+                            $record->status = "SUSPENDED";
+                        } else if ($record->status == "SUSPENDED" && $record->verified) {
+                            $record->status = "ACTIVE";
+                        }
+                        if (!$record->verified)
+                            $record->verified = true;
+                        $record->save();
+                    }),
+                ActionTable::make('blokir')
+                    ->label('Blokir')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('danger')
+                    ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => 'BANNED',
+                        ]);
+                        $record->save();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->requiresConfirmation()->color('danger')
-                        ->action(function (Collection $records) {
-
-                        }),
+                        ->action(function (Collection $records) {}),
                 ]),
             ]);
     }
@@ -136,25 +165,72 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                // Section::make('')
-                //     ->schema([
-                TextEntry::make('nama')
-                    ->label('nama'),
-                TextEntry::make('email')
-                    ->label('email'),
-                TextEntry::make('no_telepon')
-                    ->label('contact'),
-                TextEntry::make('alamat')
-                    ->label('Alamat'),
-                // ImageEntry::make('ktp_id')
-                //     ->label('KTP')->getStateUsing(callback: function ($record) {
-                //         $image = Image::where('id', $record->ktp_id)->first();
-                //         // Debugging untuk melihat nilai yang didapat
-                //         return url($image->path) ?? null;
-                //     })
-                //     ->width('100')
-                //     ->height('50'),
-                // ])
+                Section::make('Identitas')->columns(3)
+                    ->schema([
+                        TextEntry::make('nama')
+                            ->label('Nama'),
+                        TextEntry::make('username')
+                            ->label('Username'),
+                        TextEntry::make('email')
+                            ->label('Email'),
+                        TextEntry::make('no_telepon')
+                            ->label('No telepon'),
+                        TextEntry::make('nik')
+                            ->label('NIK'),
+                        TextEntry::make('alamat')
+                            ->label('Alamat'),
+                        IconEntry::make('verified')->boolean()
+                            ->label('Terverifikasi'),
+                    ])->footerActions([
+                        Action::make('verified')
+                            ->label(fn($record) => match (true) {
+                                $record->verified && $record->status === 'ACTIVE' => 'Suspend',
+                                $record->verified && $record->status === 'SUSPENDED' => 'Activate',
+                                default => 'Verifikasi',
+                            })
+                            ->icon(
+                                fn($record) =>
+                                $record->status === 'ACTIVE'  && $record->verified
+                                    ? 'heroicon-o-check-circle'
+                                    : 'heroicon-o-pause-circle'
+                            )
+                            ->color(
+                                fn($record) =>
+                                $record->status === 'ACTIVE'  && $record->verified
+                                    ? 'warning'
+                                    : 'success'
+                            )
+                            ->requiresConfirmation()
+                            ->action(function ($record) {
+                                if ($record->status === 'ACTIVE' && $record->verified) {
+                                    $record->status = "SUSPENDED";
+                                } else if ($record->status == "SUSPENDED" && $record->verified) {
+                                    $record->status = "ACTIVE";
+                                }
+                                if (!$record->verified)
+                                    $record->verified = true;
+                                $record->save();
+                            }),
+                        Action::make('blokir')
+                            ->label('Blokir')
+                            ->icon('heroicon-o-no-symbol')
+                            ->color('danger')
+                            ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
+                            ->requiresConfirmation()
+                            ->action(function ($record) {
+                                $record->update([
+                                    'status' => 'BANNED',
+                                ]);
+                                $record->save();
+                            }),
+                    ]),
+                Section::make('Foto customer')
+                    ->schema([
+                        ImageEntry::make('image.path')
+                            ->label('Foto')
+                            ->disk('s3')
+                            ->height(300)      // optional
+                    ])
             ]);
     }
 }
