@@ -18,6 +18,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Forms\Components\Section as SectionForm;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\IconColumn;
@@ -93,48 +94,50 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                ActionTable::make('verified')
-                    ->label(fn($record) => match (true) {
-                        $record->verified && $record->status === 'ACTIVE' => 'Suspend',
-                        $record->verified && $record->status === 'SUSPENDED' => 'Activate',
-                        default => 'Verifikasi',
-                    })
-                    ->icon(
-                        fn($record) =>
-                        $record->status === 'ACTIVE'  && $record->verified
-                            ? 'heroicon-o-check-circle'
-                            : 'heroicon-o-pause-circle'
-                    )
-                    ->color(
-                        fn($record) =>
-                        $record->status === 'ACTIVE'  && $record->verified
-                            ? 'warning'
-                            : 'success'
-                    )
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        if ($record->status === 'ACTIVE' && $record->verified) {
-                            $record->status = "SUSPENDED";
-                        } else if ($record->status == "SUSPENDED" && $record->verified) {
-                            $record->status = "ACTIVE";
-                        }
-                        if (!$record->verified)
-                            $record->verified = true;
-                        $record->save();
-                    }),
-                ActionTable::make('blokir')
-                    ->label('Blokir')
-                    ->icon('heroicon-o-no-symbol')
-                    ->color('danger')
-                    ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        $record->update([
-                            'status' => 'BANNED',
-                        ]);
-                        $record->save();
-                    }),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    ActionTable::make('verified')
+                        ->label(fn($record) => match (true) {
+                            $record->verified && $record->status === 'ACTIVE' => 'Suspend',
+                            $record->verified && $record->status === 'SUSPENDED' => 'Activate',
+                            default => 'Verifikasi',
+                        })
+                        ->icon(
+                            fn($record) =>
+                            $record->status === 'ACTIVE'  && $record->verified
+                                ? 'heroicon-o-check-circle'
+                                : 'heroicon-o-pause-circle'
+                        )
+                        ->color(
+                            fn($record) =>
+                            $record->status === 'ACTIVE'  && $record->verified
+                                ? 'warning'
+                                : 'success'
+                        )
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            if ($record->status === 'ACTIVE' && $record->verified) {
+                                $record->status = "SUSPENDED";
+                            } else if ($record->status == "SUSPENDED" && $record->verified) {
+                                $record->status = "ACTIVE";
+                            }
+                            if (!$record->verified)
+                                $record->verified = true;
+                            $record->save();
+                        }),
+                    ActionTable::make('blokir')
+                        ->label('Blokir')
+                        ->icon('heroicon-o-no-symbol')
+                        ->color('danger')
+                        ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            $record->update([
+                                'status' => 'BANNED',
+                            ]);
+                            $record->save();
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -36,4 +36,9 @@ class Image extends Model
     {
         return $this->hasOne(User::class);
     }
+
+    public function kaos()
+    {
+        return $this->belongsTo(Kaos::class, 'id_kaos', 'id_kaos');
+    }
 }

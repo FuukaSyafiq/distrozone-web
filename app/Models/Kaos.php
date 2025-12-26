@@ -31,4 +31,9 @@ class Kaos extends Model
     {
         return self::where('nama_kaos', $name)->first();
     }
+
+    public function image()
+    {
+        return $this->hasMany(Image::class, 'id_kaos');
+    }
 }   

@@ -9,25 +9,29 @@ use App\Models\User;
 use App\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\View;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Support\Facades\Storage;
 use Filament\Infolists\Components\Section;
 use Filament\Forms\Components\Section as SectionForm;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+use App\Models\Image;
 use Filament\Tables;
 use Filament\Infolists\Components\Section as SectionEntry;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Tables\Columns\IconColumn;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Infolists\Components\ImageEntry;
+use Illuminate\Support\Facades\Hash;
 
 class KasirResource extends Resource
 {
@@ -49,36 +53,43 @@ class KasirResource extends Resource
                 SectionForm::make('Identitas')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('nama')
+                        TextInput::make('nama')->default("testing")
                             ->label('Nama')->required(),
                         TextInput::make('username')->required()->dehydrateStateUsing(fn($state) => strtolower($state))
-                            ->label('Username'),
-                        TextInput::make('password')
-                            ->label('Password')->required()->password(),
+                            ->label('Username')->default("testing"),
+                        TextInput::make('password')->required(fn(string $context) => $context === 'create')
+                            ->label('Password')->password()->default("password")->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                         TextInput::make('email')->email()->required()
-                            ->label('Email'),
-                        TextInput::make('no_telepon')
+                            ->label('Email')->default("testing@gmail.com"),
+                        TextInput::make('no_telepon')->default("089123821321")
                             ->label('No telepon')
                             ->tel()
                             ->numeric()
                             ->minLength(9)
                             ->maxLength(15)
                             ->live()
-                    ->helperText('Harus diawali 0 dan 9–15 digit angka')
-                    ->required(),
-                        TextInput::make('nik')->tel()->numeric()->required()
+                            ->helperText('Harus diawali 0 dan 9–15 digit angka')
+                            ->required(),
+                        TextInput::make('nik')->tel()->numeric()->required()->default("35165232645332")
                             ->label('NIK')->maxLength(16)->helperText('NIK Harus 16 digit angka'),
-                        TextArea::make('alamat')
+                        TextArea::make('alamat')->default("sukodono")
                             ->label('Alamat')->required()
                     ]),
 
                 SectionForm::make('Foto')
                     ->schema([
-                        FileUpload::make('foto_customer')
-                            ->label('Foto')
+                View::make('filament.components.image-preview')
+                    ->viewData(fn($record) => [
+                        'image' => Image::find($record?->foto_id),
+                    ])
+                ->visible(fn($record) => filled($record?->foto_id)),
+                FileUpload::make('foto_karyawan')
+                            ->label('Upload Foto')
                             ->image()
                             ->disk('local')
-                            ->directory('foto_customers')
+                    ->imageEditor()
+                            ->directory('foto_karyawan')
                     ]),
             ]);
     }
@@ -102,6 +113,7 @@ class KasirResource extends Resource
                     ->label('NIK'),
                 TextColumn::make('alamat')
                     ->label('Alamat'),
+
                 ImageColumn::make('image.path')
                     ->label('Foto')
                     ->disk('s3')
@@ -110,8 +122,17 @@ class KasirResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()->before(function ($record) {
+                        $image = Image::where('id', $record->foto_id)->first();
+                        if ($image->path) {
+                            Storage::disk('local')->delete($image->path);
+                            Storage::disk('s3')->delete($image->path);
+                        }
+                    })
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -131,7 +152,7 @@ class KasirResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Identitas')->columns(3)
+                SectionEntry::make('Identitas')->columns(3)
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),

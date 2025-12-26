@@ -20,8 +20,9 @@ class CreateKasir extends CreateRecord
         $data['verified'] = true;
         $data['role_id'] = Role::getIdByRole('KASIR');
         $data['password'] = Hash::make($data['password']);
-        if (isset($data['foto_customer'])) {
-            $localPath = $data['foto_customer'];
+        $imageId = null;
+        if (isset($data['foto_karyawan'])) {
+            $localPath = $data['foto_karyawan'];
             try {
 
                 $absPath = Storage::disk('local')->path($localPath);
@@ -31,7 +32,7 @@ class CreateKasir extends CreateRecord
                 }
                 // pindahkan ke S3
                 $s3Path = Storage::disk('s3')->put(
-                    'foto_customers',
+                    'foto_karyawan',
                     new File($absPath)
                 );
                 if (! $s3Path) {
@@ -44,15 +45,14 @@ class CreateKasir extends CreateRecord
                     "size" => filesize($absPath),
                 ]);
 
-                $data['foto_id'] =  $image->id;
-
+                $imageId = $image->id;
             } catch (\Throwable $err) {
                 Storage::disk('local')->delete($localPath);
             } finally {
                 Storage::disk('local')->delete($localPath);
             }
         }
-
+        $data['foto_id'] =  $imageId;
         return $data;
     }
 }

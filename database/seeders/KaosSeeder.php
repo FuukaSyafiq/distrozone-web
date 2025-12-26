@@ -82,20 +82,19 @@ class KaosSeeder extends Seeder
                 "stok_kaos" => 100
             ],
         ];
-
+        $kaosIds = [];
         foreach ($kaoss as $kaos) {
-            Kaos::create($kaos);
+           $kaos = Kaos::create($kaos);
+           array_push($kaosIds, $kaos->id);
         }
-
         $files = $files = Storage::disk('public')->files('kaos');
         foreach ($files as $filePath) {
 
             // skip kalau bukan file
 
             $absolutePath = Storage::disk('public')->path($filePath);
-
             // upload ke S3
-            $path = Storage::disk('s3')->putFile(
+            $path = Storage::disk('s3')->put(
                 'kaos',
                 new File($absolutePath)
             );
@@ -105,9 +104,10 @@ class KaosSeeder extends Seeder
                 'path' => $path,                       // path S3
                 'file_name' => basename($filePath),
                 'mime_type' => mime_content_type($absolutePath),
-                'size' => filesize($absolutePath)
+                'size' => filesize($absolutePath),
             ]);
         }
+
     }
     public static function down(): void
     {

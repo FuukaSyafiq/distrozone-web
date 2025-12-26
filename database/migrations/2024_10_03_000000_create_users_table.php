@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('nama');
             $table->enum("status", ["ACTIVE", "SUSPENDED", "BANNED"])->default("ACTIVE");
             $table->string('alamat');
-            $table->string('no_telepon');
+            $table->string('no_telepon')->unique();
             $table->boolean('verified')->default(false)->nullable();
             $table->string('nik')->unique();
             $table->unsignedInteger('role_id');
@@ -28,11 +28,10 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('foto_id')->references('id')->on('images')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('foto_id')
+                ->references('id')->on('images')
+                ->nullOnDelete();
         });
-
-
-
     }
 
     /**
