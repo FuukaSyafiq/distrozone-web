@@ -81,7 +81,9 @@ class KasirResource extends Resource
                     ->schema([
                 View::make('filament.components.image-preview')
                     ->viewData(fn($record) => [
-                        'image' => Image::find($record?->foto_id),
+                        'images' => $record?->foto_id
+                        ? [Image::find($record->foto_id)]
+                        : [],
                     ])
                 ->visible(fn($record) => filled($record?->foto_id)),
                 FileUpload::make('foto_karyawan')

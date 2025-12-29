@@ -28,6 +28,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\ViewAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -44,13 +45,54 @@ class KaosResource extends Resource
     {
         return $form
             ->schema([
-                //
+                SectionForm::make('Identitas')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('nama_kaos')->default("Kaos busuk")
+                            ->label('Nama')->required(),
+                        TextInput::make('merek_kaos')->required()->default('Palazzo'),
+                        TextInput::make('type_kaos')->required()->default('lengan panjang')
+                            ->label('Tipe kaos'),
+                        TextInput::make('warna_kaos')->required()
+                            ->label('Warna')->default("blue"),
+                        TextInput::make('ukuran')->default("L")
+                            ->label('Ukuran')
+                            ->required(),
+                        TextInput::make('harga_jual')->numeric()->required()->default("100000")
+                            ->label('Harga jual'),
+                        TextInput::make('harga_pokok')->numeric()->required()->default("90000")
+                            ->label('Harga pokok'),
+                        TextInput::make('stok_kaos')->numeric()->required()->default("100")
+                            ->label('Stok kaos'),
+                    ]),
+
+                SectionForm::make('Foto')
+                    ->schema([
+                        View::make('filament.components.image-preview')
+                            ->viewData(
+                                function ($record) {
+                                    $images = Image::where('id_kaos', $record->id_kaos)->get();
+                                    return [
+                                        'images' => $images ? $images : [],
+                                    ];
+                                }
+                            )
+                            ->visible(fn($record) => filled($record?->image)),
+                        FileUpload::make('foto_kaos')
+                            ->multiple()
+                            ->label('Upload Foto')
+                            ->image()
+                            ->disk('local')
+                            ->imageEditor()
+                            ->directory('kaos')
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->searchPlaceholder('Cari kaos...')
             ->columns([
                 TextColumn::make('nama_kaos')
                     ->label('Nama'),
@@ -63,34 +105,75 @@ class KaosResource extends Resource
                 TextColumn::make('ukuran')
                     ->label('Ukuran'),
                 TextColumn::make('harga_jual')
-                    ->label('Harga jual'),
+                    ->label('Harga jual')->money('IDR', true),
                 TextColumn::make('harga_pokok')
-                    ->label('Harga pokok'),
+                    ->label('Harga pokok')->money('IDR', true),
                 TextColumn::make('stok_kaos')
                     ->label('Stok kaos'),
+                TextColumn::make('nama_kaos')
+                    ->searchable(),
                 ImageColumn::make('image.path')
                     ->label('Foto')
                     ->disk('s3')
             ])
             ->filters([
-                //
+                SelectFilter::make('merek_kaos')
+                    ->label('Merek')
+                    ->options(
+                        fn() =>
+                        Kaos::query()
+                            ->distinct()
+                            ->pluck('merek_kaos', 'merek_kaos')
+                            ->toArray()
+                    ),
+                SelectFilter::make('stok_kaos')
+                    ->label('Stok')
+                    ->default('many')
+                    ->options([
+                        'out' => 'Habis',
+                        'low' => 'Hampir Habis',
+                        'many' => 'Banyak',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return match ($data['value'] ?? null) {
+                            'out' => $query->where('stok_kaos', 0),
+                            'low' => $query->whereBetween('stok_kaos', [1, 10]),
+                            'many' => $query->where('stok_kaos', '>', 10),
+                            default => $query,
+                        };
+                    })
             ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make()->before(function ($record) {
-                        $image = Image::where('id_kaos', $record->id)->first();
-                        if ($image->path) {
-                            Storage::disk('local')->delete($image->path);
-                            Storage::disk('s3')->delete($image->path);
+                        $images = Image::where('id_kaos', $record->id_kaos)->get();
+                        foreach ($images as $image) {
+                            if ($image->path) {
+                                Storage::disk('local')->delete($image->path);
+                                Storage::disk('s3')->delete($image->path);
+                            }
+                            $image->delete();
                         }
                     })
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->before(function ($records) {
+                        foreach ($records as $record) {
+                            $images = Image::where('id_kaos', $record->id_kaos)->get();
+                            foreach ($images as $image) {
+                                dd($images);
+                                if ($image->path) {
+                                    Storage::disk('local')->delete($image->path);
+                                    Storage::disk('s3')->delete($image->path);
+                                }
+                                $image->delete();
+                            }
+                        }
+                    }),
                 ]),
             ]);
     }
@@ -132,25 +215,25 @@ class KaosResource extends Resource
                     ]),
 
                 Actions::make([
-                        Action::make('edit')
-                            ->label('Edit')
-                            ->icon('heroicon-o-pencil')
-                            ->url(fn($record) => static::getUrl('edit', ['record' => $record])),
+                    Action::make('edit')
+                        ->label('Edit')
+                        ->icon('heroicon-o-pencil')
+                        ->url(fn($record) => static::getUrl('edit', ['record' => $record])),
 
-                        Action::make('delete')
-                            ->label('Hapus')
-                            ->icon('heroicon-o-trash')
-                            ->color('danger')
-                            ->requiresConfirmation()
-                            ->action(function ($record) {
-                                foreach ($record->images as $image) {
-                                    Storage::disk('s3')->delete($image->path);
-                                    $image->delete();
-                                }
+                    Action::make('delete')
+                        ->label('Hapus')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            foreach ($record->images as $image) {
+                                Storage::disk('s3')->delete($image->path);
+                                $image->delete();
+                            }
 
-                                $record->delete();
-                            }),
-                    ])
+                            $record->delete();
+                        }),
+                ])
                     ->columns(2),
             ]);
     }

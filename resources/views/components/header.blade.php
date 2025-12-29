@@ -41,14 +41,53 @@
                 </div>
             </div>
 
+            @guest
             <div class="flex gap-3 mx-2">
                 <a href="/login"
-                    class="rounded-md text-center hover:cursor-pointer bg-gray-900 text-xs sm:text-md px-3 py-2  font-medium text-white"
-                    aria-current="page">Login</a>
+                    class="rounded-md bg-gray-900 text-xs sm:text-md px-3 py-2 font-medium text-white">
+                    Login
+                </a>
                 <a href="/register"
-                    class="rounded-md  text-center hover:cursor-pointer bg-gray-900 px-3 py-2   text-xs sm:text-md font-medium text-white"
-                    aria-current="page">Register</a>
+                    class="rounded-md bg-gray-900 text-xs sm:text-md px-3 py-2 font-medium text-white">
+                    Register
+                </a>
             </div>
+        @endguest
+        
+        @auth
+            <div class="relative mx-2" x-data="{ open: false }">
+                <!-- Avatar -->
+                <button @click="open = !open" class="flex items-center focus:outline-none">
+                    <img
+                        src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}"
+                        alt="avatar"
+                        class="w-8 h-8 rounded-full border"
+                    >
+                </button>
+        
+                <!-- Dropdown -->
+                <div
+                    x-show="open"
+                    @click.outside="open = false"
+                    class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border"
+                >
+                    <a href="/profile"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Profile
+                    </a>
+        
+                    <form method="POST" action="/logout">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endauth
+        
         </div>
 
     </div>

@@ -44,7 +44,7 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN') || auth()->user()->role_id === Role::getIdByRole('KASIR');
     }
 
     public static function canView(Model $record): bool

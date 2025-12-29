@@ -44,10 +44,9 @@
         "files": [
             "app/Helpers/Sender.php",
             "app/Helpers/Invoice.php",
-            "app/Helpers/StoreImages.php",
             "app/Helpers/Terbilang.php",
             "app/Helpers/GenerateMessage.php",
-            "app/Helpers/DeleteImages.php"
+            "app/Helpers/Status.php"
         ]
     },
     "autoload-dev": {

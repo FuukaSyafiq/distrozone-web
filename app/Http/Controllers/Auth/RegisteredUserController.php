@@ -4,6 +4,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\Status;
 use App\Http\Controllers\ImageController;
 use App\Models\Role;
 use App\Models\User;
@@ -36,9 +37,7 @@ class RegisteredUserController extends Controller
     public function store(RegisterRequest $request)
     {
         $validated = $request->validated();
-
         
-        // dd($request);
         $user = User::create([
             "nama" => $request->nama,
             "email" => $request->email,
@@ -46,6 +45,8 @@ class RegisteredUserController extends Controller
             "username" => $request->username,
             "role_id" => Role::getIdByRole("CUSTOMER"),
             "no_telepon" => $request->no_telepon,
+            "verified" => false,
+            "status" => Status::ACTIVE,
             "alamat" => $request->alamat,
             "password" => Hash::make($request->password)
         ]);

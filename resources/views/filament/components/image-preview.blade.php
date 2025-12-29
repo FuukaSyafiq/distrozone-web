@@ -1,13 +1,14 @@
 
-@if ($image)
-    <div class="flex justify-center flex-col">
-		<h3 class="mb-4">Preview Foto</h3>
-		<div class="flex justify-center flex-col max-w-3/5">
+@if ($images)
+
+<h3 class="mb-4">Preview Foto</h3>
+<div class="flex justify-around gap-5 max-h-4/5">
+		@foreach ($images as $image)
 			<img
 				src="{{ Storage::disk('s3')->url($image->path) }}"
 				alt="Preview"
-				class="rounded-xl max-h-48 object-cover border"
+				class="rounded-lg w-32 object-cover border"
 			/>
-		</div>
-    </div>
+		@endforeach
+</div>
 @endif

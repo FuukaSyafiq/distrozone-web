@@ -7,8 +7,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
-use App\Models\Role;
-use App\Models\User;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;

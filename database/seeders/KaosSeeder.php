@@ -19,7 +19,7 @@ class KaosSeeder extends Seeder
         $kaoss = [
             [
                 "merek_kaos" => "Cotton Combed",
-                "nama_kaos"=> "Kaos hitam polos lengan pendek Cotton",
+                "nama_kaos" => "Kaos hitam polos lengan pendek Cotton",
                 "type_kaos" => "lengan pendek",
                 "warna_kaos" => "hitam",
                 "ukuran" => "L",
@@ -82,11 +82,21 @@ class KaosSeeder extends Seeder
                 "stok_kaos" => 100
             ],
         ];
-        $kaosIds = [];
         foreach ($kaoss as $kaos) {
-           $kaos = Kaos::create($kaos);
-           array_push($kaosIds, $kaos->id);
+            $kaos = Kaos::create(
+                [
+                    "merek_kaos" => $kaos['merek_kaos'],
+                    "nama_kaos" => $kaos['nama_kaos'],
+                    "type_kaos" => $kaos['type_kaos'],
+                    "warna_kaos" => $kaos['warna_kaos'],
+                    "ukuran" => $kaos['ukuran'],
+                    "harga_jual" => $kaos['harga_jual'],
+                    "harga_pokok" => $kaos['harga_pokok'],
+                    "stok_kaos" => $kaos['stok_kaos']
+                ]
+            );
         }
+
         $files = $files = Storage::disk('public')->files('kaos');
         foreach ($files as $filePath) {
 
@@ -107,7 +117,6 @@ class KaosSeeder extends Seeder
                 'size' => filesize($absolutePath),
             ]);
         }
-
     }
     public static function down(): void
     {
