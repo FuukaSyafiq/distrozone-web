@@ -19,18 +19,13 @@ class Review extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'id_customer');
     }
 
-   
-    // public static function getAverageStarForRoom($roomId)
-    // {
-    //     return DB::table('reviews as rvw')
-    //         ->select(DB::raw('AVG(rvw.star) as avg_star'))
-    //         ->join('rooms as ro', 'rvw.id_kaos', '=', 'ro.id')
-    //         ->where('ro.id', $roomId)
-    //         ->first();
-    // }
+    public function kaos()
+    {
+        return $this->belongsTo(Kaos::class, 'id_kaos');
+    }
    
     public static function getReviewsByKaosId($kaosId)
     {

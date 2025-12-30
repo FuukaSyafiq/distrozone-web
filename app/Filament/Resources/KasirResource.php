@@ -38,8 +38,8 @@ class KasirResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user';
-    protected static ?string $navigationGroup = 'User management';
     protected static ?string $label = "Kasir";
+    protected static ?string $navigationGroup = 'Toko';
 
     public static function canAccess(): bool
     {

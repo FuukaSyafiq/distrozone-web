@@ -32,6 +32,7 @@ class EditKaos extends EditRecord
                 $localPath = $kaos;
                 try {
 
+
                     $absPath = Storage::disk('local')->path($localPath);
 
                     if (!file_exists($absPath) || !is_readable($absPath)) {
@@ -42,7 +43,6 @@ class EditKaos extends EditRecord
                         'kaos',
                         new File($absPath)
                     );
-
 
                     Image::create([
                         "path" =>  $s3Path,
@@ -60,4 +60,27 @@ class EditKaos extends EditRecord
         }
 
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        
+        $images = Image::where('id_kaos', $data['id_kaos'])->get();
+        // dd($images);
+        $data['foto_kaos'] = $images->pluck('path')->toArray();
+        return $data;
+    }
+
+    // protected function beforeFormFilled(): void
+    // {
+    //     $image = $this->record->image;
+
+    //     if (is_array($image) && isset($image['path'])) {
+    //         dd($image);
+    //         $this->form->fill([
+    //             'image' => [
+    //                 'path' => $image['path'],
+    //             ],
+    //         ]);
+    //     }
+    // }
 }

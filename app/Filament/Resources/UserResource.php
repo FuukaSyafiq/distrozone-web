@@ -31,11 +31,9 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user';
 
-    protected static ?int $navigationSort = 1;
-
     protected static ?string $label = "Customer";
 
-    protected static ?string $navigationGroup = 'User management';
+    protected static ?string $navigationGroup = 'Customer';
 
     public static function canCreate(): bool
     {

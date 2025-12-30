@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Image;
 use App\Models\Role;
 use App\Models\Tagihan;
+use App\Models\Transaksi;
+use App\Models\TransaksiDetail;
 use App\Models\VerifikasiPembayaran;
 use Carbon\Carbon;
 use Filament\Forms\Form;
@@ -27,12 +29,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionResource extends Resource
 {
-    protected static ?string $model = VerifikasiPembayaran::class;
+    protected static ?string $model = TransaksiDetail::class;
 
-    protected static ?string $navigationIcon = 'heroicon-c-circle-stack';
-    protected static ?string $navigationLabel = 'Transaction history';
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationLabel = 'Transaksi';
 
-    protected static ?string $navigationGroup = 'Financial Transactions';
+    protected static ?string $navigationGroup = 'Transaksi';
 
     public static function getBreadcrumb(): string
     {
@@ -70,36 +72,14 @@ class TransactionResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(function ($query) {
-            if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
-                return $query->where('pengirim', auth()->user()->name)->where('is_valid', true);
-            }
-            return $query->where('is_valid', true);
-        })
+        return $table
             ->columns([
-                TextColumn::make('amount')->label('Nominal')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
-                TextColumn::make('pengirim')->label('pengirim'),
-                TextColumn::make('no_invoice')->label('No Invoice'),
-                TextColumn::make('updated_at')->label('Tanggal diverifikasi')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
-                TextColumn::make('tanggal_dibayar')->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
-                ImageColumn::make('bukti_file.path')
-                    ->label('Invoice')->getStateUsing(callback: function ($record) {
-                        // dd($record->id);
-                        $invoice = VerifikasiPembayaran::where('id', $record->id)->first();
-                        $image = Image::where('id', $invoice->bukti_file)->first();
-                        // Debugging untuk melihat nilai yang didapat
-                        return isset($image->path) ? url($image->path) : "";
-                    }),
-
+              
             ])
             ->filters([
                 // SelectFilter::make('')
             ])
-            ->actions([
-                Action::make('Cetak kuitansi')
-                    ->url(fn(VerifikasiPembayaran $record) => route('buktibayar.settled.pdf', $record))
-                    ->openUrlInNewTab()
-            ])
+            ->actions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ]);

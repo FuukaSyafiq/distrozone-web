@@ -60,6 +60,6 @@ class ListTransactions extends ListRecords
 
     public function getTitle(): string
     {
-        return 'Transaction history';
+        return 'Transaksi';
     }
 }

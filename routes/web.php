@@ -11,6 +11,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TipeRoomController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\BulkPDFController;
+use App\Http\Controllers\ImageController;
 use App\View\Components\Denah;
 use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
@@ -43,9 +44,9 @@ Route::get('download/kuitansi/{id}', [PDFController::class, 'cetak'])->name('tra
 Route::get('/', [IndexController::class, 'gets'])->name('index');
 Route::post('/', [IndexController::class, 'store']);
 
-//permission manager route (for debug purpose)
-Route::post("/roles", [RoleController::class, "store"]);
-Route::delete("/roles", [RoleController::class, "delete"]);
+Route::delete('/images/{image}', [ImageController::class, 'destroy'])
+	->name('images.destroy');
+
 
 // Route::middleware('auth')->group(function () {
 //     // fitur routing

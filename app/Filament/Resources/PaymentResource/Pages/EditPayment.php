@@ -19,11 +19,4 @@ class EditPayment extends EditRecord
         ];
     }
 
-    public function mount($record): void
-    {
-        $roleId =  auth()->user()->role_id;
-        $roleName = Role::getIdbyRole($roleId);
-       
-        redirect("/{$roleName}/payments/create");
-    }
 }

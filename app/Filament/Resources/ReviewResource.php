@@ -24,7 +24,7 @@ class ReviewResource extends Resource
     protected static ?string $model = Review::class;
 
     protected static ?string $navigationIcon = 'heroicon-c-star';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Customer';
 
     public static function getBreadcrumb(): string
     {
@@ -68,21 +68,15 @@ class ReviewResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function ($query) {
-                if (auth()->user()->role_id == Role::getIdByRole("PENYEWA")) {
-                    return $query->where('user_id', auth()->user()->id);
-                }
-                return $query;
-            })
             ->columns([
-                TextColumn::make('user.name')
-                    ->label('Penyewa'),
-                TextColumn::make('room.name')
-                    ->label('Kamar'),
+                TextColumn::make('user.nama')
+                    ->label('Customer'),
+                TextColumn::make('kaos.nama_kaos')
+                    ->label('Kaos'),
                 TextColumn::make('review')
                     ->label('Review'),
                 TextColumn::make('star')
-                    ->label('rating')
+                    ->label('Rating')
                     ->icon('heroicon-c-star')
                     ->color('warning'),
             ])
@@ -93,13 +87,6 @@ class ReviewResource extends Resource
                 //         titleAttribute: 'name',
                 //     )
                 //     ->label('Penyewa'),
-                // SelectFilter::make('room_id')
-                //     ->relationship(
-                //         name: 'room',
-                //         titleAttribute: 'name',
-                //         modifyQueryUsing: fn(Builder $query, $get) => $query
-                //          ->whereHas('role', fn($q) => $q->where('name', 'PENYEWA')))
-                //     ->label('Kamar'),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),

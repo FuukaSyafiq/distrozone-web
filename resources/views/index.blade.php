@@ -20,7 +20,7 @@
         @endforeach --}}
     </section>
     <!-- popular Products end -->
-
+   
     <!-- Promo -->
     <section class="flex w-4/5 mx-auto justify-between lg:flex-row flex-col  shadow-lg rounded-xl">
         <div class="lg:w-1/5 w-full flex-col flex justify-center rounded-md px-4 bg-black text-white">

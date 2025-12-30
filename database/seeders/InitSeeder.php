@@ -16,6 +16,7 @@ class InitSeeder extends Seeder
     {
         $this->call(ImageSeeder::class);
         $this->call(KaosSeeder::class);
+        $this->call(JamOperasionalSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(PermissionNameSeeder::class);
         $this->call(PermissionAdminSeeder::class);
@@ -32,6 +33,7 @@ class InitSeeder extends Seeder
         PermissionKasirSeeder::down();
         UserSeeder::down();
         PermissionNameSeeder::down();
+        JamOperasionalSeeder::down();
         ImageSeeder::down();
         KaosSeeder::down();
         RoleSeeder::down();

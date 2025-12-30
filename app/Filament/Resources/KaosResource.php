@@ -68,21 +68,21 @@ class KaosResource extends Resource
 
                 SectionForm::make('Foto')
                     ->schema([
-                        View::make('filament.components.image-preview')
-                            ->viewData(
-                                function ($record) {
-                                    $images = Image::where('id_kaos', $record->id_kaos)->get();
-                                    return [
-                                        'images' => $images ? $images : [],
-                                    ];
-                                }
-                            )
-                            ->visible(fn($record) => filled($record?->image)),
+                        // View::make('filament.components.image-preview')
+                        //     ->viewData(
+                        //         function ($record) {
+                        //             $images = Image::where('id_kaos', $record->id_kaos)->get();
+                        //             return [
+                        //                 'images' => $images ? $images : [],
+                        //             ];
+                        //         }
+                        //     )
+                        //     ->visible(fn($record) => filled($record?->image)),
+                      
                         FileUpload::make('foto_kaos')
                             ->multiple()
                             ->label('Upload Foto')
                             ->image()
-                            ->disk('local')
                             ->imageEditor()
                             ->directory('kaos')
                     ]),
@@ -112,9 +112,7 @@ class KaosResource extends Resource
                     ->label('Stok kaos'),
                 TextColumn::make('nama_kaos')
                     ->searchable(),
-                ImageColumn::make('image.path')
-                    ->label('Foto')
-                    ->disk('s3')
+                ImageColumn::make('image.path')->disk('s3')->label('Foto')
             ])
             ->filters([
                 SelectFilter::make('merek_kaos')

@@ -22,12 +22,4 @@ class ListPayments extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-    public function mount(): void
-    {
-        $roleId =  auth()->user()->role_id;
-        $roleName = Role::getIdbyRole($roleId);
-       
-        redirect("/{$roleName}/payments/create");
-        // redirect("/{$roleName}/payments/create");
-    }
 }
