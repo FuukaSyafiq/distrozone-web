@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use Illuminate\Support\Facades\Session;
-
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section as SectionEntry;
+use Filament\Infolists\Components\ImageEntry;
 use App\Models\Image;
 use App\Models\Role;
 use App\Models\Tagihan;
@@ -22,6 +24,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -74,12 +77,27 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-              
+                TextColumn::make('transaksi.kode_transaksi')
+                    ->label('Kode transaksi'),
+                TextColumn::make('kaos.nama_kaos')
+                    ->label('Kaos'),
+                TextColumn::make('transaksi.metode_pembayaran')
+                    ->label('Metode pembayaran'),
+                TextColumn::make('transaksi.status')
+                    ->label('Status'),
+                TextColumn::make('qty')
+                    ->label('Quantity'),
+                TextColumn::make('harga_satuan')
+                    ->label('Harga satuan'),
+                TextColumn::make('subtotal')
+                    ->label('Subtotal'),
             ])
             ->filters([
                 // SelectFilter::make('')
             ])
-            ->actions([])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
             ]);
@@ -94,12 +112,67 @@ class TransactionResource extends Resource
         ];
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                SectionEntry::make('Detail')->columns(3)
+                    ->schema([
+                        TextEntry::make('transaksi.kode_transaksi')
+                            ->label('Kode transaksi'),
+                        TextEntry::make('transaksi.jenis_transaksi')
+                            ->label('Jenis transaksi'),
+                        TextEntry::make('transaksi.metode_pembayaran')
+                            ->label('Metode pembayaran'),
+                        TextEntry::make('transaksi.total_harga')
+                            ->label('Total harga')->money('IDR', true),
+                        TextEntry::make('transaksi.ongkir')
+                            ->label('Ongkir')->money('IDR', true),
+                        TextEntry::make('transaksi.ongkir.tarif_per_kg')
+                            ->label('Tarif ongkir / kg')->money('IDR', true),
+                        TextEntry::make('transaksi.status')
+                            ->label('Status transaksi'),
+                        TextEntry::make('transaksi.kasir.nama')
+                            ->label('Kasir'),
+                        TextEntry::make('transaksi.customer.nama')
+                            ->label('Customer'),
+                        TextEntry::make('transaksi.customer.username')
+                            ->label('Customer username'),
+                        TextEntry::make('transaksi.customer.username')
+                            ->label('Username customer'),
+                        TextEntry::make('transaksi.customer.no_telepon')
+                            ->label('No telepon'),
+                        TextEntry::make('kaos.nama_kaos')
+                            ->label('Kaos'),
+                        TextEntry::make('kaos.merek_kaos')
+                            ->label('Merek kaos'),
+                        TextEntry::make('kaos.type_kaos')
+                            ->label('Type kaos'),
+                        TextEntry::make('kaos.warna_kaos')
+                            ->label('Warna kaos'),
+                        TextEntry::make('kaos.ukuran')
+                            ->label('Ukuran kaos'),
+                        TextEntry::make('kaos.harga_jual')
+                            ->label('Harga jual')->money('IDR', true),
+                        TextEntry::make('kaos.stok_kaos')
+                            ->label('Stok kaos'),
+                    ]),
+                SectionEntry::make('Foto')
+                    ->schema([
+                        ImageEntry::make('transaksi.customer.image.path')
+                            ->label('Foto customer')
+                            ->disk('s3')
+                            ->height(300),
+                    ])
+            ]);
+    }
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
+            'view' => Pages\ViewTransaction::route('/{record}')
         ];
     }
 }

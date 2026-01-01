@@ -9,7 +9,7 @@ class TransaksiDetail extends Model
 {
     use HasFactory;
     protected $table = "transaksi_detail";
-
+    protected $primaryKey = 'id_detail_transaksi';
     protected $fillable = [
         'id_transaksi',
         'id_kaos',

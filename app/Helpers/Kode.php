@@ -2,16 +2,18 @@
 
 namespace App\Helpers;
 // use App\Models\Transaction;
-use App\Models\Tagihan;
-use App\Models\VerifikasiPembayaran;
-use Carbon\Carbon;
 
-class Invoice
+use App\Models\Pembayaran;
+use App\Models\Transaksi;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
+class Kode
 {
 	public static function GenerateInvoiceNumber()
 	{
 		// Ambil nomor terakhir dari database
-		$lastInvoice = Tagihan::orderBy('id', 'desc')->first();
+		$lastInvoice = Pembayaran::orderBy('id_pembayaran', 'desc')->first();
 
 		if ($lastInvoice) {
 			$lastInvoiceNumber = intval(substr($lastInvoice->no_invoice, 4, 4)); // Ambil angka dari no_invoice (misal 'INV-0001' -> 0001)
@@ -32,5 +34,21 @@ class Invoice
 
 
 		return $no_invoice;
+	}
+	
+	public static function GenerateKodeTransaksi() {
+		$date = Carbon::now()->format('Ymd'); // 20260101
+
+		do {
+			// Random 4 karakter (huruf besar + angka)
+			$random = strtoupper(Str::random(4));
+
+			$kode = "TRX-{$date}-{$random}";
+
+			// cek ke DB biar 100% unik
+			$exists = Transaksi::where('kode_transaksi', $kode)->exists();
+		} while ($exists);
+
+		return $kode;
 	}
 }

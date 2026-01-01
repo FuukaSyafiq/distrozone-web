@@ -9,7 +9,7 @@ class Transaksi extends Model
 {
     use HasFactory;
     protected $table = "transaksi";
-
+    protected $primaryKey = 'id_transaksi';
     protected $fillable = [
         'kode_transaksi',
         'id_kasir',
@@ -18,6 +18,7 @@ class Transaksi extends Model
         'metode_pembayaran',
         'total_harga',
         'ongkir',
+        'id_ongkir',
         'status',
     ];
 
@@ -29,5 +30,10 @@ class Transaksi extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'id_customer');
+    }
+
+    public function ongkir()
+    {
+        return $this->belongsTo(Ongkir::class, 'id_ongkir');
     }
 }

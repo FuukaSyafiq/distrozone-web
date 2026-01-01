@@ -27,9 +27,10 @@ class Kaos extends Model
         'stok_kaos',
     ];
 
+
     public static function getKaosByName($name)
     {
-        return self::where('nama_kaos', $name)->first();
+        return self::where('nama_kaos', 'like', "%{$name}%")->first();
     }
 
     public function image()

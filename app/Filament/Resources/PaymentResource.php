@@ -70,11 +70,11 @@ class PaymentResource extends Resource
                 TextColumn::make('transaksi.jenis_transaksi')
                     ->label('Jenis transaksi'),
                 TextColumn::make('transaksi.total_harga')
-                    ->label('Total harga'),
+                    ->label('Total harga')->money('IDR', true),
                 TextColumn::make('status')
                     ->label('Status pembayaran')->badge(),
-            TextColumn::make('transaksi.status')
-                ->label('Status transaksi')->badge(),
+                TextColumn::make('transaksi.status')
+                    ->label('Status transaksi')->badge(),
                 TextColumn::make('no_invoice')
                     ->label('No invoice'),
                 ImageColumn::make('transfer.path')->disk('s3')

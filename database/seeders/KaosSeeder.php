@@ -30,7 +30,6 @@ class KaosSeeder extends Seeder
             [
                 "merek_kaos" => "Cotton Combed",
                 "nama_kaos" => "Kaos merah polos lengan pendek Cotton",
-
                 "type_kaos" => "lengan pendek",
                 "warna_kaos" => "merah",
                 "ukuran" => "L",
@@ -52,7 +51,6 @@ class KaosSeeder extends Seeder
             [
                 "merek_kaos" => "Cotton Combed",
                 "nama_kaos" => "Kaos putih polos lengan pendek Cotton",
-
                 "type_kaos" => "lengan pendek",
                 "warna_kaos" => "putih",
                 "ukuran" => "L",
@@ -63,7 +61,6 @@ class KaosSeeder extends Seeder
             [
                 "merek_kaos" => "Cotton Combed",
                 "nama_kaos" => "Kaos merah gelap polos lengan pendek Cotton",
-
                 "type_kaos" => "lengan pendek",
                 "warna_kaos" => "merah-gelap",
                 "ukuran" => "L",
@@ -108,6 +105,8 @@ class KaosSeeder extends Seeder
                 'kaos',
                 new File($absolutePath)
             );
+            $namaKaos = pathinfo(basename($filePath), PATHINFO_FILENAME);
+            $kaos = Kaos::getKaosByName($namaKaos);
 
             // contoh simpan ke DB
             Image::create([
@@ -115,6 +114,7 @@ class KaosSeeder extends Seeder
                 'file_name' => basename($filePath),
                 'mime_type' => mime_content_type($absolutePath),
                 'size' => filesize($absolutePath),
+                'id_kaos' => $kaos->id_kaos
             ]);
         }
     }

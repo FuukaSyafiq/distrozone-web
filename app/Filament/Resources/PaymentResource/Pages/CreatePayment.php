@@ -4,7 +4,7 @@ namespace App\Filament\Resources\PaymentResource\Pages;
 
 use App\Filament\Resources\PaymentResource;
 use App\Helpers\DeleteImages;
-use App\Helpers\Invoice;
+use App\Helpers\Kode;
 use App\Helpers\Sender;
 use App\Models\RentedRoom;
 use App\Models\Role;

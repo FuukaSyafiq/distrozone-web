@@ -43,7 +43,7 @@
         },
         "files": [
             "app/Helpers/Sender.php",
-            "app/Helpers/Invoice.php",
+            "app/Helpers/Kode.php",
             "app/Helpers/Terbilang.php",
             "app/Helpers/GenerateMessage.php",
             "app/Helpers/Status.php"

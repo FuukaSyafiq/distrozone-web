@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->string('kode_transaksi', 30)->unique();
 
-            $table->integer('id_kasir')->nullable();
-            $table->integer('id_customer')->nullable();
+            $table->integer('id_kasir');
+            $table->integer('id_customer');
 
             $table->enum('jenis_transaksi', ['OFFLINE', 'ONLINE']);
 
@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->decimal('total_harga', 12, 2);
             $table->decimal('ongkir', 12, 2)->default(0);
-
+            $table->integer('id_ongkir');
             $table->enum('status', [
                 'PENDING',
                 'ACC_KASIR',
@@ -43,6 +43,11 @@ return new class extends Migration
             $table->foreign('id_kasir')
                 ->references('id_user')
                 ->on('users')
+                ->onDelete('set null')->cascadeOnUpdate();
+
+            $table->foreign('id_ongkir')
+                ->references('id')
+                ->on('ongkir')
                 ->onDelete('set null')->cascadeOnUpdate();
 
             $table->foreign('id_customer')

@@ -16,6 +16,7 @@ class InitSeeder extends Seeder
     {
         $this->call(ImageSeeder::class);
         $this->call(KaosSeeder::class);
+        $this->call(OngkirSeeder::class);
         $this->call(JamOperasionalSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(PermissionNameSeeder::class);
@@ -23,11 +24,13 @@ class InitSeeder extends Seeder
         $this->call(PermissionKasirSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(ReviewSeeder::class);
+        $this->call(TransaksiSeeder::class);
     }
 
 
     public static function down()
     {
+        TransaksiSeeder::down();
         ReviewSeeder::down();
         PermissionAdminSeeder::down();
         PermissionKasirSeeder::down();
@@ -35,8 +38,8 @@ class InitSeeder extends Seeder
         PermissionNameSeeder::down();
         JamOperasionalSeeder::down();
         ImageSeeder::down();
+        OngkirSeeder::down();
         KaosSeeder::down();
         RoleSeeder::down();
-      
     }
 }
