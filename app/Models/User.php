@@ -4,11 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Role;
-use App\Models\Agama;
-use App\Models\Kecamatan;
-use App\Models\Kelurahan;
-use App\Models\DataPendaftar;
-use App\Models\GolonganDarah;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,7 +26,6 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
     protected $keyType = 'int';
     protected $fillable = [
         'nama',
-        'username',
         'password',
         'email',
         'role_id',
@@ -61,13 +55,10 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
     public function getFilamentName(): string
     {
         // Return the desired attribute, with a fallback (e.g., to 'username' or a default string)
-        return $this->nama ?? $this->username ?? 'Unknown User';
+        return $this->nama;
     }
 
-    public static function getUserByUsername($username)
-    {
-        return self::where('username', $username)->first();
-    }
+   
     public static function getUserByName($name)
     {
         return self::where('nama', $name)->first();

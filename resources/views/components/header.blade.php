@@ -59,7 +59,7 @@
                 <!-- Avatar -->
                 <button @click="open = !open" class="flex items-center focus:outline-none">
                     <img
-                        src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}"
+                        src="https://ui-avatars.com/api/?name={{ auth()->user()->nama }}"
                         alt="avatar"
                         class="w-8 h-8 rounded-full border"
                     >

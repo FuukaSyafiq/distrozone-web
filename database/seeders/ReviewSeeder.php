@@ -19,7 +19,7 @@ class ReviewSeeder extends Seeder
             [
                 "review" => "Tempat yang sangat nyaman dan bersih. Sangat direkomendasikan!",
                 "star" => 5,
-                "id_customer" => User::getUserByUsername("aril")->id_user,
+                "id_customer" => User::getUserByName("Mas aril")->id_user,
                 "id_kaos" => Kaos::getKaosByName('Kaos hitam polos lengan pendek Cotton')->id_kaos,
             ],
         ];

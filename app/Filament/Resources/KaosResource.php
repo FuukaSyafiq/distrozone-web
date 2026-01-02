@@ -126,7 +126,6 @@ class KaosResource extends Resource
                     ),
                 SelectFilter::make('stok_kaos')
                     ->label('Stok')
-                    ->default('many')
                     ->options([
                         'out' => 'Habis',
                         'low' => 'Hampir Habis',

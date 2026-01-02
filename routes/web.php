@@ -32,15 +32,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('download/transaction/{id}', [PDFController::class, 'transactionpdf'])->name('transaction.pdf');
 /*Tagihan PDF */
 
-Route::get('download/tagihan/{id}', [PDFController::class, 'tagihanpdf'])->name('tagihan.pdf');
 /*Transaction history PDF */
-Route::get('download/buktibayar/{id}', [PDFController::class, 'cetakbuktibayar'])->name('buktibayar.settled.pdf');
-// Route::get('download/all-transactions', [PDFController::class, 'allTransactionPdf'])->name('transaction.all.pdf');
-// Route::get('download/all-user-transactions', [PDFController::class, 'allUserTransactionPdf'])->name('transaction.all.user.pdf');
-// Route::get('download/selected-user-transactions', [PDFController::class, 'allSelectedUserTransactionPdf'])->name('transaction.select.user.pdf');
-Route::get('download/kuitansi/{id}', [PDFController::class, 'cetak'])->name('transaction.settled.pdf');
+// Route::get('download/buktibayar/{id}', [PDFController::class, 'cetakbuktibayar'])->name('buktibayar.settled.pdf');
+Route::get('download/transaksi/{id}', [PDFController::class, 'cetak'])->name('transaction.settled.pdf');
 
-//
 Route::get('/', [IndexController::class, 'gets'])->name('index');
 Route::post('/', [IndexController::class, 'store']);
 

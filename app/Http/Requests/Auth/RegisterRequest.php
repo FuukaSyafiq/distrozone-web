@@ -25,22 +25,11 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'lowercase', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email', 'lowercase'],
             'password' => [
                 'required',
                 'confirmed', // otomatis cek password_confirmation
                 Password::defaults(),
-            ],
-            'nik' => ['required', 'string', 'digits:16'],
-            'alamat' => ['required', 'string'],
-            'no_telepon' => [
-                'required',
-                'string',
-                'regex:/^[0-9]+$/',
-                'min:9',
-                'max:15',
             ],
         ];
     }

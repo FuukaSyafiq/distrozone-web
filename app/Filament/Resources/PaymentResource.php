@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action as ActionTable;
 
 class PaymentResource extends Resource
 {
@@ -79,6 +80,16 @@ class PaymentResource extends Resource
                     ->label('No invoice'),
                 ImageColumn::make('transfer.path')->disk('s3')
                     ->label('Bukti transfer'),
+
+            ])->filters([
+                //
+            ])
+            ->actions([
+                ActionTable::make('cetak')
+                    ->label('Cetak')->icon('heroicon-o-printer')
+                    ->color(
+                        'red'
+                    )
             ]);
     }
 

@@ -70,8 +70,6 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('nama')
                     ->label('Nama'),
-                TextColumn::make('username')
-                    ->label('Username'),
                 TextColumn::make('email')
                     ->label('Email'),
                 TextColumn::make('no_telepon')

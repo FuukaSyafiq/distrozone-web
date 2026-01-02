@@ -84,13 +84,13 @@ class TransactionResource extends Resource
                 TextColumn::make('transaksi.metode_pembayaran')
                     ->label('Metode pembayaran'),
                 TextColumn::make('transaksi.status')
-                    ->label('Status'),
+                    ->label('Status')->badge(),
                 TextColumn::make('qty')
                     ->label('Quantity'),
                 TextColumn::make('harga_satuan')
-                    ->label('Harga satuan'),
+                    ->label('Harga satuan')->money('IDR', true),
                 TextColumn::make('subtotal')
-                    ->label('Subtotal'),
+                    ->label('Subtotal')->money('IDR', true),
             ])
             ->filters([
                 // SelectFilter::make('')
@@ -134,14 +134,24 @@ class TransactionResource extends Resource
                             ->label('Status transaksi'),
                         TextEntry::make('transaksi.kasir.nama')
                             ->label('Kasir'),
+
+
+                    ]),
+                SectionEntry::make('Customer')->columns(2)
+                    ->schema([
                         TextEntry::make('transaksi.customer.nama')
                             ->label('Customer'),
-                        TextEntry::make('transaksi.customer.username')
-                            ->label('Customer username'),
-                        TextEntry::make('transaksi.customer.username')
-                            ->label('Username customer'),
                         TextEntry::make('transaksi.customer.no_telepon')
                             ->label('No telepon'),
+                        TextEntry::make('transaksi.customer.alamat')
+                            ->label('Alamat'),
+                        TextEntry::make('transaksi.customer.nik')
+                            ->label('NIK'),
+                        TextEntry::make('transaksi.customer.email')
+                            ->label('Email'),
+                    ]),
+                SectionEntry::make('Kaos')->columns(2)
+                    ->schema([
                         TextEntry::make('kaos.nama_kaos')
                             ->label('Kaos'),
                         TextEntry::make('kaos.merek_kaos')
@@ -157,10 +167,9 @@ class TransactionResource extends Resource
                         TextEntry::make('kaos.stok_kaos')
                             ->label('Stok kaos'),
                     ]),
-                SectionEntry::make('Foto')
+                SectionEntry::make('Foto kaos')->columns(2)
                     ->schema([
-                        ImageEntry::make('transaksi.customer.image.path')
-                            ->label('Foto customer')
+                        ImageEntry::make('customer_image_by_kaos')->label("")
                             ->disk('s3')
                             ->height(300),
                     ])

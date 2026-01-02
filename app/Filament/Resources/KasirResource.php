@@ -55,8 +55,6 @@ class KasirResource extends Resource
                     ->schema([
                         TextInput::make('nama')->default("testing")
                             ->label('Nama')->required(),
-                        TextInput::make('username')->required()->dehydrateStateUsing(fn($state) => strtolower($state))
-                            ->label('Username')->default("testing"),
                         TextInput::make('password')->required(fn(string $context) => $context === 'create')
                             ->label('Password')->password()->default("password")->dehydrated(fn($state) => filled($state))
                     ->dehydrateStateUsing(fn($state) => Hash::make($state)),
@@ -105,8 +103,6 @@ class KasirResource extends Resource
             ->columns([
                 TextColumn::make('nama')
                     ->label('Nama'),
-                TextColumn::make('username')
-                    ->label('Username'),
                 TextColumn::make('email')
                     ->label('Email'),
                 TextColumn::make('no_telepon')
@@ -158,8 +154,6 @@ class KasirResource extends Resource
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),
-                        TextEntry::make('username')
-                            ->label('Username'),
                         TextEntry::make('email')
                             ->label('Email'),
                         TextEntry::make('no_telepon')

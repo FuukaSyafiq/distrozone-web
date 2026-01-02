@@ -27,4 +27,11 @@ class TransaksiDetail extends Model
     {
         return $this->belongsTo(Transaksi::class, 'id_transaksi');
     }
+
+    public function getCustomerImageByKaosAttribute()
+    {
+        return Image
+            ::where('id_kaos', $this->id_kaos)
+            ->value('path');
+    }
 }

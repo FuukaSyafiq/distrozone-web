@@ -14,6 +14,8 @@ class IndexController extends Controller
   
         // dd($rooms);
         return view('index', ['user' => auth()->user()]);
+        // return view('auth.verify-email');
+        // return redirect()->route('verification.notice');
     }
     public function store(Request $request) {
 

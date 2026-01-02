@@ -20,25 +20,26 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-black py-2 px-4 text-center">Id</th>
-                    <th class="border border-black py-2 px-4 text-center">No Invoice</th>
-                    <th class="border border-black py-2 px-4 text-center">Pengirim</th>
-                    <th class="border border-black py-2 px-4 text-center">Kamar</th>
-                    <th class="border border-black py-2 px-4 text-center">Amount</th>
-                    <th class="border border-black py-2 px-4 text-center">Tanggal Dibayar</th>
+                    <th class="border border-black py-2 px-4 text-center">Kaos</th>
+                    <th class="border border-black py-2 px-4 text-center">Merek kaos</th>
+                    <th class="border border-black py-2 px-4 text-center">Type kaos</th>
+                    <th class="border border-black py-2 px-4 text-center">Quantity</th>
+                    <th class="border border-black py-2 px-4 text-center">Harga satuan</th>
+                    <th class="border border-black py-2 px-4 text-center">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Iterate through each transaction -->
-                @foreach ($records as $record)
+                {{-- @foreach ($records as $record) --}}
                 <tr>
-                    <td class="border border-black py-2 px-4 text-center">{{ $loop->iteration }}</td>
+                    {{-- <td class="border border-black py-2 px-4 text-center">{{ $loop->iteration }}</td> --}}
                     <td class="border border-black py-2 px-4 text-center">{{ $record->no_invoice }}</td>
-                    <td class="border border-black py-2 px-4 text-center">{{ $record->pengirim }}</td>
+                    {{-- <td class="border border-black py-2 px-4 text-center">{{ $record->pengirim }}</td>
                     <td class="border border-black py-2 px-4 text-center">{{ $record->room }}</td>
                     <td class="border border-black py-2 px-4 text-center">Rp.{{ number_format($record->amount, 0, ',', '.') }}</td>
-                    <td class="border border-black py-2 px-4 text-center">{{ $record->tanggal_dibayar }}</td>
+                    <td class="border border-black py-2 px-4 text-center">{{ $record->tanggal_dibayar }}</td> --}}
                 </tr>
-                @endforeach
+                {{-- @endforeach --}}
             </tbody>
         </table>
 

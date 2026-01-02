@@ -30,7 +30,7 @@ class JamOperasionalResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->role_id === Role::getIdByRole('ADMIN') || auth()->user()->role_id === Role::getIdByRole('KASIR');
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
     }
 
     public static function canView(Model $record): bool

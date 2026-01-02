@@ -15,9 +15,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
 use App\Http\Requests\Auth\RegisterRequest;
-
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RegisteredUserController extends Controller
 {
@@ -36,21 +37,21 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        $validated = $request->validated();
-        
         $user = User::create([
-            "nama" => $request->nama,
             "email" => $request->email,
-            "nik" => $request->nik,
-            "username" => $request->username,
             "role_id" => Role::getIdByRole("CUSTOMER"),
-            "no_telepon" => $request->no_telepon,
             "verified" => false,
             "status" => Status::ACTIVE,
-            "alamat" => $request->alamat,
             "password" => Hash::make($request->password)
         ]);
+        $nama = explode('@', $request->email)[0];
 
-        return redirect('/login');
+        $user->update([
+            'nama' => $nama . Str::random(5)
+        ]);
+
+        event(new Registered($user));
+        auth()->login($user);
+        return redirect()->route('verification.notice');
     }
 }

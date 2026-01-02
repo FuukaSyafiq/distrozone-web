@@ -32,8 +32,8 @@ class TransaksiSeeder extends Seeder
             'size'      => $disk->size($path),
         ]);
 
-        $customer = User::getUserByUsername('aril');
-        $kasir = User::getUserByUsername('lua_kasir');
+        $customer = User::getUserByName('Mas aril');
+        $kasir = User::getUserByName('Mbak lua');
         $kaos = Kaos::getKaosByName('Kaos biru polo lengan pendek');
         $quantity = 2;
         $hargaSatuan = $kaos->harga_jual;

@@ -14,17 +14,31 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 
 <body>
     <x-header />
-
     @livewire('notifications')
-
+    
     <!-- Page Content -->
     {{ $slot }}
-
+    
     <x-footer />
+    @livewireScripts
+    <div
+    x-data="{ show: false, message: '' }"
+    x-on:toast.window="
+        message = $event.detail.message;
+        show = true;
+        setTimeout(() => show = false, 3000)
+    "
+    x-show="show"
+    x-transition
+    class="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg"
+>
+    <span x-text="message"></span>
+</div>
 </body>
 
 </html>

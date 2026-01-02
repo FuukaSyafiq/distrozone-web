@@ -30,29 +30,16 @@ class AuthenticatedSessionController extends Controller
     {
 
         $request->authenticate();
-
-        if (!$request->user()->verified) {
-            throw ValidationException::withMessages([
-                'auth' => 'Akun Anda belum diverifikasi.',
-            ]);
-        }
-        
         if ($request->user()->status == Status::BANNED){
-            throw ValidationException::withMessages([
-                'auth' => 'Akun Anda telah diblokir secara permanen. Silakan hubungi administrator.',
-            ]);
+            $this->dispatch('toast', message: 'Akun Anda telah diblokir secara permanen. Silakan hubungi administrator.');
         }
 
         if ($request->user()->status == Status::SUSPENDED) {
-            throw ValidationException::withMessages([
-                'auth' => 'Akun Anda sedang ditangguhkan sementara. Silakan coba lagi nanti.',
-            ]);
+            $this->dispatch('toast', message: 'Akun Anda sedang ditangguhkan sementara. Silakan coba lagi nanti.');
         }
 
         if ($request->user()->status != Status::ACTIVE) {
-            throw ValidationException::withMessages([
-                'auth' => "Akun Anda belum diverifikasi. Kami akan mengirimkan email setelah proses verifikasi selesai.",
-            ]);
+            $this->dispatch('toast', message: 'Akun Anda belum diverifikasi. Kami akan mengirimkan email setelah proses verifikasi selesai.');
         }
         $request->session()->regenerate();
 
@@ -61,7 +48,7 @@ class AuthenticatedSessionController extends Controller
         } else if ($request->user()->role_id == Role::getIdByRole("KASIR")) {
             return redirect('/kasir');
         }
-
+        
         return redirect('/');
     }
 
