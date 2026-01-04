@@ -1,110 +1,222 @@
-<nav class="bg-gray-100 w-full shadow-lg sticky top-0 z-40">
-    <div class="mx-auto w-full px-2 md:px-6 lg:px-8">
-        <div class="relative flex h-16 items-center justify-around md:justify-between">
-            <div class="absolute inset-y-0 left-0 flex items-center cursor-pointer sm:mr-o mr-5 md:hidden">
-                <!-- Mobile menu button-->
-                <button type="button"
-                    class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+<nav class="bg-white w-full shadow-md sticky top-0 z-50">
+    <div class="mx-auto w-full px-4 md:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between gap-4">
+
+            <!-- Mobile menu button -->
+            <div class="flex items-center md:hidden">
+                <button type="button" id="mobile-menu-button"
+                    class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
                     aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="absolute -inset-0.5"></span>
                     <span class="sr-only">Open main menu</span>
-                    <!-- Icon when menu is closed. -->
-                    <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true">
+                    <svg class="block h-6 w-6" id="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
-                    <!-- Icon when menu is open. -->
-                    <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true">
+                    <svg class="hidden h-6 w-6" id="close-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            <!-- Madura Logo -->
-            <div class="flex items-center md:w-1/5 w-2/5 sm:block mx-auto justify-center md:justify-between cursor-pointer"
-                id="goHome">
-                <div class="flex items-center mr-3 justify-center">
-                    {{-- <img class="mt-2 max-w-24 text-center" src="/assets/logomadura-removebg-preview.png" --}}
-                        {{-- alt="Your Company"> --}}
-                    <h2 class="font-bold text-md -ml-7 md:block hidden">Distrozone
-                    </h2>
-                </div>
-            </div>
 
-            <!-- Input Search -->
-            <div class="flex items-center flex-col justify-center w-4/5 sm:w-3/5 md:w-5/5 relative">
-                <div class="bg-white flex w-full rounded-lg  border border-black ">
-                    <input id="searchInput" class="w-full rounded-md border-none py-sm-2 py-1 px-1 px-sm-2" autocomplete="on"
-                        placeholder="Search ..." />
-                    <x-bi-search class="hover:cursor-pointer mx-[-10px] m-auto" />
-                </div>
-            </div>
-
-            @guest
-            <div class="flex gap-3 mx-2">
-                <a href="/login"
-                    class="rounded-md bg-gray-900 text-xs sm:text-md px-3 py-2 font-medium text-white">
-                    Login
-                </a>
-                <a href="/register"
-                    class="rounded-md bg-gray-900 text-xs sm:text-md px-3 py-2 font-medium text-white">
-                    Register
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="/" class="flex items-center gap-2 group">
+                    <h1 class="font-bold text-xl text-gray-800 hidden md:block">Distrozone</h1>
                 </a>
             </div>
-        @endguest
-        
-        @auth
-            <div class="relative mx-2" x-data="{ open: false }">
-                <!-- Avatar -->
-                <button @click="open = !open" class="flex items-center focus:outline-none">
-                    <img
-                        src="https://ui-avatars.com/api/?name={{ auth()->user()->nama }}"
-                        alt="avatar"
-                        class="w-8 h-8 rounded-full border"
-                    >
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex flex-1 max-w-xl mx-4">
+                <form action="/search" method="GET" class="w-full relative">
+                    <input type="text" name="q" id="searchInput"
+                        class="w-full rounded-lg border-2 border-gray-200 py-2.5 pl-4 pr-12 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                        placeholder="Cari kaos, merek, atau kategori..." autocomplete="off" />
+                    <button type="submit"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Section: Cart & Auth -->
+            <div class="flex items-center gap-3">
+
+                <!-- Search Icon (Mobile) -->
+                <button type="button" id="mobile-search-button"
+                    class="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                 </button>
-        
-                <!-- Dropdown -->
-                <div
-                    x-show="open"
-                    @click.outside="open = false"
-                    class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border"
-                >
-                    <a href="/profile"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Profile
+
+                <!-- Shopping Cart -->
+                <a href="/cart" class="relative p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <!-- Cart Badge -->
+                    @if(auth()->check())
+                    @if($cartCount > 0)
+                    <span
+                        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {{$cartCount }}
+                    </span>
+                    @endif
+                    @endif
+
+                </a>
+
+                @guest
+                <!-- Guest Buttons -->
+                <div class="hidden md:flex gap-2">
+                    <a href="/login"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                        Login
                     </a>
-        
-                    <form method="POST" action="/logout">
-                        @csrf
-                        <button
-                            type="submit"
-                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                            Logout
-                        </button>
-                    </form>
+                    <a href="/register"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        Register
+                    </a>
                 </div>
+                @endguest
+
+                @auth
+                <!-- User Menu -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
+                        <img src="https://ui-avatars.com/api/?name={{ auth()->user()->nama }}&background=3b82f6&color=fff"
+                            alt="avatar" class="w-9 h-9 rounded-full border-2 border-blue-500">
+                        <svg class="w-4 h-4 text-gray-600 hidden md:block" :class="{ 'rotate-180': open }" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" @click.outside="open = false" x-cloak
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
+                        style="display: block;">
+
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <p class="text-sm font-medium text-gray-900">{{ auth()->user()->nama }}</p>
+                            <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                        </div>
+
+                        <a href="/profile"
+                            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Profil Saya
+                        </a>
+
+                        <a href="/orders"
+                            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            Pesanan Saya
+                        </a>
+
+                        <div class="border-t border-gray-200 mt-1 pt-1">
+                            <form method="POST" action="/logout">
+                                @csrf
+                                <button type="submit"
+                                    class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endauth
+
             </div>
-        @endauth
-        
         </div>
 
-    </div>
+        <!-- Mobile Search Bar -->
+        <div id="mobile-search" class="hidden md:hidden pb-4">
+            <form action="/search" method="GET" class="relative">
+                <input type="text" name="q"
+                    class="w-full rounded-lg border-2 border-gray-200 py-2.5 pl-4 pr-12 focus:border-blue-500 focus:outline-none"
+                    placeholder="Cari kaos..." autocomplete="off" />
+                <button type="submit"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white rounded-md p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!--Navbar Handphone devices -->
-    <div class="hidden" id="mobile-menu">
-        <div class="space-y-1 px-2 pb-3 pt-2 absolute bg-white shadow-md w-full">
-            <a href="/"
-                class="block rounded-md hover:cursor-pointer bg-gray-900 text-xs sm:text-md px-3 py-2  text-center font-medium text-white"
-                aria-current="page">Home</a>
+    <!-- Mobile Menu -->
+    <div class="hidden md:hidden border-t border-gray-200" id="mobile-menu">
+        <div class="px-4 py-3 space-y-1 bg-gray-50">
+            @guest
             <a href="/login"
-                class="block rounded-md  text-center hover:cursor-pointer bg-gray-900 text-xs sm:text-md px-3 py-2  font-medium text-white"
-                aria-current="page">Login</a>
+                class="block px-4 py-2 text-center rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 border border-gray-200">
+                Login
+            </a>
             <a href="/register"
-                class="block rounded-md  text-center hover:cursor-pointer bg-gray-900 px-3 py-2  text-xs sm:text-md font-medium text-white"
-                aria-current="page">Register</a>
+                class="block px-4 py-2 text-center rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                Register
+            </a>
+            @endguest
+
+            @auth
+            <a href="/" class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">
+                Home
+            </a>
+            <a href="/cart" class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">
+                Keranjang
+            </a>
+            <a href="/orders" class="block px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">
+                Pesanan Saya
+            </a>
+            @endauth
         </div>
     </div>
 </nav>
+
+<script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+    }
+
+    // Mobile search toggle
+    const mobileSearchButton = document.getElementById('mobile-search-button');
+    const mobileSearch = document.getElementById('mobile-search');
+
+    if (mobileSearchButton) {
+        mobileSearchButton.addEventListener('click', () => {
+            mobileSearch.classList.toggle('hidden');
+        });
+    }
+</script>

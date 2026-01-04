@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\NikVerified;
+use App\Helpers\Status;
 use App\Models\Image;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
@@ -20,15 +22,15 @@ class UserSeeder extends Seeder
         // dd(Image::getImageByFilename("mbak-cantik.jpeg")->id);
         $datas = [
             // kasir 1
-            ["nama" => "Mbak lua",  "password" => $password, "role_id" => Role::getIdByRole("KASIR"), "alamat" => "Mantingan, Ngawi, Jawa timur", "no_telepon" => "08327827334", "email" => "lua@lua.my.id", "nik" => "352352353455433", "foto_id" => Image::getImageByFilename("mbak-cantik.jpeg")->id, "verified" => true, "email_verified_at" => now()],
+            ["nama" => "Mbak lua",  "password" => $password, "role_id" => Role::getIdByRole("KASIR"), "alamat" => "Mantingan, Ngawi, Jawa timur", "no_telepon" => "08327827334", "email" => "lua@lua.my.id", "nik" => "352352353455433", "foto_id" => Image::getImageByFilename("mbak-cantik.jpeg")->id, "nik_verified" => NikVerified::APPROVED, "email_verified_at" => now()],
 
             //admin 
-            ["nama" => "Bos Fajrul",  "password" => $password, "role_id" => Role::getIdByRole("ADMIN"), "alamat" => "Geneng, Ngawi, Jawa timur", "no_telepon" => "0833479824632", "email" => "fajrul@fajrul.com", "nik" => "34352352352354", "foto_id" => null,  "verified" => true, "email_verified_at" => now()],
+            ["nama" => "Bos Fajrul",  "password" => $password, "role_id" => Role::getIdByRole("ADMIN"), "alamat" => "Geneng, Ngawi, Jawa timur", "no_telepon" => "0833479824632", "email" => "fajrul@fajrul.com", "nik" => "34352352352354", "foto_id" => null,  "nik_verified" => NikVerified::APPROVED, "email_verified_at" => now()],
 
             // kasir 2
-            ["nama" => "Mas robert",  "password" => $password, "role_id" => Role::getIdByRole("KASIR"), "alamat" => "Kertonegoro, Ngawi, Jawa timur", "no_telepon" => "083226872332", "email" => "robert@robert.dev", "nik" => "34352454352352354", "foto_id" => Image::getImageByFilename("china1.jpeg")->id, "verified" => true, "email_verified_at" => now()],
+            ["nama" => "Mas robert",  "password" => $password, "role_id" => Role::getIdByRole("KASIR"), "alamat" => "Kertonegoro, Ngawi, Jawa timur", "no_telepon" => "083226872332", "email" => "robert@robert.dev", "nik" => "34352454352352354", "foto_id" => Image::getImageByFilename("china1.jpeg")->id, "nik_verified" => NikVerified::APPROVED, "email_verified_at" => now()],
 
-            ["nama" => "Mas aril", "password" => $password, "role_id" => Role::getIdByRole("CUSTOMER"), "alamat" => "Kertonegoro, Ngawi, Jawa timur", "no_telepon" => "088234974632", "email" => "aril@yahoo.com", "nik" => "3434351952352354", "foto_id" => Image::getImageByFilename("bos.jpeg")->id, "email_verified_at" => now()]
+            ["nama" => "Mas aril", "password" => $password, "role_id" => Role::getIdByRole("CUSTOMER"), "alamat" => "Kertonegoro, Ngawi, Jawa timur", "no_telepon" => "088234974632", "email" => "aril@yahoo.com", "nik" => "3434351952352354", "foto_id" => Image::getImageByFilename("bos.jpeg")->id, "nik_verified" => NikVerified::PENDING, "email_verified_at" => now()]
         ];
 
         foreach ($datas as $value) {

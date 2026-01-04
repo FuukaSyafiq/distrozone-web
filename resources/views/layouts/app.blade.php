@@ -11,34 +11,36 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
     @livewireStyles
 </head>
 
 <body>
     <x-header />
     @livewire('notifications')
-    
+
     <!-- Page Content -->
-    {{ $slot }}
-    
+    <div class="min-h-screen">
+        {{ $slot }}
+    </div>
     <x-footer />
     @livewireScripts
-    <div
-    x-data="{ show: false, message: '' }"
-    x-on:toast.window="
+    <div x-data="{ show: false, message: '' }" x-on:toast.window="
         message = $event.detail.message;
         show = true;
         setTimeout(() => show = false, 3000)
-    "
-    x-show="show"
-    x-transition
-    class="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg"
->
-    <span x-text="message"></span>
-</div>
+    "x-show="show" x-transition
+        class="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg">
+        <span x-text="message"></span>
+    </div>
+
+    @vite(['resources/js/app.js'])
 </body>
 
 </html>

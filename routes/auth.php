@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\ProfileForm;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,8 @@ Route::middleware(['web'])->group(
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
+
+    Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
 

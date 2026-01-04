@@ -14,6 +14,9 @@ install:
 	npm install
 	composer install
 
+run:
+	docker compose -f compose.needed.yml up -d
+
 dev:
 	docker compose -f compose.dev.yml up -d
 

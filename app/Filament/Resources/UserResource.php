@@ -78,8 +78,8 @@ class UserResource extends Resource
                     ->label('NIK'),
                 TextColumn::make('alamat')
                     ->label('Alamat'),
-                IconColumn::make('verified')->boolean()
-                    ->label('Terverifikasi'),
+                TextColumn::make('nik_verified')->badge()
+                    ->label('Status NIK'),
                 TextColumn::make('status')
                     ->label('Status'),
                 ImageColumn::make('image.path')

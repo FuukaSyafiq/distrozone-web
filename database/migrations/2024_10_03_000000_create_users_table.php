@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->enum("status", ["ACTIVE", "SUSPENDED", "BANNED"])->default("ACTIVE");
             $table->string('alamat')->nullable();
             $table->string('no_telepon')->nullable()->unique();
-            $table->boolean('verified')->default(false)->nullable();
+            $table->enum('nik_verified', ['EMPTY', 'PENDING','APPROVED','REJECTED'])->default('empty')->nullable();
             $table->string('nik')->nullable()->unique();
             $table->unsignedInteger('role_id');
             $table->unsignedInteger('foto_id')->nullable();

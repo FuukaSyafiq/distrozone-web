@@ -3,19 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Room;
-use App\Models\TipeRoom;
+use App\Models\Kaos;
 use Illuminate\Support\Facades\Mail;
 
 class IndexController extends Controller
 {
     public function gets()
     {
-  
-        // dd($rooms);
-        return view('index', ['user' => auth()->user()]);
-        // return view('auth.verify-email');
-        // return redirect()->route('verification.notice');
+        $kaoss = Kaos::getAllKaos();
+        
+        return view('index', ['kaoss' => $kaoss]);
     }
     public function store(Request $request) {
 

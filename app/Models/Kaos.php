@@ -27,7 +27,16 @@ class Kaos extends Model
         'stok_kaos',
     ];
 
-
+    public static function getAllKaos()
+    {
+        return Kaos::with('image')->with('reviews')->get();
+    }
+    public static function getAllKaosWithName($q)
+    {
+        return Kaos::with('image')->with('reviews')->orWhere('nama_kaos', 'ILIKE', '%' . $q . '%')->orWhere('merek_kaos', 'ILIKE', "%{$q}%")
+            ->orWhere('type_kaos', 'ILIKE', "%{$q}%")->get();
+      
+    }
     public static function getKaosByName($name)
     {
         return self::where('nama_kaos', 'like', "%{$name}%")->first();
@@ -37,4 +46,14 @@ class Kaos extends Model
     {
         return $this->hasMany(Image::class, 'id_kaos');
     }
-}   
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'id_kaos');
+    }
+
+    public function keranjangdetail()
+    {
+        return $this->hasMany(KeranjangDetail::class, 'id_kaos');
+    }
+}

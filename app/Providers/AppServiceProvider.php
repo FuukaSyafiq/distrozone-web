@@ -6,7 +6,8 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
-
+use App\Models\KeranjangDetail;
+use Illuminate\Support\Facades\View;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -22,9 +23,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // URL::forceScheme('https');
+        View::composer('*', function ($view) {
+            if (auth()->check()) {
+                $cartCount = KeranjangDetail::whereHas('keranjang', function ($q) {
+                    $q->where('id_customer', auth()->id())
+                        ->where('status', 'AKTIF');
+                })->count();
 
-        // FilamentAsset::register([
-        // Css::make('custom-stylesheet', __DIR__ . '/build/assets/app-57a5f44b.css'),]);
+                $view->with('cartCount', $cartCount);
+            }
+        });
     }
 }

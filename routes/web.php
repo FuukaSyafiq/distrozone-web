@@ -12,6 +12,7 @@ use App\Http\Controllers\TipeRoomController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\BulkPDFController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\KaosController;
 use App\View\Components\Denah;
 use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,7 @@ Route::get('download/transaksi/{id}', [PDFController::class, 'cetak'])->name('tr
 
 Route::get('/', [IndexController::class, 'gets'])->name('index');
 Route::post('/', [IndexController::class, 'store']);
+Route::get('/search', [KaosController::class , 'search'])->name('search');
 
 Route::delete('/images/{image}', [ImageController::class, 'destroy'])
 	->name('images.destroy');
