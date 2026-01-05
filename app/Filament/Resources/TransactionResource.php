@@ -44,6 +44,7 @@ class TransactionResource extends Resource
         return '';
     }
 
+
     public static function canCreate(): bool
     {
         return false;
@@ -121,9 +122,9 @@ class TransactionResource extends Resource
                         TextEntry::make('transaksi.kode_transaksi')
                             ->label('Kode transaksi'),
                         TextEntry::make('transaksi.jenis_transaksi')
-                            ->label('Jenis transaksi'),
+                            ->label('Jenis transaksi')->badge(),
                         TextEntry::make('transaksi.metode_pembayaran')
-                            ->label('Metode pembayaran'),
+                            ->label('Metode pembayaran')->badge(),
                         TextEntry::make('transaksi.total_harga')
                             ->label('Total harga')->money('IDR', true),
                         TextEntry::make('transaksi.ongkir')
@@ -131,7 +132,7 @@ class TransactionResource extends Resource
                         TextEntry::make('transaksi.ongkir.tarif_per_kg')
                             ->label('Tarif ongkir / kg')->money('IDR', true),
                         TextEntry::make('transaksi.status')
-                            ->label('Status transaksi'),
+                            ->label('Status transaksi')->badge(),
                         TextEntry::make('transaksi.kasir.nama')
                             ->label('Kasir'),
 

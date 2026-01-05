@@ -35,11 +35,13 @@
         message = $event.detail.message;
         show = true;
         setTimeout(() => show = false, 3000)
-    "x-show="show" x-transition
+    " x-show="show" x-transition
         class="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg">
         <span x-text="message"></span>
     </div>
-
+    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, {{ session('toast.ttl') }})" x-show="show">
+        {{ session('toast.message') }}
+    </div>
     @vite(['resources/js/app.js'])
 </body>
 

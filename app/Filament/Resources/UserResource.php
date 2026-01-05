@@ -168,8 +168,6 @@ class UserResource extends Resource
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),
-                        TextEntry::make('username')
-                            ->label('Username'),
                         TextEntry::make('email')
                             ->label('Email'),
                         TextEntry::make('no_telepon')
@@ -178,7 +176,7 @@ class UserResource extends Resource
                             ->label('NIK'),
                         TextEntry::make('alamat')
                             ->label('Alamat'),
-                        IconEntry::make('verified')->boolean()
+                        TextEntry::make('nik_verified')->badge()
                             ->label('Terverifikasi'),
                     ])->footerActions([
                         Action::make('verified')

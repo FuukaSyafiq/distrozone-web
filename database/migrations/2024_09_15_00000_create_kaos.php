@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id("id_kaos");
             $table->string("merek_kaos");
             $table->string("nama_kaos")->unique();
+            $table->text("description")->nullable();
             $table->enum("type_kaos", ["lengan panjang", "lengan pendek"]);
             $table->string("warna_kaos");
             $table->enum("ukuran", ["XS","S","M","L","XL","2XL","3XL","4XL","5XL"]);

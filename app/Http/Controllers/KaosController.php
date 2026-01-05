@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class KaosController extends Controller
 {
+    public function detail(Request $request, string $id) {
+
+        $kaos = Kaos::getKaosById($id);
+        return view('kaos.detail');
+    }
+
     public function search(Request $request) {
         $q = $request->query('q');
         $kaoss = Kaos::getAllKaosWithName($q);

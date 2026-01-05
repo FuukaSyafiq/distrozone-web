@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('download/transaksi/{id}', [PDFController::class, 'cetak'])->name('transaction.settled.pdf');
 
 Route::get('/', [IndexController::class, 'gets'])->name('index');
+Route::get('/kaos/{id}', [KaosController::class, 'detail'])->name('kaos-detail');
 Route::post('/', [IndexController::class, 'store']);
 Route::get('/search', [KaosController::class , 'search'])->name('search');
 

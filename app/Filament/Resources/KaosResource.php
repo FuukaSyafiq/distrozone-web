@@ -58,6 +58,7 @@ class KaosResource extends Resource
                         TextInput::make('ukuran')->default("L")
                             ->label('Ukuran')
                             ->required(),
+                        TextInput::make('description')->label('Deskripsi')->required(false),
                         TextInput::make('harga_jual')->numeric()->required()->default("100000")
                             ->label('Harga jual'),
                         TextInput::make('harga_pokok')->numeric()->required()->default("90000")
@@ -68,21 +69,10 @@ class KaosResource extends Resource
 
                 SectionForm::make('Foto')
                     ->schema([
-                        // View::make('filament.components.image-preview')
-                        //     ->viewData(
-                        //         function ($record) {
-                        //             $images = Image::where('id_kaos', $record->id_kaos)->get();
-                        //             return [
-                        //                 'images' => $images ? $images : [],
-                        //             ];
-                        //         }
-                        //     )
-                        //     ->visible(fn($record) => filled($record?->image)),
-                      
                         FileUpload::make('foto_kaos')
                             ->multiple()
                             ->label('Upload Foto')
-                            ->image()
+                            ->image()->disk('s3')
                             ->imageEditor()
                             ->directory('kaos')
                     ]),
@@ -192,6 +182,7 @@ class KaosResource extends Resource
                             ->label('Warna'),
                         TextEntry::make('ukuran')
                             ->label('Ukuran'),
+
                         TextEntry::make('harga_jual')
                             ->label('Harga jual')
                             ->money('IDR'),
@@ -201,7 +192,11 @@ class KaosResource extends Resource
                         TextEntry::make('stok_kaos')
                             ->label('Stok kaos'),
                     ]),
-
+                SectionEntry::make('Deskripsi')
+                    ->schema([
+                        TextEntry::make('description')
+                            ->label('Description'),
+                    ]),
                 SectionEntry::make('Foto Kaos')
                     ->schema([
                         ImageEntry::make('image.path')

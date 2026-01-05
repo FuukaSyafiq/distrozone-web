@@ -22,6 +22,7 @@ class Kaos extends Model
         'type_kaos',
         'warna_kaos',
         'ukuran',
+        'description',
         'harga_jual',
         'harga_pokok',
         'stok_kaos',
@@ -31,6 +32,11 @@ class Kaos extends Model
     {
         return Kaos::with('image')->with('reviews')->get();
     }
+
+    public static function getKaosById(string $id) {
+
+    }
+
     public static function getAllKaosWithName($q)
     {
         return Kaos::with('image')->with('reviews')->orWhere('nama_kaos', 'ILIKE', '%' . $q . '%')->orWhere('merek_kaos', 'ILIKE', "%{$q}%")
