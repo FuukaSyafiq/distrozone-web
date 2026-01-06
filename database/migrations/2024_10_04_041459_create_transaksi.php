@@ -33,7 +33,8 @@ return new class extends Migration
             $table->enum('status', [
                 'PENDING',
                 'ACC_KASIR',
-                'LUNAS',
+                'SUKSES',
+                'GAGAL',
                 'DIKIRIM'
             ])->default("PENDING");
 

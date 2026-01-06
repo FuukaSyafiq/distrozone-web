@@ -9,7 +9,7 @@
             @php
             $avgStar= ceil($kaos->reviews->avg('star'));
             @endphp
-            <a href='{{route('kaos-detail')}}'>
+            <a href='{{"/kaos/$kaos->id_kaos"}}'>
                 <div
                     class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col">
                     <!-- Image Container -->

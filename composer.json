@@ -46,7 +46,7 @@
             "app/Helpers/Kode.php",
             "app/Helpers/Terbilang.php",
             "app/Helpers/GenerateMessage.php",
-            "app/Helpers/Status.php"
+            "app/Helpers/UserStatus.php"
         ]
     },
     "autoload-dev": {

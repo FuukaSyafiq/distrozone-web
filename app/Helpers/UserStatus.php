@@ -2,11 +2,27 @@
 
 namespace App\Helpers;
 
-class Status
+class UserStatus
 {
 	const ACTIVE = "ACTIVE";
 	const SUSPENDED = "SUSPENDED";
 	const BANNED = "BANNED";
+}
+
+class PembayaranStatus
+{
+	const MENUNGGU = 'MENUNGGU';
+	const DITERIMA = 'DITERIMA';
+	const DITOLAK = 'DITOLAK';
+}
+
+class TransaksiStatus
+{
+	const PENDING = 'PENDING';
+	const ACC_KASIR = 'ACC_KASIR';
+	const SUKSES = 'SUKSES';
+	const GAGAL = 'GAGAL';
+	const DIKIRIM = 'DIKIRIM';
 }
 
 class CartStatus
@@ -15,6 +31,7 @@ class CartStatus
 	const CHECKOUT = 'CHECKOUT';
 	const DIBATALKAN = 'DIBATALKAN';
 }
+
 class NikVerified
 {
 	const EMPTY = 'EMPTY';

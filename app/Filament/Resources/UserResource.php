@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Helpers\NikVerified;
+use App\Helpers\UserStatus;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Form;
@@ -80,7 +82,7 @@ class UserResource extends Resource
                     ->label('Alamat'),
                 TextColumn::make('nik_verified')->badge()
                     ->label('Status NIK'),
-                TextColumn::make('status')
+                TextColumn::make('status')->badge()
                     ->label('Status'),
                 ImageColumn::make('image.path')
                     ->label('Foto')
@@ -92,33 +94,33 @@ class UserResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    ActionTable::make('verified')
+                    ActionTable::make('nik_verified')
                         ->label(fn($record) => match (true) {
-                            $record->verified && $record->status === 'ACTIVE' => 'Suspend',
-                            $record->verified && $record->status === 'SUSPENDED' => 'Activate',
-                            default => 'Verifikasi',
+                            $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::ACTIVE => 'Suspend',
+                            $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::SUSPENDED => 'Activate',
+                            $record->nik_verified == NikVerified::PENDING && $record->status === UserStatus::ACTIVE => 'Verifikasi'
                         })
                         ->icon(
                             fn($record) =>
-                            $record->status === 'ACTIVE'  && $record->verified
+                            $record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED
                                 ? 'heroicon-o-check-circle'
                                 : 'heroicon-o-pause-circle'
                         )
                         ->color(
                             fn($record) =>
-                            $record->status === 'ACTIVE'  && $record->verified
+                            $record->status === 'ACTIVE'  && $record->nik_verified == NikVerified::APPROVED
                                 ? 'warning'
                                 : 'success'
                         )
                         ->requiresConfirmation()
                         ->action(function ($record) {
-                            if ($record->status === 'ACTIVE' && $record->verified) {
-                                $record->status = "SUSPENDED";
-                            } else if ($record->status == "SUSPENDED" && $record->verified) {
-                                $record->status = "ACTIVE";
+                            if ($record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED) {
+                                $record->status = UserStatus::SUSPENDED;
+                            } else if ($record->status == UserStatus::SUSPENDED && $record->nik_verified == NikVerified::APPROVED) {
+                                $record->status = UserStatus::ACTIVE;
                             }
-                            if (!$record->verified)
-                                $record->verified = true;
+                            if ($record->nik_verified == NikVerified::PENDING)
+                                $record->nik_verified = NikVerified::APPROVED;
                             $record->save();
                         }),
                     ActionTable::make('blokir')
@@ -177,42 +179,42 @@ class UserResource extends Resource
                         TextEntry::make('alamat')
                             ->label('Alamat'),
                         TextEntry::make('nik_verified')->badge()
-                            ->label('Terverifikasi'),
+                            ->label('Nik Terverifikasi'),
                     ])->footerActions([
-                        Action::make('verified')
+                        Action::make('nik_verified')
                             ->label(fn($record) => match (true) {
-                                $record->verified && $record->status === 'ACTIVE' => 'Suspend',
-                                $record->verified && $record->status === 'SUSPENDED' => 'Activate',
-                                default => 'Verifikasi',
+                                $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::ACTIVE => 'Suspend',
+                                $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::SUSPENDED => 'Activate',
+                                $record->nik_verified == NikVerified::PENDING && $record->status === UserStatus::ACTIVE => 'Verifikasi'
                             })
                             ->icon(
                                 fn($record) =>
-                                $record->status === 'ACTIVE'  && $record->verified
+                                $record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED
                                     ? 'heroicon-o-check-circle'
                                     : 'heroicon-o-pause-circle'
                             )
                             ->color(
                                 fn($record) =>
-                                $record->status === 'ACTIVE'  && $record->verified
+                                $record->status === 'ACTIVE'  && $record->nik_verified == NikVerified::APPROVED
                                     ? 'warning'
                                     : 'success'
                             )
                             ->requiresConfirmation()
                             ->action(function ($record) {
-                                if ($record->status === 'ACTIVE' && $record->verified) {
-                                    $record->status = "SUSPENDED";
-                                } else if ($record->status == "SUSPENDED" && $record->verified) {
-                                    $record->status = "ACTIVE";
+                                if ($record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED) {
+                                    $record->status = UserStatus::SUSPENDED;
+                                } else if ($record->status == UserStatus::SUSPENDED && $record->nik_verified == NikVerified::APPROVED) {
+                                    $record->status = UserStatus::ACTIVE;
                                 }
-                                if (!$record->verified)
-                                    $record->verified = true;
+                                if ($record->nik_verified == NikVerified::PENDING)
+                                    $record->nik_verified = NikVerified::APPROVED;
                                 $record->save();
                             }),
                         Action::make('blokir')
                             ->label('Blokir')
                             ->icon('heroicon-o-no-symbol')
                             ->color('danger')
-                            ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
+                            ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified == NikVerified::APPROVED)
                             ->requiresConfirmation()
                             ->action(function ($record) {
                                 $record->update([

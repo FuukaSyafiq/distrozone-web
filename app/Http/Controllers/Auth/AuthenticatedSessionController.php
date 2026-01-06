@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Helpers\Status;
+use App\Helpers\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Role;
@@ -30,15 +30,15 @@ class AuthenticatedSessionController extends Controller
     {
 
         $request->authenticate();
-        if ($request->user()->status == Status::BANNED){
+        if ($request->user()->status == UserStatus::BANNED){
             $this->dispatch('toast', message: 'Akun Anda telah diblokir secara permanen. Silakan hubungi administrator.');
         }
 
-        if ($request->user()->status == Status::SUSPENDED) {
+        if ($request->user()->status == UserStatus::SUSPENDED) {
             $this->dispatch('toast', message: 'Akun Anda sedang ditangguhkan sementara. Silakan coba lagi nanti.');
         }
 
-        if ($request->user()->status != Status::ACTIVE) {
+        if ($request->user()->status != UserStatus::ACTIVE) {
             $this->dispatch('toast', message: 'Akun Anda belum diverifikasi. Kami akan mengirimkan email setelah proses verifikasi selesai.');
         }
         $request->session()->regenerate();
