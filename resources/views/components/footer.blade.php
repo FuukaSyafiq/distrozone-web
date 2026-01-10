@@ -1,14 +1,15 @@
 <!-- Footer -->
-<footer class="bg-gray-900 text-gray-300 mt-16">
+<footer class="bg-gray-900 w-full text-gray-300 mt-16">
     <div class="max-w-7xl mx-auto px-6 py-12">
-        <div class="grid grid-cols-1 w-full justify-center sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-4 gap-10">
             <!-- Brand -->
             <div>
                 <h2 class="text-2xl font-bold text-white mb-4">
                     Distro zone
                 </h2>
                 <p class="text-sm text-gray-400">
-                    Toko ini adalah sebuah toko yang menjual berbagai macam kaos distro dengan berbagai macam model, warna dan ukuran. 
+                    Toko ini adalah sebuah toko yang menjual berbagai macam kaos distro dengan berbagai macam model,
+                    warna dan ukuran.
                 </p>
             </div>
 
@@ -22,7 +23,7 @@
                     <li><a href="/products" class="hover:text-white transition">Produk</a></li>
                     @if (auth()->user())
                     <li><a href="/profile" class="hover:text-white transition">Profile</a></li>
-                        
+
                     @endif
                 </ul>
             </div>
@@ -34,12 +35,13 @@
                 </h3>
                 <ul class="space-y-2 text-sm">
                     <li><a href="/faq" class="hover:text-white transition">FAQ</a></li>
-                    <li><a href="https://t.me/anonym14818?text=Halo%20CS,%20saya%20butuh%20bantuan" class="hover:text-white transition">Customer service</a></li>
+                    <li><a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
+                            class="hover:text-white transition">Customer service</a></li>
                 </ul>
             </div>
 
             <!-- Kontak & Sosial -->
-             <div>
+            <div>
                 <h3 class="text-lg font-semibold text-white mb-4">
                     Hubungi Kami
                 </h3>
@@ -52,17 +54,17 @@
                     <li class="flex items-center gap-2">
                         <span>📧</span> distrozone@gmail.com
                     </li>
-                 
+
                 </ul>
 
                 <!-- Social Icons -->
                 <div class="flex items-center gap-4 mt-5">
-                    <a href="https://t.me/anonym14818?text=Halo%20CS,%20saya%20butuh%20bantuan
-" class="hover:text-white transition" target="_blank">
+                    <a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
+                        class="hover:text-white transition" target="_blank">
                         <x-bi-telegram class="w-8 h-8" />
                     </a>
                 </div>
-            </div> 
+            </div>
 
         </div>
     </div>

@@ -17,7 +17,8 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('nama')->nullable();
             $table->enum("status", ["ACTIVE", "SUSPENDED", "BANNED"])->default("ACTIVE");
-            $table->string('alamat')->nullable();
+            $table->string('alamat_lengkap')->nullable();
+            $table->unsignedInteger('kota_id')->nullable();
             $table->string('no_telepon')->nullable()->unique();
             $table->enum('nik_verified', ['EMPTY', 'PENDING','APPROVED','REJECTED'])->default('empty')->nullable();
             $table->string('nik')->nullable()->unique();
@@ -27,6 +28,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('kota_id')->references('id')->on('kota')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('foto_id')
                 ->references('id')->on('images')
                 ->nullOnDelete();

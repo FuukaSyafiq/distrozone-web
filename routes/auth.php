@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransaksiController;
 use App\Livewire\ProfileForm;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('verification.notice');
 
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
+    Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
+    Route::post('bayar', [TransaksiController::class, 'bayar'])->name('bayar');
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
 

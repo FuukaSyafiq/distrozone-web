@@ -78,7 +78,11 @@ class UserResource extends Resource
                     ->label('No telepon'),
                 TextColumn::make('nik')
                     ->label('NIK'),
-                TextColumn::make('alamat')
+                TextColumn::make('kota.kota')
+                    ->label('Kota'),
+                TextColumn::make('kota.provinsi.provinsi')
+                    ->label('Provinsi'),
+                TextColumn::make('alamat_lengkap')
                     ->label('Alamat'),
                 TextColumn::make('nik_verified')->badge()
                     ->label('Status NIK'),
@@ -176,7 +180,11 @@ class UserResource extends Resource
                             ->label('No telepon'),
                         TextEntry::make('nik')
                             ->label('NIK'),
-                        TextEntry::make('alamat')
+                        TextEntry::make('kota.kota')
+                            ->label('Kota'),
+                        TextEntry::make('kota.provinsi.provinsi')
+                            ->label('Provinsi'),
+                        TextEntry::make('alamat_lengkap')
                             ->label('Alamat'),
                         TextEntry::make('nik_verified')->badge()
                             ->label('Nik Terverifikasi'),

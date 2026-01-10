@@ -1,20 +1,9 @@
 <?php
 
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\KosController;
-use App\Http\Controllers\PermissionAdmin;
-use App\Http\Controllers\PermissionManager;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ListRoomController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\TipeRoomController;
 use App\Http\Controllers\PDFController;
-use App\Http\Controllers\BulkPDFController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KaosController;
-use App\View\Components\Denah;
-use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -6,9 +6,6 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($kaoss as $kaos)
-            @php
-            $avgStar= ceil($kaos->reviews->avg('star'));
-            @endphp
             <a href='{{"/kaos/$kaos->id_kaos"}}'>
                 <div
                     class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col">
@@ -63,7 +60,7 @@
                             </span>
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                {{ ucfirst($kaos->warna_kaos) }}
+                                {{ ucfirst($kaos->warna->label) }}
                             </span>
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -73,27 +70,11 @@
 
                         <!-- Price -->
                         <div class="mt-auto">
-                            @if ($avgStar)
-                            <div class="flex mb-5">
-                                @for ($i = 1; $i
-                                <= $avgStar; $i++) <x-heroicon-s-star color="yellow" width="30px" />
-                                @endfor
-                            </div>
-                            @endif
                             <div class="flex items-baseline gap-2 mb-4">
                                 <span class="text-2xl font-bold text-gray-900">
                                     Rp {{ number_format($kaos->harga_jual, 0, ',', '.') }}
                                 </span>
                             </div>
-
-                            <!-- Action Button -->
-                            {{-- @if($kaos->stok_kaos > 0)
-                            <livewire:add-cart :kaos="$kaos" />
-                            @else
-                            <button disabled
-                                class="w-full bg-gray-300 text-gray-500 font-semibold py-2.5 px-4 rounded-lg cursor-not-allowed">
-                                Stok Habis </button>
-                            @endif --}}
                         </div>
                     </div>
                 </div>

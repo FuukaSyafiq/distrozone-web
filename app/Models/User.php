@@ -34,7 +34,8 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
         'foto_id',
         "password",
         "no_telepon",
-        "alamat",
+        "alamat_lengkap",
+        "kota_id"
     ];
 
     /**
@@ -69,7 +70,10 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
     {
         return $this->belongsTo(Role::class);
     }
-
+    public function kota()
+    {
+        return $this->belongsTo(Kota::class);
+    }
     public function image()
     {
         return $this->belongsTo(Image::class, 'foto_id');

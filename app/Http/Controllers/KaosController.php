@@ -10,7 +10,7 @@ class KaosController extends Controller
     public function detail(Request $request, string $id) {
 
         $kaos = Kaos::getKaosById($id);
-        return view('kaos.detail');
+        return view('kaos.detail', ['kaos' => $kaos]);
     }
 
     public function search(Request $request) {

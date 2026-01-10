@@ -144,7 +144,11 @@ class TransactionResource extends Resource
                             ->label('Customer'),
                         TextEntry::make('transaksi.customer.no_telepon')
                             ->label('No telepon'),
-                        TextEntry::make('transaksi.customer.alamat')
+                        TextEntry::make('transaksi.customer.kota.kota')
+                            ->label('Kota'),
+                        TextEntry::make('transaksi.customer.kota.provinsi.provinsi')
+                            ->label('Provinsi'),
+                        TextEntry::make('transaksi.customer.alamat_lengkap')
                             ->label('Alamat'),
                         TextEntry::make('transaksi.customer.nik')
                             ->label('NIK'),
@@ -158,11 +162,11 @@ class TransactionResource extends Resource
                         TextEntry::make('kaos.merek_kaos')
                             ->label('Merek kaos'),
                         TextEntry::make('kaos.type_kaos')
-                            ->label('Type kaos'),
-                        TextEntry::make('kaos.warna_kaos')
-                            ->label('Warna kaos'),
+                            ->label('Type kaos')->badge(),
+                        TextEntry::make('kaos.warna.label')
+                            ->label('Warna kaos')->badge(),
                         TextEntry::make('kaos.ukuran')
-                            ->label('Ukuran kaos'),
+                            ->label('Ukuran kaos')->badge(),
                         TextEntry::make('kaos.harga_jual')
                             ->label('Harga jual')->money('IDR', true),
                         TextEntry::make('kaos.stok_kaos')

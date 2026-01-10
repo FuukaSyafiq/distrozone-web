@@ -3,17 +3,20 @@
 namespace App\Livewire;
 
 use App\Helpers\NikVerified;
+use App\Models\Kota;
 use App\Models\User;
 use Livewire\Component;
 
 class ProfileForm extends Component
 {
     public $nama;
-    public $alamat;
+    public $alamat_lengkap;
     public $editing = false;
     public $userId;
     public $no_telepon;
     public $nik;
+    public $kota;
+    public $provinsi;
     public $email;
     public $nik_verified;
     public $email_verified_at;
@@ -24,9 +27,11 @@ class ProfileForm extends Component
         $user = auth()->user();
         $this->userId = auth()->id();
         $this->nama = $user->nama;
-        $this->alamat = $user->alamat;
+        $this->alamat_lengkap = $user->alamat_lengkap;
         $this->email_verified_at = $user->email_verified_at;
         $this->userId = auth()->id();
+        $this->kota = $user->kota->kota;
+        $this->provinsi = $user->kota->provinsi->provinsi;
         $this->email = $user->email;
         $this->no_telepon = $user->no_telepon;
         $this->nik_verified = $user->nik_verified;
@@ -42,7 +47,8 @@ class ProfileForm extends Component
         $data = [
             'nama'        => $this->nama,
             'email'       => $this->email,
-            'alamat'      => $this->alamat,
+            'alamat_lengkap'      => $this->alamat_lengkap,
+            'kota_id' => Kota::getKota($this->kota)->id,
             'no_telepon'  => $this->no_telepon,
         ];
 

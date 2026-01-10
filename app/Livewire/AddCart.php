@@ -11,10 +11,11 @@ use Livewire\Component;
 class AddCart extends Component
 {
     public Kaos $kaos;
-
-    public function mount(Kaos $kaos)
+    public $quantity = 1;
+    public function mount(Kaos $kaos, int $quantity)
     {
         $this->kaos = $kaos;
+        $this->quantity = $quantity;
     }
 
     public function render()
@@ -28,8 +29,6 @@ class AddCart extends Component
 
         if (!auth()->check()) {
             $this->dispatch('toast', message: "Login diperlukan untuk menambahkan produk ke keranjang.");
-            $this->dispatch('redirect-login');
-
             return;
         }
 
@@ -46,7 +45,7 @@ class AddCart extends Component
             'id_keranjang' => $keranjang->id_keranjang,
             'id_kaos' => $this->kaos->id_kaos,
             'harga_satuan' => $this->kaos->harga_jual,
-            'qty' => '1',
+            'qty' => $this->quantity,
             'subtotal' => $this->kaos->harga_jual
         ]);
         $this->dispatch('toast', message: 'Berhasil ditambahkan ke keranjang');

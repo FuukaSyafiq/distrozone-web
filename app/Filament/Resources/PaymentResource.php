@@ -73,6 +73,8 @@ class PaymentResource extends Resource
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
                     ->label('Kode transaksi'),
+                TextColumn::make('transaksi.customer.nama')
+                    ->label('Customer'),
                 TextColumn::make('transaksi.metode_pembayaran')
                     ->label('Metode pembayaran')->badge(),
                 TextColumn::make('transaksi.jenis_transaksi')
@@ -148,8 +150,8 @@ class PaymentResource extends Resource
                         ->icon(
                             'heroicon-o-check-circle'
                         )
-                    ->visible(fn($record) => $record->status === PembayaranStatus::DITERIMA && TransaksiStatus::DIKIRIM ? false : true)
-                    ->color(
+                        ->visible(fn($record) => $record->status === PembayaranStatus::DITERIMA && TransaksiStatus::DIKIRIM ? false : true)
+                        ->color(
                             'success'
                         )
                         ->requiresConfirmation()

@@ -20,7 +20,6 @@ class Kaos extends Model
         'nama_kaos',
         'merek_kaos',
         'type_kaos',
-        'warna_kaos',
         'ukuran',
         'description',
         'harga_jual',
@@ -30,16 +29,17 @@ class Kaos extends Model
 
     public static function getAllKaos()
     {
-        return Kaos::with('image')->with('reviews')->get();
+        return Kaos::with('image')->with('warna')->get();
     }
 
     public static function getKaosById(string $id) {
-
+        return Kaos::with('image')->with('warna')
+            ->orWhere('id_kaos', 'ILIKE', "%{$id}%")->first();
     }
 
     public static function getAllKaosWithName($q)
     {
-        return Kaos::with('image')->with('reviews')->orWhere('nama_kaos', 'ILIKE', '%' . $q . '%')->orWhere('merek_kaos', 'ILIKE', "%{$q}%")
+        return Kaos::with('image')->with('warna')->orWhere('nama_kaos', 'ILIKE', '%' . $q . '%')->orWhere('merek_kaos', 'ILIKE', "%{$q}%")
             ->orWhere('type_kaos', 'ILIKE', "%{$q}%")->get();
       
     }
@@ -53,9 +53,8 @@ class Kaos extends Model
         return $this->hasMany(Image::class, 'id_kaos');
     }
 
-    public function reviews()
-    {
-        return $this->hasMany(Review::class, 'id_kaos');
+    public function warna() {
+        return $this->belongsTo(Warna::class, 'id_warna_kaos');
     }
 
     public function keranjangdetail()

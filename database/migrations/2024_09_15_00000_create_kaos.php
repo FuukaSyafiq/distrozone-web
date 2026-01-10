@@ -17,12 +17,14 @@ return new class extends Migration
             $table->string("nama_kaos")->unique();
             $table->text("description")->nullable();
             $table->enum("type_kaos", ["lengan panjang", "lengan pendek"]);
-            $table->string("warna_kaos");
+            $table->unsignedInteger("id_warna_kaos");
             $table->enum("ukuran", ["XS","S","M","L","XL","2XL","3XL","4XL","5XL"]);
             $table->decimal('harga_jual');
             $table->decimal("harga_pokok");
             $table->integer("stok_kaos");
             $table->timestamps();
+
+            $table->foreign("id_warna_kaos")->references("id")->on("warna")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

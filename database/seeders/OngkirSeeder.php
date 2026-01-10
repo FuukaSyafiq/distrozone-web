@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kota;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Ongkir;
+use App\Models\Provinsi;
 
 class OngkirSeeder extends Seeder
 {
@@ -15,35 +17,35 @@ class OngkirSeeder extends Seeder
     {
         $ongkirs = [
             [
-                'wilayah' => "Jakarta",
+                'wilayah' => Provinsi::getProvinsi('DKI JAKARTA')->provinsi,
                 'tarif_per_kg' => 24000
             ],
             [
-                'wilayah' => "Depok",
+                'wilayah' => Kota::getKota("DEPOK")->kota,
                 'tarif_per_kg' => 24000
             ],
             [
-                'wilayah' => "Bekasi",
+                'wilayah' => Kota::getKota("BEKASI")->kota,
                 'tarif_per_kg' => 25000
             ],
             [
-                'wilayah' => "Tangerang",
+                'wilayah' => Kota::getKota("TANGERANG")->kota,
                 'tarif_per_kg' => 25000
             ],
             [
-                'wilayah' => "Bogor",
+                'wilayah' => Kota::getKota("BOGOR")->kota,
                 'tarif_per_kg' => 27000
             ],
             [
-                'wilayah' => "Jawa barat",
+                'wilayah' => Provinsi::getProvinsi('JAWA BARAT')->provinsi,
                 'tarif_per_kg' => 31000
             ],
             [
-                'wilayah' => "Jawa tengah",
+                'wilayah' => Provinsi::getProvinsi('JAWA TENGAH')->provinsi,
                 'tarif_per_kg' => 39000
             ],
             [
-                'wilayah' => "Jawa timur",
+                'wilayah' => Provinsi::getProvinsi('JAWA TIMUR')->provinsi,
                 'tarif_per_kg' => 47000
             ]
         ];

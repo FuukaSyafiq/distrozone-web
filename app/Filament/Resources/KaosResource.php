@@ -23,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
+use App\Models\Kota;
 use Filament\Infolists\Components\Actions;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -32,6 +33,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\ViewAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
+use App\Models\Warna;
 
 class KaosResource extends Resource
 {
@@ -53,8 +56,15 @@ class KaosResource extends Resource
                         TextInput::make('merek_kaos')->required()->default('Palazzo'),
                         TextInput::make('type_kaos')->required()->default('lengan panjang')
                             ->label('Tipe kaos'),
-                        TextInput::make('warna_kaos')->required()
-                            ->label('Warna')->default("blue"),
+                        Select::make('id_warna_kaos')
+                            ->label('Warna')
+                            ->options(
+                                Warna::query()
+                                    ->orderBy('label')
+                                    ->pluck('label', 'id')
+                            )
+                            ->searchable()
+                            ->required(),
                         TextInput::make('ukuran')->default("L")
                             ->label('Ukuran')
                             ->required(),
@@ -90,7 +100,7 @@ class KaosResource extends Resource
                     ->label('Merek'),
                 TextColumn::make('type_kaos')
                     ->label('Tipe'),
-                TextColumn::make('warna_kaos')
+                TextColumn::make('warna.label')
                     ->label('Warna'),
                 TextColumn::make('ukuran')
                     ->label('Ukuran'),
@@ -178,11 +188,10 @@ class KaosResource extends Resource
                             ->label('Merek'),
                         TextEntry::make('type_kaos')
                             ->label('Tipe'),
-                        TextEntry::make('warna_kaos')
+                        TextEntry::make('warna.label')
                             ->label('Warna'),
                         TextEntry::make('ukuran')
                             ->label('Ukuran'),
-
                         TextEntry::make('harga_jual')
                             ->label('Harga jual')
                             ->money('IDR'),

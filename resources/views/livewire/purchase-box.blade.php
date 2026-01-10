@@ -1,0 +1,123 @@
+<div class="w-full">
+    <div x-data="{
+        quantity: '1',
+        maxStock: {{ $kaos->stok_kaos }},
+        pricePerItem: {{ $kaos->harga_jual }},
+        @if(isset($kaos->harga_coret) && $kaos->harga_coret > $kaos->harga_jual)
+        originalPrice: {{ $kaos->harga_coret }},
+        @else
+        originalPrice: null,
+        @endif
+        get subtotal() {
+            return this.quantity * this.pricePerItem;
+        },
+        get originalSubtotal() {
+            return this.originalPrice ? this.quantity * this.originalPrice : null;
+        },
+        increment() {
+            if (this.quantity < this.maxStock) {
+                this.quantity++;
+            }
+        },
+        decrement() {
+            if (this.quantity > 1) {
+                this.quantity--;
+            }
+        },
+        formatPrice(price) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price).replace('IDR', 'Rp');
+        }
+    }" class="bg-white border-2 border-gray-200 rounded-xl p-6 ">
+        <h3 class="font-bold text-gray-900 mb-4">Atur jumlah dan catatan</h3>
+
+        <!-- Selected Product Info -->
+        <div class="flex gap-3 mb-4 pb-4 border-b">
+            @if($kaos->image && $kaos->image->first())
+            <img src="{{ Storage::url($kaos->image->first()->path) }}" alt="{{ $kaos->nama_kaos }}"
+                class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
+            @endif
+            <div class="flex-1">
+                <p class="text-sm font-medium text-gray-700">
+                    {{ $kaos->nama_kaos }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center border-2 border-gray-200 rounded-lg">
+                <button @click="decrement" :disabled="quantity <= 1"
+                    :class="quantity <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
+                    class="px-3 py-2 transition-colors">
+                    -
+                </button>
+                <input type="number" x-model.number="quantity" min="1" :max="maxStock"
+                    @input="quantity = Math.max(1, Math.min(maxStock, parseInt($event.target.value) || 1))"
+                    class="w-16 text-center border-x-2 border-gray-200 py-2 focus:outline-none">
+                <button @click="increment" :disabled="quantity >= maxStock"
+                    :class="quantity >= maxStock ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
+                    class="px-3 py-2 transition-colors">
+                    +
+                </button>
+            </div>
+            <div class="text-sm text-gray-600">
+                Stok: <span class="font-semibold">{{ number_format($kaos->stok_kaos) }}</span>
+            </div>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="mb-4 pb-4 border-b">
+            <template x-if="originalSubtotal">
+                <div class="flex justify-between text-sm text-gray-500 mb-1 line-through">
+                    <span>Subtotal</span>
+                    <span x-text="formatPrice(originalSubtotal)"></span>
+                </div>
+            </template>
+            <div class="flex justify-between items-baseline">
+                <span class="text-gray-700">Subtotal</span>
+                <span class="text-2xl font-bold text-gray-900" x-text="formatPrice(subtotal)"></span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        @if($kaos->stok_kaos > 0)
+        <div class="space-y-3">
+            <button wire:click="check"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                Beli langsung
+            </button>
+
+            {{--
+            <livewire:beli-langsung :kaos_id="$kaos->id_kaos" :quantity="$quantity" /> --}}
+            <livewire:add-cart :kaos="$kaos" :quantity="$quantity" />
+        </div>
+        @else
+        <button disabled class="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-4 rounded-lg cursor-not-allowed">
+            Stok Habis
+        </button>
+        @endif
+
+        <!-- Additional Actions -->
+        <div class="flex gap-3 mt-4">
+            <a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
+                class="flex-1 flex items-center justify-center gap-2 py-2 px-4 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <x-heroicon-o-chat-bubble-left-ellipsis class="w-5 h-5" />
+                <span class="text-sm font-medium">Chat</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('redirect-login', () => {
+    setTimeout(() => {
+        window.location.href = "{{ route('login') }}";
+    }, 700); // 700 milidetik
+});
+</script>

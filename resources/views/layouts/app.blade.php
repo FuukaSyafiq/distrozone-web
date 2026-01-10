@@ -26,7 +26,7 @@
     @livewire('notifications')
 
     <!-- Page Content -->
-    <div class="min-h-screen">
+    <div class="w-full">
         {{ $slot }}
     </div>
     <x-footer />
