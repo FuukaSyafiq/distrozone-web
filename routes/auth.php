@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
 use App\Livewire\ProfileForm;
@@ -52,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/images/{image}', [ImageController::class, 'destroy'])
         ->name('images.destroy');
+    Route::get('/cetak/pendapatan/{ids}', [PDFController::class, 'cetakpendapatan'])->name('pendapatan.cetak.pdf');
+    Route::get('/cetak/transaksi/{id}', [PDFController::class, 'cetaktransaksi'])->name('transaksi.cetak.pdf');
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
 

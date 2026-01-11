@@ -11,7 +11,7 @@ class Pendapatan extends Model
     public $incrementing = true;
     protected $table = "pendapatan";
     protected $keyType = 'int';
-
+    protected $appends = ['keuntungan'];
     protected $fillable = [
         'qty',
         'nama_kaos',
@@ -19,4 +19,9 @@ class Pendapatan extends Model
         'total_harga_pokok',
         'ongkir'
     ];
+
+    public function getKeuntunganAttribute()
+    {
+        return $this->total_harga_jual - $this->total_harga_pokok;
+    }
 }

@@ -9,10 +9,14 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\Action as ActionTable;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -36,10 +40,13 @@ class PendapatanResource extends Resource
     }
     public static function canView(Model $record): bool
     {
-        return true;
+        return false;
     }
 
-
+    public static function canEdit(Model $model): bool
+    {
+        return false;
+    }
     public static function canDeleteAny(): bool
     {
         return false;
@@ -64,10 +71,14 @@ class PendapatanResource extends Resource
                 TextColumn::make('total_harga_pokok')
                     ->label('Total Harga Pokok')
                     ->money('IDR'),
-
                 TextColumn::make('ongkir')
                     ->label('Ongkir')
                     ->money('IDR'),
+                TextColumn::make('keuntungan')
+                    ->label('Keuntungan')
+                    ->money('IDR'),
+
+
 
                 TextColumn::make('created_at')
                     ->label('Tanggal')
@@ -111,13 +122,26 @@ class PendapatanResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                BulkAction::make('cetak')
+                    ->label('Cetak')
+                    ->icon('heroicon-o-printer')
+                    ->color('danger')
+                    ->action(function (Collection $records) {
+                        $ids = $records->pluck('id')->implode(',');
+
+                        $startDate = $records->min('created_at')->toDateString();
+                        $endDate   = $records->max('created_at')->toDateString();
+
+                       return redirect()->route('pendapatan.cetak.pdf', [
+                            'ids'        => $ids,
+                            'start_date' => $startDate,
+                            'end_date'  => $endDate,
+                        ]);
+                      
+                    }),
+
             ]);
     }
 

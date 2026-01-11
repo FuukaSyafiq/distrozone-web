@@ -7,6 +7,7 @@ use App\Models\VerifikasiPembayaran;
 use App\Models\Image;
 use App\Models\Kaos;
 use App\Models\Pembayaran;
+use App\Models\Pendapatan;
 use App\Models\RentedRoom;
 use App\Models\Room;
 use App\Models\User;
@@ -20,88 +21,50 @@ use Barryvdh\DomPDF\PDF;
 
 class PDFController extends Controller
 {
-    //Contoh pdf dengan fitur render gambar dari DB
-    public function transactionpdf($id)
-    {
-        // Get transaction (single)
-        $transaction = Transaksi::find($id);
 
-        // Get the image path based on the bukti_file value
-        $image = Image::where('id', $transaction->bukti_transfer)->first();
+    public function cetakpendapatan($ids, Request $request) {
+        $idArray = explode(',', $ids);
 
-        //splice "/storage/" if exist so the link is not broken
-        $image_path = $image->path;
-        // if (strpos($image_path, '/storage/') === 0) {
-        //     // Remove the '/storage/' from the path
-        //     $image_path = substr($image_path, strlen('/storage/'));
-        // }
+        // ambil banyak data
+        $pendapatan = Pendapatan::whereIn('id', $idArray)->get();
 
-        // // Get the full path to the image file
-        // $filePath = storage_path('app/public/' . $image_path);
-        // // dd($filePath);
-
-        // Convert the image to base64 if the file exists
-        $base64Image = null;
-        if (file_exists($image_path)) {
-            $imageData = file_get_contents($image_path);
-            $imageType = pathinfo($image_path, PATHINFO_EXTENSION);
-            $base64Image = 'data:image/' . $imageType . ';base64,' . base64_encode($imageData);
-        }
-        // dd($base64Image);
-
-        // Prepare the data to pass to the PDF view
         $data = [
-            'record' => $transaction,
-            'image_base64' => $base64Image, // Pass the base64 encoded image
+            'records' => $pendapatan,
+            'start_date' => $request->query('start_date'),
+            'end_date'   => $request->query('end_date'),
         ];
 
-        // Load the view for the PDF
-        $pdf = FacadePdf::loadView('pdf.TransactionDetail', $data);
+
+        $pdf = FacadePdf::loadView('pdf.pendapatan', $data)->setPaper('A4', 'portrait')
+            ->setOption('isRemoteEnabled', true);
 
         // return $pdf->download('transaction-' . $transaction->id . '.pdf');
-        return $pdf->stream('transaction.pdf');
+        return $pdf->stream('pendapatan.pdf');
     }
 
-    public function allTransactionPdf()
+
+    public function cetaktransaksi($id, Request $request)
     {
-        // Get the authenticated user's name
-        $pengirim = auth()->user()->name;
+        // Get transaction (single)
+        $pembayaran = Pembayaran::where('id_transaksi', $id)->first();
+        $transaksi_detail = TransaksiDetail::where('id_transaksi', $id)->get();
 
-        // Fetch all valid transactions for the user
-        $transactions = Transaksi::where('pengirim', $pengirim)
-            ->where('is_valid', true)
-            ->get();
-
-        // Load the view for the PDF with all transactions
-        $pdf = FacadePdf::loadView('pdf.TransactionHistory', ['records' => $transactions]);
-
-        // Return the PDF as a stream
-        return $pdf->stream('all-transactions.pdf');
-    }
-
-   
-    public function cetak($id)
-    {
-        // Get the tagihan (single)
-        // dd($no_invoice);
-        $transaksi = Transaksi::where('id_transaksi', $id)->first();
-
-        $user = User::find($transaksi->id_customer);
-
-        $transaksiDetails = TransaksiDetail::where('id_transaksi', $transaksi->id_transaksi)->first();
-
-        $kaos = Kaos::where('id_kaos', $transaksiDetails->id_kaos)->first();
+        // Get the image path based on the bukti_file value
+        $image = Image::where('id', $pembayaran->bukti_transfer)->first();
 
         $data = [
-            'record' => $transaksi,
-            'user' => $user,
-            'kaos' => $kaos,
+            'transaksi' => $pembayaran->transaksi,
+            'pembayaran' => $pembayaran,
+            'transaksi_detail' => $transaksi_detail,
+            'bukti_transfer' => $image->path,
+            'date' => $request->query('date')
         ];
 
         // Load the view for the PDF
-        $pdf = FacadePdf::loadView('pdf.TransactionHistory', $data);
+        $pdf = FacadePdf::loadView('pdf.transaksi', $data)->setPaper('A4', 'portrait')
+            ->setOption('isRemoteEnabled', true);;
 
-        // return $pdf->download('tagihan-' . $tagihan->id . '.pdf');
+        // return $pdf->download('transaction-' . $transaction->id . '.pdf');
         return $pdf->stream('transaksi.pdf');
     }
 }

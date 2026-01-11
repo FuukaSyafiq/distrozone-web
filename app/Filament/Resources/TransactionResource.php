@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section as SectionEntry;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Actions\Action as ActionEntry;
 use App\Models\Image;
 use App\Models\Role;
 use App\Models\Tagihan;
@@ -25,6 +26,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Filters\SelectFilter;
+use App\Helpers\TransaksiStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -94,13 +99,31 @@ class TransactionResource extends Resource
                     ->label('Subtotal')->money('IDR', true),
             ])
             ->filters([
-                // SelectFilter::make('')
+                SelectFilter::make('status_transaksi')->options([
+                    'PENDING' => TransaksiStatus::PENDING,
+                    'DIKIRIM' => TransaksiStatus::DIKIRIM,
+                    'SUKSES' => TransaksiStatus::SUKSES,
+                    'GAGAL' => TransaksiStatus::GAGAL,
+                ])->query(function (Builder $query, array $data) {
+                    if (! $data['value']) {
+                        return;
+                    }
+
+                    $query->whereHas('transaksi', function ($q) use ($data) {
+                        $q->where('status', $data['value']);
+                    });
+                })
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([]),
+                ViewAction::make(),
+                Action::make('cetak')
+                    ->label('Cetak')
+                    ->icon('heroicon-o-printer')
+                    ->color('danger')
+                    ->url(fn($record) => route('transaksi.cetak.pdf', [
+                        'id'        => $record->id_transaksi,
+                        'date' => $record->created_at->toDateString()
+                    ]))->openUrlInNewTab()
             ]);
     }
 
@@ -171,6 +194,15 @@ class TransactionResource extends Resource
                             ->label('Harga jual')->money('IDR', true),
                         TextEntry::make('kaos.stok_kaos')
                             ->label('Stok kaos'),
+                    ])->footerActions([
+                        ActionEntry::make('cetak')
+                            ->label('Cetak')
+                            ->icon('heroicon-o-printer')
+                            ->color('danger')
+                            ->url(fn($record) => route('transaksi.cetak.pdf', [
+                                'id'        => $record->id_transaksi,
+                                'date' => $record->created_at->toDateString()
+                            ]))->openUrlInNewTab()
                     ]),
                 SectionEntry::make('Foto kaos')->columns(2)
                     ->schema([

@@ -92,14 +92,7 @@ class PaymentResource extends Resource
 
             ])->filters([])
             ->actions([
-                ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    ActionTable::make('cetak')
-                        ->label('Cetak')->icon('heroicon-o-printer')
-                        ->color(
-                            'red'
-                        )
-                ])
+                Tables\Actions\ViewAction::make(),
             ]);
     }
 
