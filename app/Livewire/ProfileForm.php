@@ -16,6 +16,7 @@ class ProfileForm extends Component
     public $no_telepon;
     public $nik;
     public $kota;
+    public $kotaSelected;
     public $provinsi;
     public $email;
     public $nik_verified;
@@ -30,7 +31,8 @@ class ProfileForm extends Component
         $this->alamat_lengkap = $user->alamat_lengkap;
         $this->email_verified_at = $user->email_verified_at;
         $this->userId = auth()->id();
-        $this->kota = $user->kota->kota;
+        $this->kota = Kota::all();
+        $this->kotaSelected = $user->kota_id;
         $this->provinsi = $user->kota->provinsi->provinsi;
         $this->email = $user->email;
         $this->no_telepon = $user->no_telepon;
@@ -38,17 +40,24 @@ class ProfileForm extends Component
         $this->nik = $user->nik;
     }
 
+    public function updatedKotaSelected($id)
+    {
+        $dataKota = Kota::with('provinsi')->find($id);
+        if ($dataKota) {
+            $this->provinsi = $dataKota->provinsi->provinsi;
+        }
+    }
+
     public function save()
     {
         $user = auth()->user();
         $emailChanged = $user->email !== $this->email;
         $nikChanged   = $user->nik !== $this->nik;
-
         $data = [
             'nama'        => $this->nama,
             'email'       => $this->email,
             'alamat_lengkap'      => $this->alamat_lengkap,
-            'kota_id' => Kota::getKota($this->kota)->id,
+            'kota_id' => $this->kotaSelected,
             'no_telepon'  => $this->no_telepon,
         ];
 

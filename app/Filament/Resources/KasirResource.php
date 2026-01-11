@@ -25,6 +25,7 @@ use Filament\Infolists\Components\Section as SectionEntry;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -32,6 +33,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Infolists\Components\ImageEntry;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Kota;
 
 class KasirResource extends Resource
 {
@@ -57,9 +59,18 @@ class KasirResource extends Resource
                             ->label('Nama')->required(),
                         TextInput::make('password')->required(fn(string $context) => $context === 'create')
                             ->label('Password')->password()->default("password")->dehydrated(fn($state) => filled($state))
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state)),
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                         TextInput::make('email')->email()->required()
                             ->label('Email')->default("testing@gmail.com"),
+                        Select::make('kota_id')
+                            ->label('Kota')
+                            ->options(
+                                Kota::query()
+                                    ->orderBy('kota')
+                                    ->pluck('kota', 'id')
+                            )
+                            ->searchable()
+                            ->required(),
                         TextInput::make('no_telepon')->default("089123821321")
                             ->label('No telepon')
                             ->tel()
@@ -71,25 +82,23 @@ class KasirResource extends Resource
                             ->required(),
                         TextInput::make('nik')->tel()->numeric()->required()->default("35165232645332")
                             ->label('NIK')->maxLength(16)->helperText('NIK Harus 16 digit angka'),
-                        TextArea::make('alamat')->default("sukodono")
+                        TextArea::make('alamat_lengkap')->default("sukodono")
                             ->label('Alamat')->required()
                     ]),
 
                 SectionForm::make('Foto')
                     ->schema([
-                View::make('filament.components.image-preview')
-                    ->viewData(fn($record) => [
-                        'images' => $record?->foto_id
-                        ? [Image::find($record->foto_id)]
-                        : [],
-                    ])
-                ->visible(fn($record) => filled($record?->foto_id)),
-                FileUpload::make('foto_karyawan')
+                        View::make('filament.components.image-preview')
+                            ->viewData(fn($record) => [
+                                'images' => $record?->foto_id
+                                    ? [Image::find($record->foto_id)]
+                                    : [],
+                            ])
+                            ->visible(fn($record) => filled($record?->foto_id)),
+                        FileUpload::make('foto_karyawan')
                             ->label('Upload Foto')
                             ->image()
-                            ->disk('local')
-                    ->imageEditor()
-                            ->directory('foto_karyawan')
+                            ->imageEditor()
                     ]),
             ]);
     }
@@ -109,7 +118,11 @@ class KasirResource extends Resource
                     ->label('No telepon'),
                 TextColumn::make('nik')
                     ->label('NIK'),
-                TextColumn::make('alamat')
+                TextColumn::make('kota.kota')
+                    ->label('Kota'),
+                TextColumn::make('kota.provinsi.provinsi')
+                    ->label('Provinsi'),
+                TextColumn::make('alamat_lengkap')
                     ->label('Alamat'),
 
                 ImageColumn::make('image.path')
@@ -160,7 +173,7 @@ class KasirResource extends Resource
                             ->label('No telepon'),
                         TextEntry::make('nik')
                             ->label('NIK'),
-                        TextEntry::make('alamat')
+                        TextEntry::make('alamat_lengkap')
                             ->label('Alamat'),
                     ]),
                 SectionEntry::make('Foto karyawan')

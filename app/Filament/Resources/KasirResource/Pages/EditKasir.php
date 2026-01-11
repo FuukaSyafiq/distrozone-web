@@ -23,6 +23,7 @@ class EditKasir extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        dd("tes");
         if (filled($data['password'] ?? null)) {
             $data['password'] = Hash::make($data['password']);
         } else {
@@ -65,4 +66,5 @@ class EditKasir extends EditRecord
         });
         return $data;
     }
+
 }

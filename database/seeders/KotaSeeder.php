@@ -33,15 +33,7 @@ class KotaSeeder extends Seeder
                 'provinsi_id' => Provinsi::getProvinsi('DKI JAKARTA')->id
             ],
             [
-                'kota' => 'DEPOK',
-                'provinsi_id' => Provinsi::getProvinsi('DKI JAKARTA')->id
-            ],
-            [
                 'kota' => 'BANDUNG',
-                'provinsi_id' => Provinsi::getProvinsi('JAWA BARAT')->id
-            ],
-            [
-                'kota' => 'BEKASI',
                 'provinsi_id' => Provinsi::getProvinsi('JAWA BARAT')->id
             ],
             [
@@ -75,40 +67,6 @@ class KotaSeeder extends Seeder
             [
                 'kota' => 'MALANG',
                 'provinsi_id' => Provinsi::getProvinsi('JAWA TIMUR')->id
-            ],
-
-            // ===== SUMATERA =====
-            [
-                'kota' => 'MEDAN',
-                'provinsi_id' => Provinsi::getProvinsi('SUMATERA UTARA')->id
-            ],
-            [
-                'kota' => 'BINJAI',
-                'provinsi_id' => Provinsi::getProvinsi('SUMATERA UTARA')->id
-            ],
-            [
-                'kota' => 'PADANG',
-                'provinsi_id' => Provinsi::getProvinsi('SUMATERA BARAT')->id
-            ],
-            [
-                'kota' => 'PEKANBARU',
-                'provinsi_id' => Provinsi::getProvinsi('RIAU')->id
-            ],
-            [
-                'kota' => 'BATAM',
-                'provinsi_id' => Provinsi::getProvinsi('KEPULAUAN RIAU')->id
-            ],
-            [
-                'kota' => 'PALEMBANG',
-                'provinsi_id' => Provinsi::getProvinsi('SUMATERA SELATAN')->id
-            ],
-            [
-                'kota' => 'BANDAR LAMPUNG',
-                'provinsi_id' => Provinsi::getProvinsi('LAMPUNG')->id
-            ],
-            [
-                'kota' => 'BANDA ACEH',
-                'provinsi_id' => Provinsi::getProvinsi('ACEH')->id
             ],
         ];
 

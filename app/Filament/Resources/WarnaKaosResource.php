@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProvinsiResource\Pages;
-use App\Filament\Resources\ProvinsiResource\RelationManagers;
-use App\Models\Provinsi;
+use App\Filament\Resources\WarnaKaosResource\Pages;
+use App\Filament\Resources\WarnaKaosResource\RelationManagers;
+use App\Models\Warna;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,19 +15,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProvinsiResource extends Resource
+class WarnaKaosResource extends Resource
 {
-    protected static ?string $model = Provinsi::class;
+    protected static ?string $model = Warna::class;
 
-    protected static ?string $navigationGroup = 'Toko';
-    protected static ?string $navigationIcon = 'heroicon-s-home-modern';
+    protected static ?string $navigationIcon = 'heroicon-s-paint-brush';
+    protected static ?string $navigationGroup = 'Kaos';
+    protected static ?string $label = "Warna kaos";
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('provinsi')
-                    ->label('Provinsi'),
+                TextInput::make('key')->label('Key'),
+                TextInput::make('label')->label('Label'),
+                TextInput::make('tw_class')->label('Tailwind class')
             ]);
     }
 
@@ -35,8 +37,9 @@ class ProvinsiResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('provinsi')
-                    ->label('Provinsi'),
+            TextColumn::make('key')->label('Key'),
+            TextColumn::make('label')->label('Label'),
+            TextColumn::make('tw_class')->label('Tailwind class')
             ])
             ->filters([
                 //
@@ -61,9 +64,9 @@ class ProvinsiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProvinsis::route('/'),
-            'create' => Pages\CreateProvinsi::route('/create'),
-            'edit' => Pages\EditProvinsi::route('/{record}/edit'),
+            'index' => Pages\ListWarnaKaos::route('/'),
+            'create' => Pages\CreateWarnaKaos::route('/create'),
+            'edit' => Pages\EditWarnaKaos::route('/{record}/edit'),
         ];
     }
 }

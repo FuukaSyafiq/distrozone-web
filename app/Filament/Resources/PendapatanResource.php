@@ -5,11 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PendapatanResource\Pages;
 use App\Filament\Resources\PendapatanResource\RelationManagers;
 use App\Models\Pendapatan;
-use App\Models\TransaksiDetail;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PendapatanResource extends Resource
 {
-    protected static ?string $model = TransaksiDetail::class;
+    protected static ?string $model = Pendapatan::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-chart-bar';
     protected static ?string $navigationLabel = 'Pendapatan';
@@ -53,10 +54,61 @@ class PendapatanResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('nama_kaos')
+                    ->label('Nama Kaos'), // bukan kode transaksi
+
+                TextColumn::make('total_harga_jual')
+                    ->label('Total Harga Jual')
+                    ->money('IDR'),
+
+                TextColumn::make('total_harga_pokok')
+                    ->label('Total Harga Pokok')
+                    ->money('IDR'),
+
+                TextColumn::make('ongkir')
+                    ->label('Ongkir')
+                    ->money('IDR'),
+
+                TextColumn::make('created_at')
+                    ->label('Tanggal')
+                    ->date('d M Y'),
+
             ])
             ->filters([
-                //
+                SelectFilter::make('bulan')
+                    ->label('Bulan')
+                    ->options([
+                        1  => 'Januari',
+                        2  => 'Februari',
+                        3  => 'Maret',
+                        4  => 'April',
+                        5  => 'Mei',
+                        6  => 'Juni',
+                        7  => 'Juli',
+                        8  => 'Agustus',
+                        9  => 'September',
+                        10 => 'Oktober',
+                        11 => 'November',
+                        12 => 'Desember',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value']) {
+                            $query->whereMonth('created_at', $data['value']);
+                        }
+                    }),
+                SelectFilter::make('tahun')
+                    ->label('Tahun')
+                    ->options(
+                        collect(range(now()->year, now()->year - 5))
+                            ->mapWithKeys(fn($year) => [$year => $year])
+                            ->toArray()
+                    )
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value']) {
+                            $query->whereYear('created_at', $data['value']);
+                        }
+                    }),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

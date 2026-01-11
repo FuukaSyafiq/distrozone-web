@@ -9,6 +9,7 @@ use App\Helpers\Kode;
 use App\Models\Image;
 use App\Models\Kaos;
 use App\Models\Ongkir;
+use App\Models\Pendapatan;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\User;
@@ -65,6 +66,14 @@ class TransaksiSeeder extends Seeder
             'no_invoice' => Kode::GenerateInvoiceNumber(),
             'id_transaksi' => $transaksi->id_transaksi,
             'bukti_transfer' => $image->id,
+        ]);
+
+        Pendapatan::create([
+            'qty' => $quantity,
+            'nama_kaos' => $kaos->nama_kaos,
+            'total_harga_jual' => $subtotal,
+            'total_harga_pokok' => $kaos->harga_pokok * $quantity,
+            'ongkir' => $total_ongkir
         ]);
     }
 

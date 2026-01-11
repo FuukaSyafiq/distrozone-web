@@ -16,12 +16,14 @@ class ImageController extends Controller
 
     public function destroy(Image $image)
     {
-        // hapus file dari S3
-        Storage::disk('s3')->delete($image->path);
+        dd("tes");
+        if ($image->path && Storage::disk('s3')->exists($image->path)) {
+            Storage::disk('s3')->delete($image->path);
+        }
 
-        // hapus dari database
+        // Hapus record DB
         $image->delete();
 
-        return back()->with('success', 'Foto berhasil dihapus');
+        return back()->with('success', 'Gambar berhasil dihapus');
     }
 }

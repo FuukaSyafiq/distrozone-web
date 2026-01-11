@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
@@ -48,6 +49,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
     Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
     Route::post('bayar', [TransaksiController::class, 'bayar'])->name('bayar');
+
+    Route::delete('/images/{image}', [ImageController::class, 'destroy'])
+        ->name('images.destroy');
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
 

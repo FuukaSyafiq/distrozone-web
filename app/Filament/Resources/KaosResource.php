@@ -79,12 +79,16 @@ class KaosResource extends Resource
 
                 SectionForm::make('Foto')
                     ->schema([
-                        FileUpload::make('foto_kaos')
+                View::make('filament.components.image-preview')
+                    ->viewData(fn($record) => [
+                        'images' => $record?->image
+                    ])
+                    ->visible(fn($record) => filled($record?->image)),
+                FileUpload::make('foto_kaos')
                             ->multiple()
                             ->label('Upload Foto')
-                            ->image()->disk('s3')
+                            ->image()
                             ->imageEditor()
-                            ->directory('kaos')
                     ]),
             ]);
     }

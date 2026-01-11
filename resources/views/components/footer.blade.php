@@ -20,8 +20,8 @@
                 </h3>
                 <ul class="space-y-2 text-sm">
                     <li><a href="/" class="hover:text-white transition">Home</a></li>
-                    <li><a href="/products" class="hover:text-white transition">Produk</a></li>
                     @if (auth()->user())
+                    <li><a href="{{ route('cart') }}" class="hover:text-white transition">Cart</a></li>
                     <li><a href="/profile" class="hover:text-white transition">Profile</a></li>
 
                     @endif
@@ -52,7 +52,7 @@
 
                     </li>
                     <li class="flex items-center gap-2">
-                        <span>📧</span> distrozone@gmail.com
+                        <span>📧</span>syafiq_1971@disroot.org
                     </li>
 
                 </ul>
