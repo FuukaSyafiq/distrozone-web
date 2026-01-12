@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('keranjang_detail', function (Blueprint $table) {
             $table->id('id_keranjang_detail');
-            $table->unsignedInteger('id_kaos');
+            $table->unsignedInteger('id_kaos_varian');
             $table->unsignedInteger('id_keranjang');
             $table->integer('qty');
             $table->decimal('harga_satuan');
             $table->decimal('subtotal');
             $table->timestamps();
 
-            $table->foreign('id_kaos')
-                ->references('id_kaos')
-                ->on('kaos')
+            $table->foreign('id_kaos_varian')
+                ->references('id')
+                ->on('kaos_varian')
                 ->cascadeOnDelete()->cascadeOnUpdate();
                 
             $table->foreign('id_keranjang')

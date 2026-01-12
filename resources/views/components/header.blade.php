@@ -58,8 +58,8 @@
                 <!-- Shopping Cart -->
                 <a href="/cart" class="relative p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group">
                     @if (auth()->check())
-                    <x-heroicon-c-shopping-cart class="w-6 h-6 group-hover:scale-110 transition-transform"/>
-                        
+                    <x-heroicon-c-shopping-cart class="w-6 h-6 group-hover:scale-110 transition-transform" />
+
                     @endif
                     <!-- Cart Badge -->
                     @if(auth()->check())
@@ -92,12 +92,14 @@
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
                         class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
-                        <img src="https://ui-avatars.com/api/?name={{ auth()->user()->nama }}&background=3b82f6&color=fff"
-                            alt="avatar" class="w-9 h-9 rounded-full border-2 border-blue-500">
-                        <svg class="w-4 h-4 text-gray-600 hidden md:block" :class="{ 'rotate-180': open }" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        @if (auth()->user() && auth()->user()->foto_user)
+                        <img src="{{ Storage::disk('s3')->url(auth()->user()->foto_user) }}" alt="Profile"
+                            class="w-12 h-12 rounded-full border-4 border-white dark:border-gray-800 shadow-lg object-cover">
+                        @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama ?? 'User') }}&size=128&background=6366f1&color=fff"
+                            alt="Profile"
+                            class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
+                        @endif
                     </button>
 
                     <!-- Dropdown Menu -->

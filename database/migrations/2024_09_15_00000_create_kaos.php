@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('kaos', function (Blueprint $table) {
             $table->id("id_kaos");
-            $table->string("merek_kaos");
+            $table->unsignedInteger("merek_id");
             $table->string("nama_kaos")->unique();
             $table->text("description")->nullable();
-            $table->enum("type_kaos", ["lengan panjang", "lengan pendek"]);
-            $table->unsignedInteger("id_warna_kaos");
-            $table->enum("ukuran", ["XS","S","M","L","XL","2XL","3XL","4XL","5XL"]);
+            $table->unsignedInteger("type_id");
             $table->decimal('harga_jual');
             $table->decimal("harga_pokok");
-            $table->integer("stok_kaos");
             $table->timestamps();
 
-            $table->foreign("id_warna_kaos")->references("id")->on("warna")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign("merek_id")->references("id")->on("merek_kaos")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign("type_id")->references("id")->on("type_kaos")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

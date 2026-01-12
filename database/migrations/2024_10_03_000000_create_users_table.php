@@ -23,15 +23,12 @@ return new class extends Migration {
             $table->enum('nik_verified', ['EMPTY', 'PENDING','APPROVED','REJECTED'])->default('empty')->nullable();
             $table->string('nik')->nullable()->unique();
             $table->unsignedInteger('role_id');
-            $table->unsignedInteger('foto_id')->nullable();
+            $table->string('foto_user')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
 
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('kota_id')->references('id')->on('kota')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('foto_id')
-                ->references('id')->on('images')
-                ->nullOnDelete();
         });
     }
 

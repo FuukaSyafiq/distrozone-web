@@ -20,7 +20,6 @@ class Image extends Model
         'file_name',
         'mime_type',
         'path',
-        'id_kaos',
         'size',
     ];
 
@@ -37,10 +36,5 @@ class Image extends Model
     public function user()
     {
         return $this->hasOne(User::class);
-    }
-
-    public function kaos()
-    {
-        return $this->belongsTo(Kaos::class, 'id_kaos', 'id_kaos');
     }
 }

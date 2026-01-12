@@ -18,18 +18,23 @@ class Kaos extends Model
 
     protected $fillable = [
         'nama_kaos',
-        'merek_kaos',
-        'type_kaos',
-        'ukuran',
+        'merek_id',
+        'type_id',
         'description',
         'harga_jual',
         'harga_pokok',
-        'stok_kaos',
     ];
 
     public static function getAllKaos()
     {
-        return Kaos::with('image')->with('warna')->get();
+        return Kaos::with([
+            'variants' => function ($q) {
+                $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id');
+            },
+            'variants.warna',
+            'variants.ukuran',
+        ])
+            ->get();
     }
 
     public static function getKaosById(string $id) {
@@ -37,24 +42,56 @@ class Kaos extends Model
             ->orWhere('id_kaos', 'ILIKE', "%{$id}%")->first();
     }
 
-    public static function getAllKaosWithName($q)
+    public static function searchKaos(string $q)
     {
-        return Kaos::with('image')->with('warna')->orWhere('nama_kaos', 'ILIKE', '%' . $q . '%')->orWhere('merek_kaos', 'ILIKE', "%{$q}%")
-            ->orWhere('type_kaos', 'ILIKE', "%{$q}%")->get();
-      
+        return Kaos::query()
+            ->with([
+                'merek',
+                'type',
+                'variants.warna',
+                'variants.ukuran',
+            ])
+            ->where(function ($query) use ($q) {
+                $query
+                    ->where('nama_kaos', 'ILIKE', "%{$q}%")
+                    ->orWhereHas('merek', function ($m) use ($q) {
+                        $m->where('merek', 'ILIKE', "%{$q}%");
+                    })
+                    ->orWhereHas('type', function ($t) use ($q) {
+                        $t->where('type', 'ILIKE', "%{$q}%");
+                    })
+                    ->orWhereHas('variants.warna', function ($w) use ($q) {
+                        $w->where('label', 'ILIKE', "%{$q}%");
+                    })
+                    ->orWhereHas('variants.ukuran', function ($u) use ($q) {
+                        $u->where('ukuran', 'ILIKE', "%{$q}%");
+                    });
+            })
+            ->get();
     }
+
     public static function getKaosByName($name)
     {
         return self::where('nama_kaos', 'like', "%{$name}%")->first();
     }
 
-    public function image()
-    {
-        return $this->hasMany(Image::class, 'id_kaos');
-    }
-
     public function warna() {
         return $this->belongsTo(Warna::class, 'id_warna_kaos');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(TypeKaos::class, 'type_id');
+    }
+
+    public function merek()
+    {
+        return $this->belongsTo(MerekKaos::class, 'merek_id');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(KaosVariant::class, 'id');
     }
 
     public function keranjangdetail()

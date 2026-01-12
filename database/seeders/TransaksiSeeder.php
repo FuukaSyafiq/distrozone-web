@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use App\Helpers\Kode;
 use App\Models\Image;
 use App\Models\Kaos;
+use App\Models\KaosVariant;
 use App\Models\Ongkir;
 use App\Models\Pendapatan;
 use App\Models\Transaksi;
@@ -36,6 +37,7 @@ class TransaksiSeeder extends Seeder
         $customer = User::getUserByName('Mas Aril');
         $kasir = User::getUserByName('Mbak Lua');
         $kaos = Kaos::getKaosByName('Kaos biru polo lengan pendek');
+        $kaos_varian = KaosVariant::getKaosVarian($kaos->nama_kaos);
         $quantity = 2;
         $hargaSatuan = $kaos->harga_jual;
         $subtotal = $quantity * $hargaSatuan;
@@ -54,7 +56,7 @@ class TransaksiSeeder extends Seeder
             'status' => 'PENDING'
         ]);
         TransaksiDetail::create([
-            'id_kaos' => $kaos->id_kaos,
+            'id_kaos_varian' => $kaos_varian->id,
             'id_transaksi' => $transaksi->id_transaksi,
             'harga_satuan' => $kaos->harga_jual,
             'qty' => $quantity,

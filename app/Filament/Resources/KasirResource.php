@@ -125,7 +125,7 @@ class KasirResource extends Resource
                 TextColumn::make('alamat_lengkap')
                     ->label('Alamat'),
 
-                ImageColumn::make('image.path')
+                ImageColumn::make('foto_user')
                     ->label('Foto')
                     ->disk('s3')
             ])
@@ -178,7 +178,7 @@ class KasirResource extends Resource
                     ]),
                 SectionEntry::make('Foto karyawan')
                     ->schema([
-                        ImageEntry::make('image.path')
+                        ImageEntry::make('foto_user')
                             ->label('Foto')
                             ->disk('s3')
                             ->height(300)

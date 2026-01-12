@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transaksi_detail', function (Blueprint $table) {
             $table->id('id_detail_transaksi');
             $table->integer('id_transaksi');
-            $table->integer('id_kaos');
+            $table->integer('id_kaos_varian');
 
             $table->integer('qty');
             $table->decimal('harga_satuan', 12, 2);
@@ -27,9 +27,9 @@ return new class extends Migration
                 ->on('transaksi')
                 ->cascadeOnDelete()->cascadeOnUpdate();
 
-            $table->foreign('id_kaos')
-                ->references('id_kaos')
-                ->on('kaos')
+            $table->foreign('id_kaos_varian')
+                ->references('id')
+                ->on('kaos_varian')
                 ->onDelete('set null');
         });
     }

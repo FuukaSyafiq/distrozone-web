@@ -12,15 +12,15 @@ class TransaksiDetail extends Model
     protected $primaryKey = 'id_detail_transaksi';
     protected $fillable = [
         'id_transaksi',
-        'id_kaos',
+        'id_kaos_varian',
         'qty',
         'harga_satuan',
         'subtotal',
     ];
 
-    public function kaos()
+    public function kaos_varian()
     {
-        return $this->belongsTo(Kaos::class, 'id_kaos');
+        return $this->belongsTo(KaosVariant::class, 'id_kaos_varian');
     }
 
     public function transaksi()

@@ -4,7 +4,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Helpers\Status;
+use App\Helpers\NikVerified;
+use App\Helpers\UserStatus;
 use App\Http\Controllers\ImageController;
 use App\Models\Role;
 use App\Models\User;
@@ -40,8 +41,8 @@ class RegisteredUserController extends Controller
         $user = User::create([
             "email" => $request->email,
             "role_id" => Role::getIdByRole("CUSTOMER"),
-            "verified" => false,
-            "status" => Status::ACTIVE,
+            "nik_verified" => NikVerified::EMPTY,
+            "status" => UserStatus::ACTIVE,
             "password" => Hash::make($request->password)
         ]);
         $nama = explode('@', $request->email)[0];

@@ -88,7 +88,7 @@ class UserResource extends Resource
                     ->label('Status NIK'),
                 TextColumn::make('status')->badge()
                     ->label('Status'),
-                ImageColumn::make('image.path')
+                ImageColumn::make('foto_user')
                     ->label('Foto')
                     ->disk('s3')
             ])
@@ -233,7 +233,7 @@ class UserResource extends Resource
                     ]),
                 Section::make('Foto customer')
                     ->schema([
-                        ImageEntry::make('image.path')
+                        ImageEntry::make('foto_user')
                             ->label('Foto')
                             ->disk('s3')
                             ->height(300)      // optional

@@ -35,10 +35,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use App\Models\Warna;
+use App\Models\KaosVariant;
+use Filament\Forms\Components\Group;
 
 class KaosResource extends Resource
 {
-    protected static ?string $model = Kaos::class;
+    protected static ?string $model = KaosVariant::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-archive-box';
     protected static ?string $navigationGroup = 'Kaos';
@@ -48,48 +50,73 @@ class KaosResource extends Resource
     {
         return $form
             ->schema([
-                SectionForm::make('Identitas')
-                    ->columns(2)
+                SectionForm::make('Identitas Kaos')
                     ->schema([
-                        TextInput::make('nama_kaos')->default("Kaos busuk")
-                            ->label('Nama')->required(),
-                        TextInput::make('merek_kaos')->required()->default('Palazzo'),
-                        TextInput::make('type_kaos')->required()->default('lengan panjang')
-                            ->label('Tipe kaos'),
-                        Select::make('id_warna_kaos')
+                        Group::make()
+                            ->relationship('kaos')
+                            ->schema([
+                                TextInput::make('nama_kaos')
+                                    ->label('Nama Kaos')
+                                    ->required(),
+
+                                Select::make('merek_id')
+                                    ->label('Merek')
+                                    ->relationship('merek', 'merek')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+
+                                Select::make('type_id')
+                                    ->label('Tipe Kaos')
+                                    ->relationship('type', 'type')
+                                    ->required(),
+
+                                TextInput::make('description')
+                                    ->label('Deskripsi')
+                                    ->columnSpanFull(),
+
+                                TextInput::make('harga_jual')
+                                    ->numeric()
+                                    ->label('Harga Jual')
+                                    ->required(),
+
+                                TextInput::make('harga_pokok')
+                                    ->numeric()
+                                    ->label('Harga Pokok')
+                                    ->required(),
+                            ])
+                            ->columns(2),
+                    ]),
+                SectionForm::make('Varian')
+                    ->schema([
+                        Select::make('warna_id')
                             ->label('Warna')
-                            ->options(
-                                Warna::query()
-                                    ->orderBy('label')
-                                    ->pluck('label', 'id')
-                            )
+                            ->relationship('warna', 'label')
                             ->searchable()
                             ->required(),
-                        TextInput::make('ukuran')->default("L")
-                            ->label('Ukuran')
-                            ->required(),
-                        TextInput::make('description')->label('Deskripsi')->required(false),
-                        TextInput::make('harga_jual')->numeric()->required()->default("100000")
-                            ->label('Harga jual'),
-                        TextInput::make('harga_pokok')->numeric()->required()->default("90000")
-                            ->label('Harga pokok'),
-                        TextInput::make('stok_kaos')->numeric()->required()->default("100")
-                            ->label('Stok kaos'),
-                    ]),
 
-                SectionForm::make('Foto')
-                    ->schema([
-                View::make('filament.components.image-preview')
-                    ->viewData(fn($record) => [
-                        'images' => $record?->image
+                        Select::make('ukuran_id')
+                            ->label('Ukuran')
+                            ->relationship('ukuran', 'ukuran')
+                            ->required(),
+
+                        TextInput::make('stok_kaos')
+                            ->numeric()
+                            ->label('Stok')
+                            ->required(),
                     ])
-                    ->visible(fn($record) => filled($record?->image)),
-                FileUpload::make('foto_kaos')
-                            ->multiple()
-                            ->label('Upload Foto')
+                    ->columns(3),
+
+                SectionForm::make('Foto Kaos')
+                    ->schema([
+                        FileUpload::make('image_path')
+                            ->label('Foto')
+                            ->disk('s3')
+                            ->directory('kaos')
                             ->image()
                             ->imageEditor()
-                    ]),
+                            ->required(),
+                    ])
             ]);
     }
 
@@ -98,36 +125,27 @@ class KaosResource extends Resource
         return $table
             ->searchPlaceholder('Cari kaos...')
             ->columns([
-                TextColumn::make('nama_kaos')
+                TextColumn::make('kaos.nama_kaos')
                     ->label('Nama'),
-                TextColumn::make('merek_kaos')
+                TextColumn::make('kaos.merek.merek')
                     ->label('Merek'),
-                TextColumn::make('type_kaos')
+                TextColumn::make('kaos.type.type')
                     ->label('Tipe'),
                 TextColumn::make('warna.label')
                     ->label('Warna'),
-                TextColumn::make('ukuran')
+                TextColumn::make('ukuran.ukuran')
                     ->label('Ukuran'),
-                TextColumn::make('harga_jual')
+                TextColumn::make('kaos.harga_jual')
                     ->label('Harga jual')->money('IDR', true),
-                TextColumn::make('harga_pokok')
+                TextColumn::make('kaos.harga_pokok')
                     ->label('Harga pokok')->money('IDR', true),
                 TextColumn::make('stok_kaos')
                     ->label('Stok kaos'),
-                TextColumn::make('nama_kaos')
+                TextColumn::make('kaos.nama_kaos')
                     ->searchable(),
-                ImageColumn::make('image.path')->disk('s3')->label('Foto')
+                ImageColumn::make('image_path')->disk('s3')->label('Foto')
             ])
             ->filters([
-                SelectFilter::make('merek_kaos')
-                    ->label('Merek')
-                    ->options(
-                        fn() =>
-                        Kaos::query()
-                            ->distinct()
-                            ->pluck('merek_kaos', 'merek_kaos')
-                            ->toArray()
-                    ),
                 SelectFilter::make('stok_kaos')
                     ->label('Stok')
                     ->options([
@@ -186,38 +204,47 @@ class KaosResource extends Resource
                 SectionEntry::make('Informasi Kaos')
                     ->columns(3)
                     ->schema([
-                        TextEntry::make('nama_kaos')
+                        TextEntry::make('kaos.nama_kaos')
                             ->label('Nama'),
-                        TextEntry::make('merek_kaos')
+
+                        TextEntry::make('kaos.merek.merek')
                             ->label('Merek'),
-                        TextEntry::make('type_kaos')
+
+                        TextEntry::make('kaos.type.type')
                             ->label('Tipe'),
+
                         TextEntry::make('warna.label')
                             ->label('Warna'),
-                        TextEntry::make('ukuran')
+
+                        TextEntry::make('ukuran.ukuran')
                             ->label('Ukuran'),
-                        TextEntry::make('harga_jual')
+
+                        TextEntry::make('kaos.harga_jual')
                             ->label('Harga jual')
                             ->money('IDR'),
-                        TextEntry::make('harga_pokok')
+
+                        TextEntry::make('kaos.harga_pokok')
                             ->label('Harga pokok')
                             ->money('IDR'),
+
                         TextEntry::make('stok_kaos')
                             ->label('Stok kaos'),
                     ]),
+
                 SectionEntry::make('Deskripsi')
                     ->schema([
-                        TextEntry::make('description')
-                            ->label('Description'),
+                        TextEntry::make('kaos.description')
+                            ->label('Deskripsi'),
                     ]),
+
                 SectionEntry::make('Foto Kaos')
                     ->schema([
-                        ImageEntry::make('image.path')
+                        ImageEntry::make('image_path')
                             ->label('Foto')
                             ->disk('s3')
-                            ->height(200)
-                            ->columns(3), // gallery
+                            ->height(200),
                     ]),
+
 
                 Actions::make([
                     Action::make('edit')

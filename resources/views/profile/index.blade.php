@@ -1,4 +1,8 @@
 <x-app-layout>
+    @php
+    $user = auth()->user();
+    $isVerified = $user->nik_verified === \App\Helpers\NikVerified::APPROVED;
+    @endphp
     <div class="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen">
         <div class="w-full mx-auto sm:px-6 lg:px-8">
             <!-- Profile Header -->
@@ -7,9 +11,14 @@
                 <div class="px-6 pb-6">
                     <div class="flex flex-col sm:flex-row items-center sm:items-end -mt-16">
                         <div class="relative">
+                            @if (auth()->user()->foto_user)
+                            <img src="{{ Storage::disk('s3')->url(auth()->user()->foto_user) }}" alt="Profile"
+                                class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
+                            @else
                             <img src="https://ui-avatars.com/api/?name={{ auth()->user()->nama }}&size=128&background=6366f1&color=fff"
                                 alt="Profile"
                                 class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
+                            @endif
                             <button
                                 class="absolute bottom-0 right-0 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,13 +34,28 @@
                             <p class="text-gray-600 dark:text-gray-400">{{ auth()->user()->email }}</p>
                             <div class="flex flex-wrap justify-center sm:justify-start gap-3 mt-3">
                                 <span
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                                                {{ $isVerified
+                                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
+
+                                    @if($isVerified)
+                                    {{-- CHECK ICON --}}
                                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                             clip-rule="evenodd" />
                                     </svg>
                                     Verified
+                                    @else
+                                    {{-- WARNING ICON --}}
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.514 11.59c.75 1.334-.213 2.986-1.742 2.986H3.485c-1.53 0-2.492-1.652-1.743-2.986L8.257 3.1z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Unverified
+                                    @endif
                                 </span>
                                 <span
                                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-green bg-green">
@@ -59,23 +83,6 @@
             <div class="grid grid-cols-1  gap-6" x-data="{ tab: 'profile' }">
                 <!-- Sidebar -->
                 <div class="lg:col-span-1  space-y-2">
-                    <!-- Quick Stats -->
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Stats</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-
-                                        <x-heroicon-o-shopping-bag class="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                                    </div>
-                                    <span class=" ml-3 text-gray-700 dark:text-gray-300">Total Orders</span>
-                                </div>
-                                <span class="text-xl font-bold text-gray-900 dark:text-white">{{ $totalOrder }}</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Navigation Menu -->
 
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
@@ -88,20 +95,20 @@
                                 Profil
                             </a>
 
-                            <a href="#" @click.prevent="tab = 'pesanan'" :class="tab === 'pesanan'
+                            <a href="/orders" :class="tab === 'pesanan'
                                                                 ? 'bg-indigo-50 border-indigo-600 text-gray-900 font-medium'
                                                                 : 'border-transparent text-gray-700 hover:bg-gray-50'"
                                 class="flex items-center px-6 py-3 border-l-4">
                                 <x-heroicon-o-shopping-bag class="w-5 h-5 mr-3" />
                                 Pesanan saya
                             </a>
-                            <a href="#" @click.prevent="tab = 'keranjang'" :class="tab === 'keranjang' ? 'bg-indigo-50 border-indigo-600 text-gray-900 font-medium'
+                            <a href="/cart" :class="tab === 'keranjang' ? 'bg-indigo-50 border-indigo-600 text-gray-900 font-medium'
                                                         : 'border-transparent text-gray-700 hover:bg-gray-50'"
                                 class="flex items-center px-6 py-3 border-l-4">
                                 <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
                                 Keranjang saya
                             </a>
-                            <a href="#" @click.prevent="tab = 'transactions'" :class="tab === 'transactions'
+                            <a href="/transaction" :class="tab === 'transactions'
                                                                 ? 'bg-indigo-50 border-indigo-600 text-gray-900 font-medium'
                                                                 : 'border-transparent text-gray-700 hover:bg-gray-50'"
                                 class="flex items-center px-6 py-3 border-l-4">
@@ -115,25 +122,25 @@
                 <!-- Main Content -->
                 <div class=" space-y-6 w-full">
                     <!-- Personal Information -->
-               <!-- PROFILE -->
-                <div x-show="tab === 'profile'" x-cloak>
-                   <livewire:profile-form/>
-                </div>
-                
-                <!-- PESANAN -->
-                <div x-show="tab === 'pesanan'" x-cloak>
-                   <livewire:pesanansaya/>
-                </div>
-                
-                <!-- TRANSACTIONS -->
-                <div x-show="tab === 'transactions'" x-cloak>
-                  <livewire:transactionhistory />
-                </div>
-                
-                <!-- KERANJANG -->
-                <div x-show="tab === 'keranjang'" x-cloak>
-                   <livewire:keranjangsaya />
-                </div>
+                    <!-- PROFILE -->
+                    <div x-show="tab === 'profile'" x-cloak>
+                        <livewire:profile-form />
+                    </div>
+
+                    <!-- PESANAN -->
+                    {{-- <div x-show="tab === 'pesanan'" x-cloak>
+                        <livewire:pesanansaya />
+                    </div>
+
+                    <!-- TRANSACTIONS -->
+                    <div x-show="tab === 'transactions'" x-cloak>
+                        <livewire:transactionhistory />
+                    </div>
+
+                    <!-- KERANJANG -->
+                    <div x-show="tab === 'keranjang'" x-cloak>
+                        <livewire:keranjangsaya />
+                    </div> --}}
 
 
 

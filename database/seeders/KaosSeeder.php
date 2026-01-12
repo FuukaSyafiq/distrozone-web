@@ -4,6 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Kaos;
 use App\Models\Image;
+use App\Models\KaosVariant;
+use App\Models\MerekKaos;
+use App\Models\TypeKaos;
+use App\Models\UkuranKaos;
 use App\Models\Warna;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -85,31 +89,76 @@ class KaosSeeder extends Seeder
                 "stok_kaos" => 100
             ],
         ];
-        foreach ($kaoss as $kaos) {
-            $kaos = Kaos::create($kaos);
+        foreach ($kaoss as $item) {
+
+            // 1️⃣ MEREK
+            $merek = MerekKaos::firstOrCreate([
+                'merek' => $item['merek_kaos']
+            ]);
+
+            // 2️⃣ TYPE KAOS
+            $type = TypeKaos::firstOrCreate([
+                'type' => $item['type_kaos']
+            ]);
+
+            // 3️⃣ CREATE KAOS (TANPA warna & ukuran)
+            $kaos = Kaos::create([
+                'nama_kaos'    => $item['nama_kaos'],
+                'merek_id'     => $merek->id,
+                'type_id'      => $type->id,
+                'description'  => $item['description'],
+                'harga_jual'   => $item['harga_jual'],
+                'harga_pokok'  => $item['harga_pokok'],
+            ]);
+
+            // 4️⃣ UKURAN
+            $ukuran = UkuranKaos::firstOrCreate([
+                'ukuran' => $item['ukuran']
+            ]);
+
+            // 5️⃣ VARIANT
+            KaosVariant::create([
+                'kaos_id'   => $kaos->id_kaos,   // ✅ BENAR
+                'warna_id'  => $item['id_warna_kaos'],
+                'ukuran_id' => $ukuran->id,
+                'stok_kaos' => $item['stok_kaos'],
+                'image_path' => null              // ✅ image diisi belakangan
+            ]);
         }
 
-        $files = $files = Storage::disk('public')->files('kaos');
+        $files = Storage::disk('public')->files('kaos');
+
         foreach ($files as $filePath) {
 
-            // skip kalau bukan file
-
             $absolutePath = Storage::disk('public')->path($filePath);
-            // upload ke S3
+
             $path = Storage::disk('s3')->put(
                 'kaos',
                 new File($absolutePath)
             );
-            $namaKaos = pathinfo(basename($filePath), PATHINFO_FILENAME);
-            $kaos = Kaos::getKaosByName($namaKaos);
 
-            // contoh simpan ke DB
-            Image::create([
-                'path' => $path,                       // path S3
-                'file_name' => basename($filePath),
-                'mime_type' => mime_content_type($absolutePath),
-                'size' => filesize($absolutePath),
-                'id_kaos' => $kaos->id_kaos
+            
+            $filename = pathinfo(basename($filePath), PATHINFO_FILENAME);
+
+            $parts = explode('-', $filename);
+            if (count($parts) < 2) continue;
+
+            $warnaSlug = array_pop($parts);
+            $namaKaos  = implode('-', $parts);
+
+            $kaos  = Kaos::where('nama_kaos', $namaKaos)->first();
+            $warna = Warna::getWarna($warnaSlug);
+
+            if (!$kaos || !$warna) continue;
+
+            $variant = KaosVariant::where('kaos_id', $kaos->id_kaos)
+                ->where('warna_id', $warna->id)
+                ->first();
+
+            if (!$variant) continue;
+
+            $variant->update([
+                'image_path' => $path
             ]);
         }
     }

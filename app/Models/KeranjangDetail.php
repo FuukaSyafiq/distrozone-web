@@ -20,7 +20,7 @@ class KeranjangDetail extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'id_kaos',
+        'id_kaos_varian',
         'id_keranjang',
         'qty',
         'harga_satuan',
@@ -32,9 +32,9 @@ class KeranjangDetail extends Model
         return $this->belongsTo(Keranjang::class, 'id_keranjang');
     }
 
-    public function kaos()
+    public function kaos_varian()
     {
-        return $this->belongsTo(Kaos::class, 'id_kaos');
+        return $this->belongsTo(KaosVariant::class, 'id_kaos_varian');
     }
 
     public static function getAllKeranjang() {
