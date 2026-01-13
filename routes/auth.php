@@ -48,8 +48,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('verification.notice');
 
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
+    Route::delete('cart-varian/{id}', [KeranjangController::class, 'delete'])->name('cart-delete');
+
+
     Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
-    Route::post('bayar', [TransaksiController::class, 'bayar'])->name('bayar');
+    Route::post('payment', [TransaksiController::class, 'bayar'])->name('payment.confirm');
 
     Route::delete('/images/{image}', [ImageController::class, 'destroy'])
         ->name('images.destroy');

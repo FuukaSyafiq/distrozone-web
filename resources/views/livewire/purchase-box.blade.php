@@ -1,13 +1,9 @@
 <div class="w-full">
     <div x-data="{
-        quantity: '1',
-        maxStock: {{ $kaos->stok_kaos }},
+        quantity: {{ $quantity }},
+        maxStock: {{ $variant->stok_kaos }},
         pricePerItem: {{ $kaos->harga_jual }},
-        @if(isset($kaos->harga_coret) && $kaos->harga_coret > $kaos->harga_jual)
-        originalPrice: {{ $kaos->harga_coret }},
-        @else
-        originalPrice: null,
-        @endif
+        originalPrice: {{ $kaos->harga_jual }},
         get subtotal() {
             return this.quantity * this.pricePerItem;
         },
@@ -37,8 +33,8 @@
 
         <!-- Selected Product Info -->
         <div class="flex gap-3 mb-4 pb-4 border-b">
-            @if($kaos->image && $kaos->image->first())
-            <img src="{{ Storage::url($kaos->image->first()->path) }}" alt="{{ $kaos->nama_kaos }}"
+            @if($variant->image_path)
+            <img src="{{ Storage::url($variant->image_path) }}" alt="{{ $kaos->nama_kaos }}"
                 class="w-16 h-16 object-cover rounded-lg flex-shrink-0">
             @endif
             <div class="flex-1">
@@ -66,18 +62,12 @@
                 </button>
             </div>
             <div class="text-sm text-gray-600">
-                Stok: <span class="font-semibold">{{ number_format($kaos->stok_kaos) }}</span>
+                Stok: <span class="font-semibold">{{ number_format($variant->stok_kaos) }}</span>
             </div>
         </div>
 
         <!-- Price Summary -->
         <div class="mb-4 pb-4 border-b">
-            <template x-if="originalSubtotal">
-                <div class="flex justify-between text-sm text-gray-500 mb-1 line-through">
-                    <span>Subtotal</span>
-                    <span x-text="formatPrice(originalSubtotal)"></span>
-                </div>
-            </template>
             <div class="flex justify-between items-baseline">
                 <span class="text-gray-700">Subtotal</span>
                 <span class="text-2xl font-bold text-gray-900" x-text="formatPrice(subtotal)"></span>
@@ -85,16 +75,16 @@
         </div>
 
         <!-- Action Buttons -->
-        @if($kaos->stok_kaos > 0)
+        @if($variant->stok_kaos > 0)
         <div class="space-y-3">
             <button wire:click="check"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
                 Beli langsung
             </button>
 
-            {{--
-            <livewire:beli-langsung :kaos_id="$kaos->id_kaos" :quantity="$quantity" /> --}}
-            <livewire:add-cart :kaos="$kaos" :quantity="$quantity" />
+            
+            {{-- <livewire:beli-langsung :kaos_id="$kaos->id_kaos" :quantity="$quantity" /> --}}
+            <livewire:add-cart :variant="$variant" :quantity="$quantity" />
         </div>
         @else
         <button disabled class="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-4 rounded-lg cursor-not-allowed">
@@ -112,7 +102,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     document.addEventListener('redirect-login', () => {

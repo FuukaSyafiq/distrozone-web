@@ -22,6 +22,7 @@ use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\Action;
+use App\Models\Pendapatan;
 use Filament\Infolists\Components\Actions\Action as ActionEntry;
 use Illuminate\Support\Facades\Request;
 use Filament\Tables\Columns\ImageColumn;
@@ -133,6 +134,18 @@ class PaymentResource extends Resource
                         ->visible(fn($record) => $record->status === PembayaranStatus::MENUNGGU ? true : false)
                         ->requiresConfirmation()
                         ->action(function ($record) {
+
+                            foreach ($record->transaksi->details as $detail) {
+                                Pendapatan::create([
+                                    'nama_kaos' => $detail->kaos_varian->kaos->nama_kaos,
+                                    'qty' => $detail->qty,
+                                    'total_harga_jual' => $detail->subtotal,
+                                    'total_harga_pokok' =>
+                                    $detail->kaos_varian->kaos->harga_pokok * $detail->qty,
+                                    'ongkir' => $record->transaksi->ongkir,
+                                ]);
+                            }
+
                             $record->status = PembayaranStatus::DITERIMA;
                             $record->save();
                             $record->transaksi->status = TransaksiStatus::ACC_KASIR;

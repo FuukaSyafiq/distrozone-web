@@ -10,8 +10,15 @@ class KeranjangController extends Controller
 {
     public function create() {
         
-        $cartItems = KeranjangDetail::getAllKeranjang();
+        $cartItems = KeranjangDetail::getKeranjangUserLogin();
+        // dd($cartItems->toJson());
 
         return view('cart.index', ['cartItems' => $cartItems]);
-    }  
+    }
+
+    public function delete($id) {
+        KeranjangDetail::where('id_keranjang_detail', $id)->delete();
+
+        return redirect()->back();
+    }
 }

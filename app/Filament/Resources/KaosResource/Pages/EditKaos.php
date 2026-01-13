@@ -21,41 +21,41 @@ class EditKaos extends EditRecord
         ];
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        $record->update($data);
+    // protected function handleRecordUpdate(Model $record, array $data): Model
+    // {
+    //     $record->update($data);
 
-        $newPaths = $data['foto_kaos'] ?? [];
+    //     $newPaths = $data['foto_kaos'] ?? [];
 
-        // ambil foto lama
-        $oldImages = Image::where('id_kaos', $record->id_kaos)->get();
-        $oldPaths  = $oldImages->pluck('path')->toArray();
+    //     // ambil foto lama
+    //     $oldImages = Image::where('id_kaos', $record->id_kaos)->get();
+    //     $oldPaths  = $oldImages->pluck('path')->toArray();
 
-        /**
-         * 1️⃣ HAPUS FOTO YANG DIHILANGKAN
-         */
-        $pathsToDelete = array_diff($oldPaths, $newPaths);
+    //     /**
+    //      * 1️⃣ HAPUS FOTO YANG DIHILANGKAN
+    //      */
+    //     $pathsToDelete = array_diff($oldPaths, $newPaths);
 
-        foreach ($pathsToDelete as $path) {
-            Storage::disk('s3')->delete($path);
-            Image::where('id_kaos', $record->id_kaos)
-                ->where('path', $path)
-                ->delete();
-        }
+    //     foreach ($pathsToDelete as $path) {
+    //         Storage::disk('s3')->delete($path);
+    //         Image::where('id_kaos', $record->id_kaos)
+    //             ->where('path', $path)
+    //             ->delete();
+    //     }
 
-        /**
-         * 2️⃣ TAMBAH FOTO BARU
-         */
-        foreach ($newPaths as $path) {
-            Image::firstOrCreate([
-                'id_kaos' => $record->id_kaos,
-                'path'    => $path,
-            ], [
-                'file_name' => basename($path),
-            ]);
-        }
+    //     /**
+    //      * 2️⃣ TAMBAH FOTO BARU
+    //      */
+    //     foreach ($newPaths as $path) {
+    //         Image::firstOrCreate([
+    //             'id_kaos' => $record->id_kaos,
+    //             'path'    => $path,
+    //         ], [
+    //             'file_name' => basename($path),
+    //         ]);
+    //     }
 
-        return $record;
-    }
+    //     return $record;
+    // }
 
 }

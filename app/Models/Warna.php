@@ -23,4 +23,9 @@ class Warna extends Model
     {
         return self::where('key', $key)->first();
     }
+
+    public function variants()
+    {
+        return $this->hasMany(KaosVariant::class, 'id');
+    }
 }

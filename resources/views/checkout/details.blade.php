@@ -1,8 +1,7 @@
 <x-app-layout>
-	@vite(['resources/css/app.css','resources/js/app.js'])
 
 	<div class="py-8 max-w-6xl mx-auto px-4" x-data="{
-        paymentMethod: 'qris',
+        paymentMethod: 'bca',
         showQrisModal: false,
         showTransferModal: false,
         subtotal: 350000,
@@ -19,9 +18,9 @@
             }).format(price).replace('IDR', 'Rp');
         },
         processPayment() {
-            if (this.paymentMethod === 'qris') {
-                this.showQrisModal = true;
-            } else if (this.paymentMethod === 'transfer') {
+            if (this.paymentMethod === 'bca') {
+                this.showTransferModal = true;
+            } else if (this.paymentMethod === 'jago') {
                 this.showTransferModal = true;
             }
         }
@@ -50,35 +49,27 @@
 				<div class="bg-white rounded-xl shadow-md p-6">
 					<h2 class="text-xl font-bold text-gray-900 mb-4">Pesanan Anda</h2>
 
+					@foreach ($keranjang as $k)
+
 					<!-- Sample Product 1 -->
 					<div class="flex gap-4 pb-4 mb-4 border-b">
 						<div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
-							<img src="https://via.placeholder.com/80" alt="Product" class="w-full h-full object-cover">
+							<img src="{{ Storage::disk('s3')->url($k->kaos_varian->image_path) }}"
+								alt="{{ $k->kaos_varian->kaos->nama_kaos }} " class="w-full h-full object-cover">
 						</div>
 						<div class="flex-1">
-							<h3 class="font-semibold text-gray-800 mb-1">Kaos Polos Premium</h3>
-							<p class="text-sm text-gray-600 mb-2">Warna: Hitam, Size: L</p>
+							<h3 class="font-semibold text-gray-800 mb-1"></h3>
+							<p class="text-sm text-gray-600 mb-2">{{ $k->kaos_varian->kaos->nama_kaos }}</p>
 							<div class="flex justify-between items-center">
-								<span class="text-sm text-gray-600">x2</span>
-								<span class="font-semibold text-gray-900">Rp200.000</span>
+								<span class="text-sm text-gray-600">{{ $k->qty }}</span>
+								<span class="font-semibold text-gray-900">{{ $k->subtotal }}</span>
 							</div>
+							<span class="text-sm text-gray-600">Harga : {{ $k->harga_satuan }}</span>
 						</div>
 					</div>
+					@endforeach
 
-					<!-- Sample Product 2 -->
-					<div class="flex gap-4">
-						<div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
-							<img src="https://via.placeholder.com/80" alt="Product" class="w-full h-full object-cover">
-						</div>
-						<div class="flex-1">
-							<h3 class="font-semibold text-gray-800 mb-1">Kaos V-Neck Basic</h3>
-							<p class="text-sm text-gray-600 mb-2">Warna: Putih, Size: M</p>
-							<div class="flex justify-between items-center">
-								<span class="text-sm text-gray-600">x1</span>
-								<span class="font-semibold text-gray-900">Rp150.000</span>
-							</div>
-						</div>
-					</div>
+
 				</div>
 
 				<!-- Payment Method -->
@@ -86,44 +77,48 @@
 					<h2 class="text-xl font-bold text-gray-900 mb-4">Metode Pembayaran</h2>
 
 					<div class="space-y-3">
-						<!-- QRIS Option -->
-						<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
-							:class="paymentMethod === 'qris' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'">
-							<input type="radio" name="payment" value="qris" x-model="paymentMethod"
-								class="w-5 h-5 text-teal-600 focus:ring-teal-500">
-							<div class="ml-4 flex-1">
-								<div class="flex items-center gap-2">
-									<span class="font-semibold text-gray-900">QRIS</span>
-									<span
-										class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Instant</span>
+						<div x-data="{ paymentMethod: 'bca' }" class="space-y-4">
+							<!-- BANK BCA -->
+							<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all
+																  border-gray-200 hover:border-gray-300"
+								:class="paymentMethod === 'bca' ? 'border-teal-500 bg-teal-50' : ''">
+								<input type="radio" name="payment" value="bca" x-model="paymentMethod"
+									class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+								<div class="ml-4 flex-1">
+									<span class="font-semibold text-gray-900">BANK BCA</span>
+									<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank BCA</p>
 								</div>
-								<p class="text-sm text-gray-600 mt-1">Bayar dengan scan QR Code</p>
-							</div>
-							<div class="flex items-center gap-2">
-								<svg class="w-8 h-8 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
-									<path
-										d="M3 3h8v8H3V3zm2 2v4h4V5H5zm4 4H7V7h2v2zm-4 2h8v8H3v-8zm2 2v4h4v-4H5zm4 4H7v-2h2v2zM13 3h8v8h-8V3zm2 2v4h4V5h-4zm4 4h-2V7h2v2zm-4 2h8v8h-8v-8zm2 2v4h4v-4h-4zm4 4h-2v-2h2v2z" />
-								</svg>
-							</div>
-						</label>
+								<div class="flex items-center gap-2">
+									<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+									</svg>
+								</div>
+							</label>
 
-						<!-- Transfer Option -->
-						<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
-							:class="paymentMethod === 'transfer' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'">
-							<input type="radio" name="payment" value="transfer" x-model="paymentMethod"
-								class="w-5 h-5 text-teal-600 focus:ring-teal-500">
-							<div class="ml-4 flex-1">
-								<span class="font-semibold text-gray-900">Transfer Bank</span>
-								<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank</p>
-							</div>
-							<div class="flex items-center gap-2">
-								<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
-									viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-								</svg>
-							</div>
-						</label>
+							<!-- BANK JAGO -->
+							<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all
+																  border-gray-200 hover:border-gray-300"
+								:class="paymentMethod === 'jago' ? 'border-teal-500 bg-teal-50' : ''">
+								<input type="radio" name="payment" value="jago" x-model="paymentMethod"
+									class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+								<div class="ml-4 flex-1">
+									<span class="font-semibold text-gray-900">BANK JAGO</span>
+									<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank Jago</p>
+								</div>
+								<div class="flex items-center gap-2">
+									<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+									</svg>
+								</div>
+							</label>
+
+							<!-- Hidden input untuk submit ke backend -->
+							<input type="hidden" name="payment_selected" :value="paymentMethod">
+						</div>
 					</div>
 				</div>
 			</div>
@@ -162,90 +157,11 @@
 			</div>
 		</div>
 
-		<!-- QRIS Modal -->
-		<div x-show="showQrisModal" x-cloak @click.self="showQrisModal = false"
-			class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-			<div @click.away="showQrisModal = false"
-				class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative">
-				<!-- Close Button -->
-				<button @click="showQrisModal = false"
-					class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M6 18L18 6M6 6l12 12" />
-					</svg>
-				</button>
-
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-					<!-- Left: QR Code -->
-					<div class="flex flex-col items-center justify-center">
-						<h3 class="text-2xl font-bold text-gray-900 mb-2">Scan QR Code</h3>
-						<p class="text-gray-600 mb-6">Gunakan aplikasi e-wallet untuk scan</p>
-
-						<!-- QRIS Image -->
-						<div class="bg-white p-6 rounded-xl border-2 border-gray-200">
-							<div class="bg-gray-100 w-64 h-64 rounded-lg flex items-center justify-center">
-								<!-- Placeholder QR Code -->
-								<svg class="w-full h-full" viewBox="0 0 100 100">
-									<!-- Simple QR Code Pattern -->
-									<rect width="100" height="100" fill="white" />
-									<rect x="0" y="0" width="30" height="30" fill="black" />
-									<rect x="70" y="0" width="30" height="30" fill="black" />
-									<rect x="0" y="70" width="30" height="30" fill="black" />
-									<rect x="5" y="5" width="20" height="20" fill="white" />
-									<rect x="75" y="5" width="20" height="20" fill="white" />
-									<rect x="5" y="75" width="20" height="20" fill="white" />
-									<rect x="10" y="10" width="10" height="10" fill="black" />
-									<rect x="80" y="10" width="10" height="10" fill="black" />
-									<rect x="10" y="80" width="10" height="10" fill="black" />
-									<!-- Random blocks -->
-									<rect x="40" y="10" width="5" height="5" fill="black" />
-									<rect x="50" y="10" width="5" height="5" fill="black" />
-									<rect x="40" y="20" width="5" height="5" fill="black" />
-									<rect x="60" y="20" width="5" height="5" fill="black" />
-									<rect x="35" y="35" width="30" height="30" fill="black" />
-									<rect x="40" y="40" width="20" height="20" fill="white" />
-									<rect x="45" y="45" width="10" height="10" fill="black" />
-								</svg>
-							</div>
-						</div>
-					</div>
-
-					<!-- Right: Payment Info -->
-					<div class="flex flex-col justify-center">
-						<div class="bg-teal-50 border border-teal-200 rounded-lg p-6 mb-6">
-							<p class="text-sm text-teal-800 font-medium mb-2">Total Pembayaran</p>
-							<p class="text-3xl font-bold text-teal-900" x-text="formatPrice(total)"></p>
-						</div>
-
-						<div class="bg-gray-50 rounded-lg p-4 mb-6">
-							<h4 class="font-semibold text-gray-900 mb-3">Cara Pembayaran:</h4>
-							<ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
-								<li>Buka aplikasi e-wallet (GoPay, OVO, Dana, dll)</li>
-								<li>Pilih menu Scan QR</li>
-								<li>Arahkan kamera ke QR Code di layar</li>
-								<li>Konfirmasi pembayaran di aplikasi</li>
-							</ol>
-						</div>
-
-						<p class="text-sm text-gray-500 mb-6">
-							Pembayaran akan otomatis terverifikasi setelah berhasil
-						</p>
-
-						<button @click="showQrisModal = false"
-							class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors">
-							Batal
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<!-- Transfer Modal -->
 		<div x-show="showTransferModal" x-cloak @click.self="showTransferModal = false"
 			class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 			<div @click.away="showTransferModal = false"
-				class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative">
+				class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
 				<!-- Close Button -->
 				<button @click="showTransferModal = false"
 					class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
@@ -283,8 +199,10 @@
 								<p class="text-sm text-gray-600 mb-1">Nomor Rekening</p>
 								<div
 									class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
-									<p class="text-lg font-bold text-gray-900">{{ \App\Helpers\Bank::VIRTUAL_ACCOUNT }}</p>
-									<button onclick="navigator.clipboard.writeText('{{ \App\Helpers\Bank::VIRTUAL_ACCOUNT }}')"
+									<p class="text-lg font-bold text-gray-900">{{ \App\Helpers\Bank::VIRTUAL_ACCOUNT }}
+									</p>
+									<button
+										onclick="navigator.clipboard.writeText('{{ \App\Helpers\Bank::VIRTUAL_ACCOUNT }}')"
 										class="text-teal-600 hover:text-teal-700 text-sm font-medium">
 										Copy
 									</button>
@@ -314,7 +232,7 @@
 								</p>
 							</div>
 
-							<div class="bg-gray-50 rounded-lg p-4">
+							<div class="bg-gray-50 rounded-lg p-4 mb-6">
 								<h4 class="font-semibold text-gray-900 mb-2 text-sm">Cara Transfer:</h4>
 								<ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
 									<li>Buka aplikasi mobile banking</li>
@@ -324,19 +242,70 @@
 									<li>Konfirmasi transfer</li>
 								</ol>
 							</div>
+
+							<!-- File Upload Section -->
+							<div class="bg-white border-2 border-dashed border-gray-300 rounded-lg p-6">
+								<label for="bukti-transfer" class="block">
+									<div class="text-center cursor-pointer">
+										<svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+											viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+												d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+										</svg>
+										<p class="mt-2 text-sm text-gray-600">
+											<span class="font-semibold text-teal-600">Upload bukti transfer</span>
+										</p>
+										<p class="text-xs text-gray-500 mt-1">PNG, JPG, PDF hingga 5MB</p>
+									</div>
+									<input id="bukti-transfer" name="bukti_transfer" type="file" class="hidden"
+										accept="image/png,image/jpeg,image/jpg,application/pdf"
+										@change="handleFileUpload($event)">
+								</label>
+
+								<!-- Preview uploaded file -->
+								<div x-show="uploadedFile" class="mt-4 pt-4 border-t border-gray-200">
+									<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+										<div class="flex items-center gap-3">
+											<svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+											</svg>
+											<div>
+												<p class="text-sm font-medium text-gray-900" x-text="uploadedFileName">
+												</p>
+												<p class="text-xs text-gray-500" x-text="uploadedFileSize"></p>
+											</div>
+										</div>
+										<button @click="removeFile()" class="text-red-600 hover:text-red-700">
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 
-						<div class="space-y-3 mt-6">
-							<button @click="showTransferModal = false; alert('Pembayaran berhasil dikonfirmasi!')"
-								class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-								Selesai Bayar
-							</button>
+						<form method="POST" action="{{ route('payment.confirm') }}" enctype="multipart/form-data"
+							id="paymentForm">
+							@csrf
+							<input type="hidden" name="bukti_transfer_input" id="bukti_transfer_input">
 
-							<button @click="showTransferModal = false"
-								class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors">
-								Batalkan
-							</button>
-						</div>
+							<div class="space-y-3 mt-6">
+								<button type="submit" :disabled="!uploadedFile"
+									:class="uploadedFile ? 'bg-teal-600 hover:bg-teal-700' : 'bg-gray-300 cursor-not-allowed'"
+									class="w-full text-white font-bold py-3 px-4 rounded-lg transition-colors">
+									Konfirmasi Pembayaran
+								</button>
+
+								<button type="button" @click="showTransferModal = false"
+									class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors">
+									Batalkan
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -348,4 +317,33 @@
 			display: none !important;
 		}
 	</style>
+	<script>
+		function handleFileUpload(event) {
+		const file = event.target.files[0];
+		if (file) {
+		// Validate file size (5MB)
+		if (file.size > 5 * 1024 * 1024) {
+		alert('Ukuran file maksimal 5MB');
+		event.target.value = '';
+		return;
+		}
+		
+		// Store file info in Alpine.js data
+		this.uploadedFile = true;
+		this.uploadedFileName = file.name;
+		this.uploadedFileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+		
+		// Set the file to hidden input for form submission
+		document.getElementById('bukti_transfer_input').files = event.target.files;
+		}
+		}
+		
+		function removeFile() {
+		this.uploadedFile = false;
+		this.uploadedFileName = '';
+		this.uploadedFileSize = '';
+		document.getElementById('bukti-transfer').value = '';
+		document.getElementById('bukti_transfer_input').value = '';
+		}
+	</script>
 </x-app-layout>

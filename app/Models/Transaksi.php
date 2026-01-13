@@ -22,6 +22,11 @@ class Transaksi extends Model
         'status',
     ];
 
+    public function details()
+    {
+        return $this->hasMany(TransaksiDetail::class, 'id_keranjang');
+    }
+
     public function kasir()
     {
         return $this->belongsTo(User::class, 'id_kasir');

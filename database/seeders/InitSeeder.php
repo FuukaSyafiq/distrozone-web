@@ -13,7 +13,6 @@ class InitSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ImageSeeder::class);
         $this->call(ProvinsiSeeder::class);
         $this->call(KotaSeeder::class);
         $this->call(WarnaSeeder::class);
@@ -33,7 +32,6 @@ class InitSeeder extends Seeder
         TransaksiSeeder::down();
         UserSeeder::down();
         JamOperasionalSeeder::down();
-        ImageSeeder::down();
         OngkirSeeder::down();
         KaosSeeder::down();
         WarnaSeeder::down();

@@ -30,7 +30,6 @@
         {{ $slot }}
     </div>
     <x-footer />
-    @livewireScripts
     <div x-data="{ show: false, message: '' }" x-on:toast.window="
         message = $event.detail.message;
         show = true;
@@ -43,6 +42,7 @@
         {{ session('toast.message') }}
     </div>
     @vite(['resources/js/app.js'])
+    @livewireScripts
 </body>
 
 </html>

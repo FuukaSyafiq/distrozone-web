@@ -11,6 +11,8 @@ use Illuminate\Database\Seeder;
 use Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash as FacadesHash;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\File;
 
 class UserSeeder extends Seeder
 {
@@ -19,6 +21,27 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $files = $files = Storage::disk('public')->files('foto_karyawan');
+        foreach ($files as $filePath) {
+
+            // skip kalau bukan file
+
+            $absolutePath = Storage::disk('public')->path($filePath);
+
+            // upload ke S3
+            $path = Storage::disk('s3')->put(
+                'foto_karyawan',
+                new File($absolutePath)
+            );
+            // contoh simpan ke DB
+            Image::create([
+                'path' => $path,                       // path S3
+                'file_name' => basename($filePath),
+                'mime_type' => mime_content_type($absolutePath),
+                'size' => filesize($absolutePath)
+            ]);
+        }
         $password = FacadesHash::make('password');
         // dd(Image::getImageByFilename("mbak-cantik.jpeg")->id);
         $users = [
@@ -92,6 +115,8 @@ class UserSeeder extends Seeder
 
     public static function down()
     {
+        Image::query()->delete();
+        Storage::disk('s3')->deleteDirectory('foto_karyawan');
         User::query()->delete();
     }
 }

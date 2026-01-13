@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Helpers\CartStatus;
 use App\Models\Kaos;
+use App\Models\KaosVariant;
 use App\Models\Keranjang;
 use App\Models\KeranjangDetail;
 use Livewire\Component;
@@ -11,10 +12,12 @@ use Livewire\Component;
 class AddCart extends Component
 {
     public Kaos $kaos;
+    public KaosVariant $variant;
     public $quantity = 1;
-    public function mount(Kaos $kaos, int $quantity)
+    public function mount(KaosVariant $variant, int $quantity)
     {
-        $this->kaos = $kaos;
+        $this->variant = $variant;
+        $this->kaos = $variant->kaos;
         $this->quantity = $quantity;
     }
 
@@ -43,10 +46,10 @@ class AddCart extends Component
 
         KeranjangDetail::create([
             'id_keranjang' => $keranjang->id_keranjang,
-            'id_kaos' => $this->kaos->id_kaos,
+            'id_kaos_varian' => $this->variant->id,
             'harga_satuan' => $this->kaos->harga_jual,
             'qty' => $this->quantity,
-            'subtotal' => $this->kaos->harga_jual
+            'subtotal' => $this->kaos->harga_jual * $this->quantity
         ]);
         $this->dispatch('toast', message: 'Berhasil ditambahkan ke keranjang');
     }

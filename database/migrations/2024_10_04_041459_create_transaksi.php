@@ -23,7 +23,6 @@ return new class extends Migration
 
             $table->enum('metode_pembayaran', [
                 'CASH',
-                'QRIS',
                 'TRANSFER'
             ]);
 

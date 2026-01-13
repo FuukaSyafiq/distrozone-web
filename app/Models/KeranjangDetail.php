@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Keranjang;
 use App\Models\Kaos;
+use Illuminate\Support\Facades\Auth;
 
 class KeranjangDetail extends Model
 {
@@ -37,9 +38,17 @@ class KeranjangDetail extends Model
         return $this->belongsTo(KaosVariant::class, 'id_kaos_varian');
     }
 
-    public static function getAllKeranjang() {
-        return self::with('kaos')->with('keranjang')->get();
+    public static function getKeranjangUserLogin()
+    {
+        $customerId = Auth::id();
+
+        return self::with('kaos_varian', 'keranjang')
+            ->whereHas('keranjang', function ($q) use ($customerId) {
+                $q->where('id_customer', $customerId);
+            })
+            ->get();
     }
+
 
     public static function getKeranjangByStatus($status) {
         return self::with(['kaos','kaos.image', 'keranjang'])
@@ -49,4 +58,5 @@ class KeranjangDetail extends Model
             })
             ->get();
     }
+
 }

@@ -17,32 +17,12 @@ class ImageSeeder extends Seeder
     public function run(): void
     {
         // ambil semua file di folder
-        $files = $files = Storage::disk('public')->files('foto_karyawan');
-        foreach ($files as $filePath) {
-
-            // skip kalau bukan file
-
-            $absolutePath = Storage::disk('public')->path($filePath);
-
-            // upload ke S3
-            $path = Storage::disk('s3')->put(
-                'foto_karyawan',
-                new File($absolutePath)
-            );
-            // contoh simpan ke DB
-            Image::create([
-                'path' => $path,                       // path S3
-                'file_name' => basename($filePath),
-                'mime_type' => mime_content_type($absolutePath),
-                'size' => filesize($absolutePath)
-            ]);
-        }
+       
 
     }
 
     public static function down()
     {
-        Image::query()->delete();
-        Storage::disk('s3')->deleteDirectory('foto_karyawan');
+       
     }
 }

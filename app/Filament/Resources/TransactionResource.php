@@ -85,7 +85,7 @@ class TransactionResource extends Resource
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
                     ->label('Kode transaksi'),
-                TextColumn::make('kaos.nama_kaos')
+                TextColumn::make('kaos_varian.kaos.nama_kaos')
                     ->label('Kaos'),
                 TextColumn::make('transaksi.metode_pembayaran')
                     ->label('Metode pembayaran'),
@@ -180,19 +180,19 @@ class TransactionResource extends Resource
                     ]),
                 SectionEntry::make('Kaos')->columns(2)
                     ->schema([
-                        TextEntry::make('kaos.nama_kaos')
+                        TextEntry::make('kaos_varian.kaos.nama_kaos')
                             ->label('Kaos'),
-                        TextEntry::make('kaos.merek_kaos')
+                        TextEntry::make('kaos_varian.kaos.merek.merek')
                             ->label('Merek kaos'),
-                        TextEntry::make('kaos.type_kaos')
+                        TextEntry::make('kaos_varian.kaos.type.type')
                             ->label('Type kaos')->badge(),
-                        TextEntry::make('kaos.warna.label')
+                        TextEntry::make('kaos_varian.warna.label')
                             ->label('Warna kaos')->badge(),
-                        TextEntry::make('kaos.ukuran')
+                        TextEntry::make('kaos_varian.ukuran.ukuran')
                             ->label('Ukuran kaos')->badge(),
-                        TextEntry::make('kaos.harga_jual')
+                        TextEntry::make('kaos_varian.kaos.harga_jual')
                             ->label('Harga jual')->money('IDR', true),
-                        TextEntry::make('kaos.stok_kaos')
+                        TextEntry::make('kaos_varian.stok_kaos')
                             ->label('Stok kaos'),
                     ])->footerActions([
                         ActionEntry::make('cetak')
