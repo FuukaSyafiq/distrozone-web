@@ -1,11 +1,37 @@
 <x-app-layout>
+	@php
+	$subtotal = $keranjang->sum('subtotal');
+
+	// ambil ongkir kota → fallback provinsi
+	$ongkirTarif = \App\Models\Ongkir::where('wilayah', auth()->user()->kota->kota)->first();
+
+	if (!$ongkirTarif) {
+	$ongkirTarif = \App\Models\Ongkir::where(
+	'wilayah',
+	auth()->user()->kota->provinsi->provinsi
+	)->first();
+	}
+
+	// safety check
+	$ongkirValue = $ongkirTarif?->tarif_per_kg ?? 0;
+
+	// total qty
+	$totalQty = $keranjang->sum('qty');
+
+	// jika > 3 kaos → ongkir x2
+	if ($totalQty > 3) {
+	$ongkirValue *= 2;
+	}
+
+	$total = $subtotal + $ongkirValue;
+	@endphp
 
 	<div class="py-8 max-w-6xl mx-auto px-4" x-data="{
         paymentMethod: 'bca',
         showQrisModal: false,
         showTransferModal: false,
-        subtotal: 350000,
-        ongkir: 15000,
+        subtotal: {{ $subtotal }},
+        ongkir: {{ $ongkirValue }},
         get total() {
             return this.subtotal + this.ongkir;
         },
@@ -23,6 +49,28 @@
             } else if (this.paymentMethod === 'jago') {
                 this.showTransferModal = true;
             }
+        },
+        uploadedFile: false,
+        uploadedFileName: '',
+        uploadedFileSize: '',
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ukuran file maksimal 5MB');
+                    event.target.value = '';
+                    return;
+                }
+                this.uploadedFile = true;
+                this.uploadedFileName = file.name;
+                this.uploadedFileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            }
+        },
+        removeFile() {
+            this.uploadedFile = false;
+            this.uploadedFileName = '';
+            this.uploadedFileSize = '';
+            document.getElementById('bukti-transfer').value = '';
         }
     }">
 		<h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
@@ -39,7 +87,8 @@
 						<p class="text-gray-600">{{ auth()->user()->kota->kota }}</p>
 						<p class="text-gray-600">{{ auth()->user()->kota->provinsi->provinsi }}</p>
 						<p class="text-gray-600">{{ auth()->user()->alamat_lengkap }}</p>
-						<a href="/profile" class="text-teal-600 hover:text-teal-700 text-sm font-medium mt-2">
+						<a href="/profile"
+							class="text-teal-600 hover:text-teal-700 text-sm font-medium mt-2 inline-block">
 							Edit Profile
 						</a>
 					</div>
@@ -50,26 +99,26 @@
 					<h2 class="text-xl font-bold text-gray-900 mb-4">Pesanan Anda</h2>
 
 					@foreach ($keranjang as $k)
-
-					<!-- Sample Product 1 -->
-					<div class="flex gap-4 pb-4 mb-4 border-b">
+					<div class="flex gap-4 pb-4 mb-4 border-b last:border-b-0 last:pb-0 last:mb-0">
 						<div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
 							<img src="{{ Storage::disk('s3')->url($k->kaos_varian->image_path) }}"
-								alt="{{ $k->kaos_varian->kaos->nama_kaos }} " class="w-full h-full object-cover">
+								alt="{{ $k->kaos_varian->kaos->nama_kaos }}" class="w-full h-full object-cover">
 						</div>
 						<div class="flex-1">
-							<h3 class="font-semibold text-gray-800 mb-1"></h3>
-							<p class="text-sm text-gray-600 mb-2">{{ $k->kaos_varian->kaos->nama_kaos }}</p>
+							<h3 class="font-semibold text-gray-800 mb-1">{{ $k->kaos_varian->kaos->nama_kaos }}</h3>
+							<p class="text-sm text-gray-600 mb-2">
+								{{ $k->kaos_varian->warna->label }} - {{ $k->kaos_varian->ukuran->ukuran }}
+							</p>
 							<div class="flex justify-between items-center">
-								<span class="text-sm text-gray-600">{{ $k->qty }}</span>
-								<span class="font-semibold text-gray-900">{{ $k->subtotal }}</span>
+								<span class="text-sm text-gray-600">Quantity: {{ $k->qty }}</span>
+								<span class="font-semibold text-gray-900">Rp{{ number_format($k->subtotal, 0, ',', '.')
+									}}</span>
 							</div>
-							<span class="text-sm text-gray-600">Harga : {{ $k->harga_satuan }}</span>
+							<span class="text-xs text-gray-500">Rp. {{ number_format($k->harga_satuan, 0, ',', '.')
+								}}</span>
 						</div>
 					</div>
 					@endforeach
-
-
 				</div>
 
 				<!-- Payment Method -->
@@ -77,48 +126,41 @@
 					<h2 class="text-xl font-bold text-gray-900 mb-4">Metode Pembayaran</h2>
 
 					<div class="space-y-3">
-						<div x-data="{ paymentMethod: 'bca' }" class="space-y-4">
-							<!-- BANK BCA -->
-							<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all
-																  border-gray-200 hover:border-gray-300"
-								:class="paymentMethod === 'bca' ? 'border-teal-500 bg-teal-50' : ''">
-								<input type="radio" name="payment" value="bca" x-model="paymentMethod"
-									class="w-5 h-5 text-teal-600 focus:ring-teal-500">
-								<div class="ml-4 flex-1">
-									<span class="font-semibold text-gray-900">BANK BCA</span>
-									<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank BCA</p>
-								</div>
-								<div class="flex items-center gap-2">
-									<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
-										viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-									</svg>
-								</div>
-							</label>
+						<!-- BANK BCA -->
+						<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+							:class="paymentMethod === 'bca' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'">
+							<input type="radio" name="payment" value="bca" x-model="paymentMethod"
+								class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+							<div class="ml-4 flex-1">
+								<span class="font-semibold text-gray-900">BANK BCA</span>
+								<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank BCA</p>
+							</div>
+							<div class="flex items-center gap-2">
+								<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
+									viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+								</svg>
+							</div>
+						</label>
 
-							<!-- BANK JAGO -->
-							<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all
-																  border-gray-200 hover:border-gray-300"
-								:class="paymentMethod === 'jago' ? 'border-teal-500 bg-teal-50' : ''">
-								<input type="radio" name="payment" value="jago" x-model="paymentMethod"
-									class="w-5 h-5 text-teal-600 focus:ring-teal-500">
-								<div class="ml-4 flex-1">
-									<span class="font-semibold text-gray-900">BANK JAGO</span>
-									<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank Jago</p>
-								</div>
-								<div class="flex items-center gap-2">
-									<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
-										viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-											d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-									</svg>
-								</div>
-							</label>
-
-							<!-- Hidden input untuk submit ke backend -->
-							<input type="hidden" name="payment_selected" :value="paymentMethod">
-						</div>
+						<!-- BANK JAGO -->
+						<label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+							:class="paymentMethod === 'jago' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'">
+							<input type="radio" name="payment" value="jago" x-model="paymentMethod"
+								class="w-5 h-5 text-teal-600 focus:ring-teal-500">
+							<div class="ml-4 flex-1">
+								<span class="font-semibold text-gray-900">BANK JAGO</span>
+								<p class="text-sm text-gray-600 mt-1">Transfer ke rekening bank Jago</p>
+							</div>
+							<div class="flex items-center gap-2">
+								<svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor"
+									viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+								</svg>
+							</div>
+						</label>
 					</div>
 				</div>
 			</div>
@@ -130,7 +172,7 @@
 
 					<div class="space-y-3 mb-4 pb-4 border-b">
 						<div class="flex justify-between text-gray-700">
-							<span>Subtotal</span>
+							<span>Subtotal ({{ $keranjang->sum('qty') }} item)</span>
 							<span x-text="formatPrice(subtotal)"></span>
 						</div>
 						<div class="flex justify-between text-gray-700">
@@ -193,7 +235,8 @@
 						<div class="bg-gray-50 rounded-xl p-6 space-y-4">
 							<div>
 								<p class="text-sm text-gray-600 mb-1">Nama Bank</p>
-								<p class="text-lg font-bold text-gray-900">{{ \App\Helpers\Bank::NAME }}</p>
+								<p class="text-lg font-bold text-gray-900"
+									x-text="paymentMethod === 'bca' ? 'BCA' : 'BANK JAGO'"></p>
 							</div>
 							<div>
 								<p class="text-sm text-gray-600 mb-1">Nomor Rekening</p>
@@ -257,9 +300,9 @@
 										</p>
 										<p class="text-xs text-gray-500 mt-1">PNG, JPG, PDF hingga 5MB</p>
 									</div>
-									<input id="bukti-transfer" name="bukti_transfer" type="file" class="hidden"
+									{{-- <input id="bukti-transfer" name="bukti_transfer" type="file" class="hidden"
 										accept="image/png,image/jpeg,image/jpg,application/pdf"
-										@change="handleFileUpload($event)">
+										@change="handleFileUpload($event)"> --}}
 								</label>
 
 								<!-- Preview uploaded file -->
@@ -291,7 +334,15 @@
 						<form method="POST" action="{{ route('payment.confirm') }}" enctype="multipart/form-data"
 							id="paymentForm">
 							@csrf
-							<input type="hidden" name="bukti_transfer_input" id="bukti_transfer_input">
+							<input type="hidden" name="keranjang_id" value="{{ request('keranjang') }}">
+							<input type="hidden" name="payment_method" x-model="paymentMethod">
+							<input type="hidden" name="total_amount" x-bind:value="total">
+							<input type="hidden" name="ongkir_tarif_id" value="{{ $ongkirTarif->id }}">
+							<input type="hidden" name="ongkir_total" value="{{ $ongkirValue }}">
+							<input type="hidden" name="total" value="{{ $subtotal + $ongkirValue }}">
+							<input id="bukti-transfer" name="bukti_transfer" type="file" class="hidden"
+								accept="image/png,image/jpeg,image/jpg,application/pdf"
+								@change="handleFileUpload($event)">
 
 							<div class="space-y-3 mt-6">
 								<button type="submit" :disabled="!uploadedFile"
@@ -310,6 +361,8 @@
 				</div>
 			</div>
 		</div>
+
+
 	</div>
 
 	<style>
@@ -317,33 +370,4 @@
 			display: none !important;
 		}
 	</style>
-	<script>
-		function handleFileUpload(event) {
-		const file = event.target.files[0];
-		if (file) {
-		// Validate file size (5MB)
-		if (file.size > 5 * 1024 * 1024) {
-		alert('Ukuran file maksimal 5MB');
-		event.target.value = '';
-		return;
-		}
-		
-		// Store file info in Alpine.js data
-		this.uploadedFile = true;
-		this.uploadedFileName = file.name;
-		this.uploadedFileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
-		
-		// Set the file to hidden input for form submission
-		document.getElementById('bukti_transfer_input').files = event.target.files;
-		}
-		}
-		
-		function removeFile() {
-		this.uploadedFile = false;
-		this.uploadedFileName = '';
-		this.uploadedFileSize = '';
-		document.getElementById('bukti-transfer').value = '';
-		document.getElementById('bukti_transfer_input').value = '';
-		}
-	</script>
 </x-app-layout>

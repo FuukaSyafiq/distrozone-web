@@ -2,112 +2,218 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CartStatus;
+use App\Helpers\KeranjangStatus;
 use App\Helpers\Kode;
 use App\Helpers\PembayaranStatus;
 use App\Helpers\TransaksiStatus;
+use App\Models\JamOperasional;
+use App\Models\Keranjang;
 use App\Models\KeranjangDetail;
 use App\Models\Ongkir;
 use App\Models\Pembayaran;
 use App\Models\Pendapatan;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TransaksiController extends Controller
 {
     public function create(Request $request)
     {
-        $keranjangIds = $request->query('keranjang'); // contoh: [1,2,5]
+        $keranjangDetailId = $request->query('keranjang'); // single ID
 
-        if (empty($keranjangIds) || !is_array($keranjangIds)) {
-            return redirect()->to('/');
+        if (!$keranjangDetailId) {
+            return redirect('/');
         }
 
-        $keranjangDipilih = KeranjangDetail::with([
-            'kaos_varian.kaos',
-            'kaos_varian.ukuran',
-            'kaos_varian.warna',
-        ])
-            ->whereIn('id_keranjang_detail', $keranjangIds)
-            ->get();
+        // 1. Ambil keranjang aktif milik user
+        $keranjang = Keranjang::where('id_customer', auth()->id())
+            ->where('status', CartStatus::AKTIF)->where('id_keranjang', $keranjangDetailId)
+            ->first();
 
-        return view('checkout.details', ['keranjang' => $keranjangDipilih]);
+        if (!$keranjang) {
+            return redirect('/')->with('error', 'Keranjang tidak ditemukan');
+        }
+
+        return view('checkout.details', [
+            'keranjang' => $keranjang->details,
+            'keranjangUtama' => $keranjang,
+        ]);
     }
+
+    public function langsung(Request $request)
+    {
+        $keranjangDetailId = $request->query('keranjang_details'); // single ID
+
+        if (!$keranjangDetailId) {
+            return redirect('/');
+        }
+
+        // 1. Ambil keranjang aktif milik user
+        $keranjang = Keranjang::where('id_customer', auth()->id())
+            ->where('status', CartStatus::AKTIF)->where('id_keranjang', $keranjangDetailId)
+            ->first();
+
+        if (!$keranjang) {
+            return redirect('/')->with('error', 'Keranjang tidak ditemukan');
+        }
+
+        return view('checkout.details', [
+            'keranjang' => $keranjang->details,
+            'keranjangUtama' => $keranjang,
+        ]);
+    }
+
 
     public function bayar(Request $request)
     {
         DB::beginTransaction();
-
         try {
             $customer = auth()->user();
+            $file = $request->file('bukti_transfer');
 
-            $keranjangIds = $request->input('keranjang'); // array id_keranjang_detail
-            $metode = $request->input('payment_selected');
-            $ongkir = Ongkir::findOrFail($request->input('ongkir_id'));
+            $hariSekarang = Carbon::now()->translatedFormat('l');
 
-            // Ambil item keranjang user
-            $items = KeranjangDetail::with(['kaos_varian.kaos'])
-                ->whereIn('id_keranjang_detail', $keranjangIds)
-                ->whereHas(
-                    'keranjang',
-                    fn($q) =>
-                    $q->where('id_customer', $customer->id_user)
-                )
-                ->get();
+            // Ambil jam operasional hari ini
+            /* $jam = JamOperasional::where('hari', $hariSekarang)->first(); */
+            /**/
+            /* if (!$jam) { */
+            /*     // Tidak ada jam operasional untuk hari ini */
+            /*     return false; */
+            /* } */
+            /* $now = Carbon::now(); */
 
-            if ($items->isEmpty()) {
-                throw new \Exception('Keranjang kosong');
-            }
+            // Parse jam buka & tutup
+            /* $jamBuka = Carbon::parse($jam->jam_buka); */
+            /* $jamTutup = Carbon::parse($jam->jam_tutup); */
+            /**/
+            /* if (!$now->between($jamBuka, $jamTutup)) { */
+            /*     // Tutup */
+            /**/
+            /*     return redirect()->back()->with('error', 'NIK tidak dapat diubah saat sudah diverifikasi'); */
+            /* } */
+            /**/
 
-            // Hitung subtotal
-            $subtotal = $items->sum(fn($item) => $item->subtotal);
-            $totalOngkir = $ongkir->harga;
-            $totalBayar = $subtotal + $totalOngkir;
+            $path = Storage::disk('s3')->put(
+                'bukti-transfer', // folder di bucket
+                $file
+            );
+            $keranjangId   = $request->input('keranjang_id');
+            $paymentMethod = $request->input('payment_method');
+            $ongkirTarifId = $request->input('ongkir_tarif_id');
+            $ongkirTotal = $request->input('ongkir_total');
+            $total = $request->input('total');
 
-            // 1️⃣ Transaksi (HEADER)
+
+            // 1️⃣ Ambil item keranjang user
+            $items = Keranjang::where('id_keranjang', $keranjangId)
+                ->where('status', KeranjangStatus::AKTIF)->where('id_customer', $customer->id_user)
+                ->first();
+
+
+
+            // 6️⃣ Transaksi (HEADER)
             $transaksi = Transaksi::create([
-                'kode_transaksi' => Kode::GenerateKodeTransaksi(),
-                'jenis_transaksi' => 'ONLINE',
-                'metode_pembayaran' => strtoupper($metode),
-                'total_harga' => $totalBayar,
-                'id_customer' => $customer->id_user,
-                'id_ongkir' => $ongkir->id,
-                'ongkir' => $totalOngkir,
-                'status' => TransaksiStatus::PENDING,
+                'kode_transaksi'     => Kode::GenerateKodeTransaksi(),
+                'jenis_transaksi'    => 'ONLINE',
+                'metode_pembayaran'  => 'TRANSFER',
+                'total_harga'        => $total,
+                'id_kasir' => null,
+                'id_customer'        => $customer->id_user,
+                'id_ongkir'          => $ongkirTarifId,
+                'ongkir'             => $ongkirTotal,
+                'status'             => TransaksiStatus::PENDING,
             ]);
 
-            // 2️⃣ Transaksi Detail
-            foreach ($items as $item) {
+            // 7️⃣ Transaksi Detail
+            foreach ($items->details as $item) {
                 TransaksiDetail::create([
-                    'id_transaksi' => $transaksi->id_transaksi,
+                    'id_transaksi'   => $transaksi->id_transaksi,
                     'id_kaos_varian' => $item->id_kaos_varian,
-                    'harga_satuan' => $item->harga_satuan,
-                    'qty' => $item->qty,
-                    'subtotal' => $item->subtotal,
+                    'harga_satuan'   => $item->harga_satuan,
+                    'qty'            => $item->qty,
+                    'subtotal'       => $item->subtotal,
                 ]);
 
                 // Kurangi stok
                 $item->kaos_varian->decrement('stok_kaos', $item->qty);
             }
 
-            // 3️⃣ Pembayaran
+
+            // 8️⃣ Pembayaran
             Pembayaran::create([
-                'status' => PembayaranStatus::MENUNGGU,
-                'no_invoice' => Kode::GenerateInvoiceNumber(),
-                'id_transaksi' => $transaksi->id_transaksi,
+                'status'        => PembayaranStatus::MENUNGGU,
+                'no_invoice'    => Kode::GenerateInvoiceNumber(),
+                'id_transaksi'  => $transaksi->id_transaksi,
+                'bukti_transfer' => $path
             ]);
 
-            // 4️⃣ Update keranjang
-            KeranjangDetail::whereIn('id_keranjang_detail', $keranjangIds)
+            // 9️⃣ Update status keranjang → CHECKOUT
+            Keranjang::where('id_keranjang', $items->id_keranjang)
                 ->update(['status' => 'CHECKOUT']);
+
 
             DB::commit();
 
-            return redirect()->route('checkout.success', $transaksi->id_transaksi);
+            // return redirect()->route('checkout.success', $transaksi->id_transaksi);
+            return redirect()->route('index', $transaksi->id_transaksi);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            dd($e->getMessage(), $e->getTraceAsString());
+            // return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function transaksi(Request $request)
+    {
+
+        $status = $request->get('status', 'PENDING');
+
+        // Get transaksi by status
+        $transaksis = Transaksi::where('id_customer', Auth::id())
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Get counts for each status
+        $counts = [
+            'PENDING' => Transaksi::where('id_customer', Auth::id())->where('status', 'PENDING')->count(),
+            'ACC_KASIR' => Transaksi::where('id_customer', Auth::id())->where('status', 'ACC_KASIR')->count(),
+            'DIKIRIM' => Transaksi::where('id_customer', Auth::id())->where('status', 'DIKIRIM')->count(),
+            'SUKSES' => Transaksi::where('id_customer', Auth::id())->where('status', 'SUKSES')->count(),
+            'GAGAL' => Transaksi::where('id_customer', Auth::id())->where('status', 'GAGAL')->count(),
+        ];
+        return view('transaksi.index', compact('transaksis', 'counts'));
+    }
+
+    public function show(string $id)
+    {
+        $transaksi = Transaksi::with(['detailTransaksi.produk', 'customer', 'ongkir'])
+            ->where('id_customer', Auth::id())
+            ->findOrFail($id);
+
+        return view('transaksi.show', compact('transaksi'));
+    }
+
+    /**
+     * Confirm order received (customer confirms delivery)
+     */
+    public function confirm(string $id)
+    {
+        $transaksi = Transaksi::where('id_customer', Auth::id())
+            ->where('status', 'DIKIRIM')
+            ->findOrFail($id);
+
+        $transaksi->update([
+            'status' => 'SUKSES'
+        ]);
+
+        return redirect()->route('transaksi.index', ['status' => 'SUKSES'])
+            ->with('success', 'Pesanan berhasil dikonfirmasi. Terima kasih!');
     }
 }

@@ -13,11 +13,13 @@
         increment() {
             if (this.quantity < this.maxStock) {
                 this.quantity++;
+                @this.set('quantity', this.quantity);
             }
         },
         decrement() {
             if (this.quantity > 1) {
                 this.quantity--;
+                @this.set('quantity', this.quantity);
             }
         },
         formatPrice(price) {
@@ -28,7 +30,7 @@
                 maximumFractionDigits: 0
             }).format(price).replace('IDR', 'Rp');
         }
-    }" class="bg-white border-2 border-gray-200 rounded-xl p-6 ">
+    }" class="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h3 class="font-bold text-gray-900 mb-4">Atur jumlah dan catatan</h3>
 
         <!-- Selected Product Info -->
@@ -53,7 +55,7 @@
                     -
                 </button>
                 <input type="number" x-model.number="quantity" min="1" :max="maxStock"
-                    @input="quantity = Math.max(1, Math.min(maxStock, parseInt($event.target.value) || 1))"
+                    @input="quantity = Math.max(1, Math.min(maxStock, parseInt($event.target.value) || 1)); @this.set('quantity', quantity)"
                     class="w-16 text-center border-x-2 border-gray-200 py-2 focus:outline-none">
                 <button @click="increment" :disabled="quantity >= maxStock"
                     :class="quantity >= maxStock ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
@@ -77,14 +79,8 @@
         <!-- Action Buttons -->
         @if($variant->stok_kaos > 0)
         <div class="space-y-3">
-            <button wire:click="check"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
-                Beli langsung
-            </button>
-
-            
-            {{-- <livewire:beli-langsung :kaos_id="$kaos->id_kaos" :quantity="$quantity" /> --}}
-            <livewire:add-cart :variant="$variant" :quantity="$quantity" />
+            <livewire:beli-langsung :variant="$variant" :quantity="$quantity" wire:key="add-cart-{{ $variant->id }}" />
+            <livewire:add-cart :variant="$variant" :quantity="$quantity" wire:key="add-cart-{{ $variant->id }}" />
         </div>
         @else
         <button disabled class="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-4 rounded-lg cursor-not-allowed">
@@ -105,8 +101,8 @@
 
 <script>
     document.addEventListener('redirect-login', () => {
-    setTimeout(() => {
-        window.location.href = "{{ route('login') }}";
-    }, 700); // 700 milidetik
-});
+        setTimeout(() => {
+            window.location.href = "{{ route('login') }}";
+        }, 700);
+    });
 </script>

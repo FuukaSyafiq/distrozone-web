@@ -10,6 +10,7 @@ class JamOperasional extends Model
     use HasFactory;
 
     protected $table = "jam_operasional";
+    protected $timestamps = false;
 
     protected $fillable = [
         'hari',

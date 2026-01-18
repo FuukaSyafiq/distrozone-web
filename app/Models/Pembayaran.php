@@ -21,9 +21,4 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(Transaksi::class, 'id_transaksi');
     }
-
-    public function transfer()
-    {
-        return $this->belongsTo(Image::class, 'bukti_transfer');
-    }
 }

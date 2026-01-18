@@ -21,6 +21,8 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use App\Models\Keranjang;
+use App\Models\KeranjangDetail;
 use Filament\Tables\Actions\Action;
 use App\Models\Pendapatan;
 use Filament\Infolists\Components\Actions\Action as ActionEntry;
@@ -71,6 +73,11 @@ class PaymentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->modifyQueryUsing(
+                fn($query) =>
+                $query->where('status', '!=', PembayaranStatus::DITERIMA)
+                    ->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::SUKSES))
+            )
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
                     ->label('Kode transaksi'),
@@ -88,7 +95,7 @@ class PaymentResource extends Resource
                     ->label('Status transaksi')->badge(),
                 TextColumn::make('no_invoice')
                     ->label('No invoice'),
-                ImageColumn::make('transfer.path')->disk('s3')
+                ImageColumn::make('bukti_transfer')->disk('s3')
                     ->label('Bukti transfer'),
 
             ])->filters([])
@@ -131,10 +138,11 @@ class PaymentResource extends Resource
                         ->color(
                             'success'
                         )
-                        ->visible(fn($record) => $record->status === PembayaranStatus::MENUNGGU ? true : false)
+                        ->visible(fn($record) => $record->status === PembayaranStatus::MENUNGGU)
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
+                            // dd($record->transaksi);
                             foreach ($record->transaksi->details as $detail) {
                                 Pendapatan::create([
                                     'nama_kaos' => $detail->kaos_varian->kaos->nama_kaos,
@@ -156,7 +164,7 @@ class PaymentResource extends Resource
                         ->icon(
                             'heroicon-o-check-circle'
                         )
-                        ->visible(fn($record) => $record->status === PembayaranStatus::DITERIMA && TransaksiStatus::DIKIRIM ? false : true)
+                        ->visible(fn($record) => $record->status === PembayaranStatus::DITERIMA && $record->transaksi->status !== TransaksiStatus::DIKIRIM && $record->transaksi->status !== TransaksiStatus::SUKSES)
                         ->color(
                             'success'
                         )
@@ -194,14 +202,17 @@ class PaymentResource extends Resource
                         )
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            foreach ($record->transaksi->details as $d) {
+                                KeranjangDetail::where('id_kaos_varian', $d->id_kaos_varian)->delete();
+                            }
                             $record->transaksi->status = TransaksiStatus::SUKSES;
                             $record->transaksi->save();
                         }),
                 ]),
             InfolistSection::make('Bukti transfer')->columns(3)
                 ->schema([
-                    ImageEntry::make('transfer.path')
-                        ->label('')
+                    ImageEntry::make('bukti_transfer')
+                        ->label('Bukti transfer')
                         ->disk('s3')
                         ->height(300)
                 ])

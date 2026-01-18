@@ -63,8 +63,8 @@
                 @foreach ($transaksi_detail as $t)
                 <tr>
                     <td class="border border-black py-2 px-4 text-center">{{ $loop->iteration }}</td>
-                    <td class="border border-black py-2 px-4 text-center">{{ $t->kaos->nama_kaos }}</td>
-                    <td class="border border-black py-2 px-4 text-center">{{ $t->kaos->type_kaos }}</td>
+                    <td class="border border-black py-2 px-4 text-center">{{ $t->kaos_varian->kaos->nama_kaos }}</td>
+                    <td class="border border-black py-2 px-4 text-center">{{ $t->kaos_varian->kaos->type->type }}</td>
                     <td class="border border-black py-2 px-4 text-center">{{ $t->qty }}</td>
                     <td class="border border-black py-2 px-4 text-center">Rp. {{
                         number_format($t->harga_satuan, 0, ',',
@@ -75,8 +75,8 @@
 
 
                     <td class="border border-black py-2 px-4 text-center">
-                        @if(!empty($t->kaos->image[0]->path))
-                        <img src="{{ Storage::disk('s3')->url($t->kaos->image[0]->path) }}" alt="Kaos"
+                        @if(!empty($t->kaos_varian->image_path))
+                        <img src="{{ Storage::disk('s3')->url($t->kaos_varian->image_path) }}" alt="Kaos"
                             style="width:80px; height:auto;">
                         @else
                         -

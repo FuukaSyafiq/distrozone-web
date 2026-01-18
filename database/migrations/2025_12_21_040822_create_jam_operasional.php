@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('jam_operasional', function (Blueprint $table) {
             $table->id();
-            $table->enum('jenis',['offline','online']);
+            $table->enum('jenis',['OFFLINE','ONLINE']);
             $table->enum("hari",['SENIN','SELASA','RABU','KAMIS','JUMAT','SABTU','MINGGU']);
             $table->time('jam_buka')->nullable();
             $table->time('jam_tutup')->nullable();
             $table->enum("status",['BUKA', 'TUTUP'])->default("BUKA");
-            $table->timestamps();
         });
     }
 

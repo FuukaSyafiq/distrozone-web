@@ -14,32 +14,22 @@
 					<thead class="bg-gray-50">
 						<tr>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								<input type="checkbox" id="select-all-aktif"
-									class="w-4 h-4 text-teal-600 rounded focus:ring-teal-500">
-							</th>
-							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Produk</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Harga
-								Satuan</th>
+								Harga Satuan</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Qty
-							</th>
+								Qty</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Subtotal</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Aksi
-							</th>
+								Tanggal</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								Aksi</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200">
 						@forelse($cartItems->where('keranjang.status', 'AKTIF') as $item)
 						<tr class="hover:bg-gray-50">
-							<td class="px-6 py-4 whitespace-nowrap">
-								<input type="checkbox"
-									class="item-checkbox-aktif w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
-									data-id="{{ $item->id_keranjang_detail }}">
-							</td>
 							<td class="px-6 py-4">
 								<div class="flex items-center">
 									<img src="{{ Storage::url($item->kaos_varian->image_path) }}" alt="Product"
@@ -61,20 +51,14 @@
 							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 								Rp{{ number_format($item->harga_satuan, 0, ',', '.') }}
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap">
-								<div class="flex items-center gap-2">
-									<button onclick="updateQty({{ $item->id_keranjang_detail }}, -1)"
-										class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm">-</button>
-									<span class="w-8 text-center text-sm font-medium"
-										id="qty-{{ $item->id_keranjang_detail }}">
-										{{ $item->qty }}
-									</span>
-									<button onclick="updateQty({{ $item->id_keranjang_detail }}, 1)"
-										class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm">+</button>
-								</div>
+							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+								{{ $item->qty }}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
 								Rp{{ number_format($item->subtotal, 0, ',', '.') }}
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+								{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('l, d F Y') }}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm">
 								<form action="{{ route('cart-delete', $item->id_keranjang_detail) }}" method="POST"
@@ -89,7 +73,7 @@
 						</tr>
 						@empty
 						<tr>
-							<td colspan="6" class="px-6 py-8 text-center text-gray-500">
+							<td colspan="5" class="px-6 py-8 text-center text-gray-500">
 								Tidak ada item di keranjang aktif
 							</td>
 						</tr>
@@ -117,10 +101,13 @@
 							</span>
 						</div>
 					</div>
-				<a href="{{ route('checkout') }}?keranjang[]=1"
+					@php
+					$activeCart = $cartItems->where('keranjang.status', 'AKTIF')->first();
+					@endphp
+					<a href="{{ route('checkout') }}?keranjang={{ $activeCart->id_keranjang ?? '' }}"
 						class="w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-colors text-center block">
 						Checkout
-					</a>				 
+					</a>
 				</div>
 			</div>
 			@endif
@@ -136,15 +123,15 @@
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Produk</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Harga
-								Satuan</th>
+								Harga Satuan</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Qty
-							</th>
+								Qty</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Subtotal</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Status</th>
+								Tanggal</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								Lihat Kaos</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200">
@@ -171,7 +158,7 @@
 							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 								Rp{{ number_format($item->harga_satuan, 0, ',', '.') }}
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
 								{{ $item->qty }}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
@@ -180,8 +167,13 @@
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span
 									class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-									CHECKOUT
+									{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('l, d F Y') }}
 								</span>
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<a href="/kaos/{{ $item->kaos_varian->kaos->id_kaos }}" class="text-green-600 hover:text-green-900 font-medium">
+									Lihat
+								</a>
 							</td>
 						</tr>
 						@empty
@@ -206,18 +198,15 @@
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Produk</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Harga
-								Satuan</th>
+								Harga Satuan</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Qty
-							</th>
+								Qty</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Subtotal</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 								Status</th>
 							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Aksi
-							</th>
+								Aksi</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-200">
@@ -244,7 +233,7 @@
 							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
 								Rp{{ number_format($item->harga_satuan, 0, ',', '.') }}
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
 								{{ $item->qty }}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
@@ -279,34 +268,4 @@
 			</div>
 		</div>
 	</div>
-
-	<script>
-		// Select all functionality for AKTIF items
-		document.getElementById('select-all-aktif')?.addEventListener('change', function() {
-			const checkboxes = document.querySelectorAll('.item-checkbox-aktif');
-			checkboxes.forEach(checkbox => {
-				checkbox.checked = this.checked;
-			});
-		});
-
-		// Update quantity
-		function updateQty(itemId, change) {
-			const qtyElement = document.getElementById(`qty-${itemId}`);
-			let currentQty = parseInt(qtyElement.textContent);
-			let newQty = currentQty + change;
-			
-			if (newQty < 1) newQty = 1;
-			
-			qtyElement.textContent = newQty;
-			
-			// TODO: Send AJAX request to update quantity in database
-			console.log(`Update item ${itemId} to qty ${newQty}`);
-		}
-
-		function redirectCheckout() {
-
-			window.href = "/checkout?kerajang=1";
-
-		}
-	</script>
 </x-app-layout>

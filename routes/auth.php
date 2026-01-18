@@ -50,6 +50,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
     Route::delete('cart-varian/{id}', [KeranjangController::class, 'delete'])->name('cart-delete');
 
+    Route::get('/orders', [TransaksiController::class, 'transaksi'])->name('transaksi.render');
+    Route::get('/orders/{id}', [TransaksiController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/confirm', [TransaksiController::class, 'confirm'])->name('orders.confirm');
 
     Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
     Route::post('payment', [TransaksiController::class, 'bayar'])->name('payment.confirm');

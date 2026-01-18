@@ -33,7 +33,7 @@ class JamOperasionalSeeder extends Seeder
             if ($h === 'SENIN') {
                 // Senin LIBUR
                 $data[] = [
-                    'jenis' => 'offline',
+                    'jenis' => 'OFFLINE',
                     'hari' => $h,
                     'jam_buka' => null,
                     'jam_tutup' => null,
@@ -41,7 +41,7 @@ class JamOperasionalSeeder extends Seeder
                 ];
             } else if ($h === 'MINGGU') {
                 $data[] = [
-                    'jenis' => 'offline',
+                    'jenis' => 'OFFLINE',
                     'hari' => $h,
                     'jam_buka' => null,
                     'jam_tutup' => null,
@@ -50,21 +50,21 @@ class JamOperasionalSeeder extends Seeder
             } else  {
                 // Selasa - Sabtu
                 $data[] = [
-                    'jenis' => 'offline',
+                    'jenis' => 'OFFLINE',
                     'hari' => $h,
                     'jam_buka' => '10:00',
                     'jam_tutup' => '20:00',
                     'status' => 'BUKA',
                 ];
 
-                
-            } 
+
+            }
 
             // =====================
             // ONLINE (SETIAP HARI)
             // =====================
             $data[] = [
-                'jenis' => 'online',
+                'jenis' => 'ONLINE',
                 'hari' => $h,
                 'jam_buka' => '10:00',
                 'jam_tutup' => '17:00',

@@ -55,7 +55,8 @@
         <div>
             <label class="flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <span>NIK</span>
-
+                @php
+                @endphp
                 @if($nik_verified === \App\Helpers\NikVerified::APPROVED)
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
                                     bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">

@@ -23,7 +23,8 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="/" class="flex items-center gap-2 group">
-                    <h1 class="font-bold text-xl text-gray-800 hidden md:block">Distrozone</h1>
+                    <img src="{{ asset('Distrozone-logopng.png') }}" class="w-40" />
+                    {{-- <h1 class="font-bold text-xl text-gray-800 hidden md:block">Distrozone</h1> --}}
                 </a>
             </div>
 
@@ -98,7 +99,7 @@
                         @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama ?? 'User') }}&size=128&background=6366f1&color=fff"
                             alt="Profile"
-                            class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
+                            class="w-12 h-12 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
                         @endif
                     </button>
 
@@ -112,7 +113,21 @@
                             <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
                         </div>
 
-                        <a href="/profile"
+                        @php
+                        $role = auth()->user()->role->role;
+                        @endphp
+
+                        <a href="
+                                                @if($role == 'CUSTOMER')
+                                                    /profile
+                                                @elseif($role == 'ADMIN')
+                                                    /admin
+                                                @elseif($role == 'KASIR')
+                                                    /kasir
+                                                @else
+                                                    / # fallback kalau role lain
+                                                @endif
+                                            "
                             class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -120,6 +135,8 @@
                             </svg>
                             Profil Saya
                         </a>
+
+                        @if (auth()->user()->role->role == "CUSTOMER")
 
                         <a href="/orders"
                             class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
@@ -129,6 +146,7 @@
                             </svg>
                             Pesanan Saya
                         </a>
+                        @endif
 
                         <div class="border-t border-gray-200 mt-1 pt-1">
                             <form method="POST" action="/logout">

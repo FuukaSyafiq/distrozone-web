@@ -16,6 +16,12 @@ class UkuranSeeder extends Seeder
         $ukuran = [
             "M",
             "S",
+            "L",
+            "XL",
+            "XS",
+            "XXL",
+            "3XL",
+            "4XL"
         ];
 
         foreach ($ukuran as $u) {

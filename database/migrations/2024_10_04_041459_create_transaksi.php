@@ -19,11 +19,16 @@ return new class extends Migration
             $table->integer('id_kasir');
             $table->integer('id_customer');
 
+            $table->unsignedBigInteger('id_kasir')->nullable();
+            $table->unsignedBigInteger('id_customer')->nullable();
+            $table->unsignedBigInteger('id_ongkir')->nullable();
+
+
             $table->enum('jenis_transaksi', ['OFFLINE', 'ONLINE']);
 
             $table->enum('metode_pembayaran', [
                 'CASH',
-                'TRANSFER'
+                'TRANSFER',
             ]);
 
             $table->decimal('total_harga', 12, 2);
@@ -53,7 +58,7 @@ return new class extends Migration
             $table->foreign('id_customer')
                   ->references('id_user')
                   ->on('users')
-                  ->onDelete('set null')->cascadeOnUpdate();;
+                  ->onDelete('set null')->cascadeOnUpdate();
         });
     }
 

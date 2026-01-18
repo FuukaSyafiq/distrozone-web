@@ -16,12 +16,12 @@ class InitSeeder extends Seeder
         $this->call(ProvinsiSeeder::class);
         $this->call(KotaSeeder::class);
         $this->call(WarnaSeeder::class);
-        $this->call(KaosSeeder::class);
+        // $this->call(KaosSeeder::class);
         $this->call(OngkirSeeder::class);
         $this->call(JamOperasionalSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(TransaksiSeeder::class);
+        // $this->call(TransaksiSeeder::class);
     }
 
 
@@ -29,11 +29,11 @@ class InitSeeder extends Seeder
     {
         ProvinsiSeeder::down();
         KotaSeeder::down();
-        TransaksiSeeder::down();
+        // TransaksiSeeder::down();
         UserSeeder::down();
         JamOperasionalSeeder::down();
         OngkirSeeder::down();
-        KaosSeeder::down();
+        // KaosSeeder::down();
         WarnaSeeder::down();
         RoleSeeder::down();
     }

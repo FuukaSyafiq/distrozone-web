@@ -29,5 +29,8 @@ class Keranjang extends Model
     public static function getKeranjangByCustomerId($customerId) {
         return self::where('id_customer', $customerId)->first();
     }
-
+    public function details()
+    {
+        return $this->hasMany(KeranjangDetail::class, 'id_keranjang');
+    }
 }

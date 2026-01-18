@@ -28,10 +28,16 @@ class PDFController extends Controller
         // ambil banyak data
         $pendapatan = Pendapatan::whereIn('id', $idArray)->get();
 
+        $totalKeuntungan = $pendapatan->sum(function ($record) {
+            return $record->total_harga_jual - $record->total_harga_pokok;
+        });
+
+
         $data = [
             'records' => $pendapatan,
             'start_date' => $request->query('start_date'),
             'end_date'   => $request->query('end_date'),
+            'totalKeuntungan' => $totalKeuntungan
         ];
 
 
@@ -50,13 +56,13 @@ class PDFController extends Controller
         $transaksi_detail = TransaksiDetail::where('id_transaksi', $id)->get();
 
         // Get the image path based on the bukti_file value
-        $image = Image::where('id', $pembayaran->bukti_transfer)->first();
+        // $image = Image::where('id', $pembayaran->bukti_transfer)->first();
 
         $data = [
             'transaksi' => $pembayaran->transaksi,
             'pembayaran' => $pembayaran,
             'transaksi_detail' => $transaksi_detail,
-            'bukti_transfer' => $image->path,
+            'bukti_transfer' => $pembayaran->transaksi->bukti_transfer,
             'date' => $request->query('date')
         ];
 

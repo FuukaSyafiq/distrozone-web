@@ -42,6 +42,18 @@
         {{ session('toast.message') }}
     </div>
     @vite(['resources/js/app.js'])
+    @if (session('success'))
+    <script>
+        // Contoh simple alert
+            alert("{{ session('success') }}");
+    </script>
+    @endif
+
+    @if (session('error'))
+    <script>
+        alert("{{ session('error') }}");
+    </script>
+    @endif
     @livewireScripts
 </body>
 

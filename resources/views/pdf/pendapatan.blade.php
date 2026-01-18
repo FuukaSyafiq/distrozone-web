@@ -23,6 +23,9 @@
 			<p><strong>Total Pendapatan</strong></p>
 			<p><strong>Mulai Tanggal : </strong>{{ Carbon\Carbon::parse($start_date)->translatedFormat('d F Y') }}</p>
 			<p><strong>Sampai Tanggal : </strong>{{ Carbon\Carbon::parse($end_date)->translatedFormat('d F Y') }}</p>
+			<p><strong>Total keuntungan : </strong>Rp. {{
+			number_format($totalKeuntungan, 0, ',',
+			'.')}}</p>
 		</div>
 	</div>
 
@@ -36,6 +39,7 @@
 					<th class="border border-black py-2 px-4 text-center">Harga Jual</th>
 					<th class="border border-black py-2 px-4 text-center">Harga Pokok</th>
 					<th class="border border-black py-2 px-4 text-center">Ongkir</th>
+					<th class="border border-black py-2 px-4 text-center">Keuntungan</th>
 					<th class="border border-black py-2 px-4 text-center">Tanggal</th>
 				</tr>
 			</thead>
@@ -55,6 +59,9 @@
 					<td class="border border-black py-2 px-4 text-center">Rp. {{ number_format($record->ongkir, 0, ',',
 						'.')
 						}}</td>
+						<td class="border border-black py-2 px-4 text-center">Rp. {{
+							number_format($record->total_harga_jual - $record->total_harga_pokok, 0, ',',
+							'.')}}</td>
 					<td class="border border-black py-2 px-4 text-center">{{ Carbon\Carbon::parse($record->created_at)->translatedFormat('d F Y') }}</td>
 				</tr>
 				@endforeach

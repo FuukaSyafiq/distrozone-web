@@ -8,10 +8,10 @@ use App\Models\Kaos;
 use App\Models\KaosVariant;
 use App\Models\Keranjang;
 use App\Models\KeranjangDetail;
-use Livewire\Component;
 use Livewire\Attributes\Reactive;
+use Livewire\Component;
 
-class AddCart extends Component
+class BeliLangsung extends Component
 {
     public Kaos $kaos;
     public KaosVariant $variant;
@@ -28,7 +28,7 @@ class AddCart extends Component
 
     public function render()
     {
-        return view('livewire.add-cart');
+        return view('livewire.beli-langsung');
     }
 
     public function add()
@@ -39,7 +39,6 @@ class AddCart extends Component
             $this->dispatch('toast', message: "Login diperlukan untuk menambahkan produk ke keranjang.");
             return;
         }
-
         $keranjang = Keranjang::where('status', KeranjangStatus::AKTIF)->where('id_customer', $user->id_user)->first();
         // $keranjang = Keranjang::getKeranjangByCustomerId($user->id_user);
 
@@ -50,7 +49,7 @@ class AddCart extends Component
             ]);
         }
 
-        KeranjangDetail::create([
+        $keranjangDetail = KeranjangDetail::create([
             'id_keranjang' => $keranjang->id_keranjang,
             'id_kaos_varian' => $this->variant->id,
             'harga_satuan' => $this->kaos->harga_jual,
@@ -58,6 +57,15 @@ class AddCart extends Component
             'subtotal' => $this->kaos->harga_jual * $this->quantity
         ]);
 
-        $this->dispatch('toast', message: 'Berhasil ditambahkan ke keranjang');
+
+        // return redirect()->route('checkout');
+        return redirect()->route('checkout', [
+            'keranjang' => $keranjang->id_keranjang
+        ]);
+
+        // return redirect()->to('checkout', [
+        // 'keranjang' => $keranjangDetail,
+        // 'keranjangUtama' => $keranjang,
+        // ]);
     }
 }

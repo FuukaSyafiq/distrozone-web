@@ -36,9 +36,9 @@ class ProfileForm extends Component
         $this->provinsi = $user->kota?->provinsi?->provinsi ?? "";
 
         $this->email = $user->email;
-        $this->no_telepon = $user->no_telepon || "";
+        $this->no_telepon = $user->no_telepon;
         $this->nik_verified = $user->nik_verified;
-        $this->nik = $user->nik || "";
+        $this->nik = $user->nik;
     }
 
     public function updatedKotaSelected($id)
@@ -72,7 +72,7 @@ class ProfileForm extends Component
 
         if ($nikChanged) {
             if (! $canEditNik) {
-                $this->dispatch('toast', message: 'NIK tidak dapat diubah saat sedang diverifikasi atau sudah disetujui');
+                $this->dispatch('toast', message: 'NIK tidak dapat diubah saat sudah diverifikasi');
                 return;
             }
 
