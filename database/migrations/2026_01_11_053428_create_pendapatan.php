@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('qty');
             $table->decimal('total_harga_jual', 12, 2);
             $table->decimal('total_harga_pokok', 12, 2);
-            $table->decimal('ongkir', 12, 2)->default(0);
+            $table->decimal('ongkir', 12, 2)->nullable();
             $table->timestamps();
         });
     }

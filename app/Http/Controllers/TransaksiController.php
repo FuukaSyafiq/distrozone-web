@@ -23,28 +23,6 @@ use Illuminate\Support\Facades\Storage;
 
 class TransaksiController extends Controller
 {
-    public function create(Request $request)
-    {
-        $keranjangDetailId = $request->query('keranjang'); // single ID
-
-        if (!$keranjangDetailId) {
-            return redirect('/');
-        }
-
-        // 1. Ambil keranjang aktif milik user
-        $keranjang = Keranjang::where('id_customer', auth()->id())
-            ->where('status', CartStatus::AKTIF)->where('id_keranjang', $keranjangDetailId)
-            ->first();
-
-        if (!$keranjang) {
-            return redirect('/')->with('error', 'Keranjang tidak ditemukan');
-        }
-
-        return view('checkout.details', [
-            'keranjang' => $keranjang->details,
-            'keranjangUtama' => $keranjang,
-        ]);
-    }
 
     public function langsung(Request $request)
     {
@@ -68,7 +46,11 @@ class TransaksiController extends Controller
             'keranjangUtama' => $keranjang,
         ]);
     }
-
+    public function selesai($id) {
+        Transaksi::where('id_transaksi', $id)->where('id_customer', Auth::id())->update(['status' => TransaksiStatus::SUKSES]);
+        
+        return redirect()->back();
+    }
 
     public function bayar(Request $request)
     {
@@ -79,26 +61,7 @@ class TransaksiController extends Controller
 
             $hariSekarang = Carbon::now()->translatedFormat('l');
 
-            // Ambil jam operasional hari ini
-            /* $jam = JamOperasional::where('hari', $hariSekarang)->first(); */
-            /**/
-            /* if (!$jam) { */
-            /*     // Tidak ada jam operasional untuk hari ini */
-            /*     return false; */
-            /* } */
-            /* $now = Carbon::now(); */
-
-            // Parse jam buka & tutup
-            /* $jamBuka = Carbon::parse($jam->jam_buka); */
-            /* $jamTutup = Carbon::parse($jam->jam_tutup); */
-            /**/
-            /* if (!$now->between($jamBuka, $jamTutup)) { */
-            /*     // Tutup */
-            /**/
-            /*     return redirect()->back()->with('error', 'NIK tidak dapat diubah saat sudah diverifikasi'); */
-            /* } */
-            /**/
-
+          
             $path = Storage::disk('s3')->put(
                 'bukti-transfer', // folder di bucket
                 $file
@@ -141,7 +104,7 @@ class TransaksiController extends Controller
                 ]);
 
                 // Kurangi stok
-                $item->kaos_varian->decrement('stok_kaos', $item->qty);
+                // $item->kaos_varian->decrement('stok_kaos', $item->qty);
             }
 
 

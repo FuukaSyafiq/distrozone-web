@@ -48,6 +48,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('verification.notice');
 
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
+    Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
+    Route::post('beli-langsung-check/{id_varian}', [KeranjangController::class, 'belilangsung'])->name('beli.langsung.check');
+
     Route::delete('cart-varian/{id}', [KeranjangController::class, 'delete'])->name('cart-delete');
 
     Route::get('/orders', [TransaksiController::class, 'transaksi'])->name('transaksi.render');
@@ -71,6 +74,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+
+    Route::put('transaksi/selesai/{id}', [TransaksiController::class, 'selesai'])->name('transaksi.selesai');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');

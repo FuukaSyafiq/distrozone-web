@@ -32,7 +32,7 @@ return new class extends Migration
             ]);
 
             $table->decimal('total_harga', 12, 2);
-            $table->decimal('ongkir', 12, 2)->default(0);
+            $table->decimal('ongkir', 12, 2)->nullable();
             $table->integer('id_ongkir');
             $table->enum('status', [
                 'PENDING',

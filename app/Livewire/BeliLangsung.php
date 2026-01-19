@@ -16,7 +16,6 @@ class BeliLangsung extends Component
     public Kaos $kaos;
     public KaosVariant $variant;
 
-    #[Reactive]
     public $quantity = 1;
 
     public function mount(KaosVariant $variant, int $quantity)
@@ -40,8 +39,7 @@ class BeliLangsung extends Component
             return;
         }
         $keranjang = Keranjang::where('status', KeranjangStatus::AKTIF)->where('id_customer', $user->id_user)->first();
-        // $keranjang = Keranjang::getKeranjangByCustomerId($user->id_user);
-
+        // dd($this->quantity);
         if (!$keranjang) {
             $keranjang = Keranjang::create([
                 'status' => CartStatus::AKTIF,
@@ -49,7 +47,7 @@ class BeliLangsung extends Component
             ]);
         }
 
-        $keranjangDetail = KeranjangDetail::create([
+       $keranjangDetail =  KeranjangDetail::create([
             'id_keranjang' => $keranjang->id_keranjang,
             'id_kaos_varian' => $this->variant->id,
             'harga_satuan' => $this->kaos->harga_jual,
@@ -57,15 +55,14 @@ class BeliLangsung extends Component
             'subtotal' => $this->kaos->harga_jual * $this->quantity
         ]);
 
+        KaosVariant::where('id', $this->variant->id)->decrement('stok_kaos', $this->quantity);
 
         // return redirect()->route('checkout');
-        return redirect()->route('checkout', [
-            'keranjang' => $keranjang->id_keranjang
+        return redirect()->route('checkout.details', [
+            'keranjang' => $keranjangDetail,
+            'keranjangUtama' => $keranjang
         ]);
 
-        // return redirect()->to('checkout', [
-        // 'keranjang' => $keranjangDetail,
-        // 'keranjangUtama' => $keranjang,
-        // ]);
+      
     }
 }

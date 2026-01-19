@@ -64,6 +64,8 @@
 								<form action="{{ route('cart-delete', $item->id_keranjang_detail) }}" method="POST"
 									onsubmit="return confirm('Apakah Anda yakin ingin menghapus item ini?')">
 									@csrf
+
+									<input type="hidden" name="quantity" value="{{ $item->qty }}">
 									@method('DELETE')
 									<button type="submit" class="text-red-600 hover:text-red-900 font-medium">
 										Hapus
@@ -87,27 +89,39 @@
 			<div class="mt-6 flex justify-end">
 				<div class="bg-white rounded-lg shadow p-6 w-full md:w-96">
 					<h3 class="text-lg font-semibold text-gray-900 mb-4">Ringkasan Belanja</h3>
+			
 					<div class="space-y-3">
 						<div class="flex justify-between text-sm">
 							<span class="text-gray-600">Total Item</span>
-							<span class="font-medium">{{ $cartItems->where('keranjang.status', 'AKTIF')->count()
-								}}</span>
+							<span class="font-medium">
+								{{ $cartItems->where('keranjang.status', 'AKTIF')->count() }}
+							</span>
 						</div>
 						<div class="flex justify-between text-sm">
 							<span class="text-gray-600">Total Belanja</span>
 							<span class="font-semibold text-lg text-gray-900">
-								Rp{{ number_format($cartItems->where('keranjang.status', 'AKTIF')->sum('subtotal'), 0,
-								',', '.') }}
+								Rp{{ number_format($cartItems->where('keranjang.status', 'AKTIF')->sum('subtotal'), 0, ',', '.') }}
 							</span>
 						</div>
 					</div>
+			
 					@php
-					$activeCart = $cartItems->where('keranjang.status', 'AKTIF')->first();
+					$activeItems = $cartItems->where('keranjang.status', 'AKTIF');
 					@endphp
-					<a href="{{ route('checkout') }}?keranjang={{ $activeCart->id_keranjang ?? '' }}"
-						class="w-full mt-6 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-colors text-center block">
-						Checkout
-					</a>
+			
+					<form action="{{ route('cart.check') }}" method="POST" class="mt-6">
+						@csrf
+			
+						@forelse($activeItems as $item)
+						<input type="hidden" name="keranjang_detail_ids[]" value="{{ $item->id_keranjang_detail }}">
+						@empty
+						@endforelse
+			
+						<button type="submit"
+							class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-colors">
+							Checkout
+						</button>
+					</form>
 				</div>
 			</div>
 			@endif
@@ -171,7 +185,8 @@
 								</span>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
-								<a href="/kaos/{{ $item->kaos_varian->kaos->id_kaos }}" class="text-green-600 hover:text-green-900 font-medium">
+								<a href="/kaos/{{ $item->kaos_varian->kaos->id_kaos }}"
+									class="text-green-600 hover:text-green-900 font-medium">
 									Lihat
 								</a>
 							</td>

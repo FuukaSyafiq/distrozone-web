@@ -4,33 +4,20 @@
         maxStock: {{ $variant->stok_kaos }},
         pricePerItem: {{ $kaos->harga_jual }},
         originalPrice: {{ $kaos->harga_jual }},
-        get subtotal() {
-            return this.quantity * this.pricePerItem;
-        },
-        get originalSubtotal() {
-            return this.originalPrice ? this.quantity * this.originalPrice : null;
-        },
         increment() {
             if (this.quantity < this.maxStock) {
                 this.quantity++;
-                @this.set('quantity', this.quantity);
+                this.$dispatch('quantity-updated', this.quantity);
             }
         },
         decrement() {
             if (this.quantity > 1) {
                 this.quantity--;
-                @this.set('quantity', this.quantity);
+                this.$dispatch('quantity-updated', this.quantity);
             }
         },
-        formatPrice(price) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(price).replace('IDR', 'Rp');
-        }
-    }" class="bg-white border-2 border-gray-200 rounded-xl p-6">
+    }" class="bg-white border-2 border-gray-200 rounded-xl p-6"
+        x-on:quantity-updated="$wire.set('quantity', $event.detail)">
         <h3 class="font-bold text-gray-900 mb-4">Atur jumlah dan catatan</h3>
 
         <!-- Selected Product Info -->
@@ -54,8 +41,7 @@
                     class="px-3 py-2 transition-colors">
                     -
                 </button>
-                <input type="number" x-model.number="quantity" min="1" :max="maxStock"
-                    @input="quantity = Math.max(1, Math.min(maxStock, parseInt($event.target.value) || 1)); @this.set('quantity', quantity)"
+                <input type="number" x-model.number="quantity" min="1" :max="maxStock" min="1" @input="quantity"
                     class="w-16 text-center border-x-2 border-gray-200 py-2 focus:outline-none">
                 <button @click="increment" :disabled="quantity >= maxStock"
                     :class="quantity >= maxStock ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50'"
@@ -72,15 +58,35 @@
         <div class="mb-4 pb-4 border-b">
             <div class="flex justify-between items-baseline">
                 <span class="text-gray-700">Subtotal</span>
-                <span class="text-2xl font-bold text-gray-900" x-text="formatPrice(subtotal)"></span>
+                <span class="text-2xl font-bold text-gray-900">Rp {{ number_format($quantity * $kaos->harga_jual, 0,
+                    ',', '.') }}</span>
             </div>
         </div>
 
         <!-- Action Buttons -->
         @if($variant->stok_kaos > 0)
         <div class="space-y-3">
-            <livewire:beli-langsung :variant="$variant" :quantity="$quantity" wire:key="add-cart-{{ $variant->id }}" />
-            <livewire:add-cart :variant="$variant" :quantity="$quantity" wire:key="add-cart-{{ $variant->id }}" />
+            {{-- @php
+            print_r($quantity * $kaos->harga_jual);
+            @endphp --}}
+            <form action="{{ route('beli.langsung.check', $variant->id) }}" method="POST" class="mt-6">
+                @csrf
+
+                <input type="hidden" name="quantity" value="{{ $quantity}}">
+
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Beli langsung
+                </button>
+            </form>
+
+            <livewire:add-cart :variant="$variant" :quantity="$quantity"
+                wire:key="add-cart-{{ $variant->id }}{{$quantity  }}" />
         </div>
         @else
         <button disabled class="w-full bg-gray-300 text-gray-500 font-semibold py-3 px-4 rounded-lg cursor-not-allowed">

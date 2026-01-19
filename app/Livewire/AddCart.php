@@ -16,7 +16,6 @@ class AddCart extends Component
     public Kaos $kaos;
     public KaosVariant $variant;
 
-    #[Reactive]
     public $quantity = 1;
 
     public function mount(KaosVariant $variant, int $quantity)
@@ -24,6 +23,10 @@ class AddCart extends Component
         $this->variant = $variant;
         $this->kaos = $variant->kaos;
         $this->quantity = $quantity;
+    }
+
+    public function updatedQuantity($value)
+    {
     }
 
     public function render()
@@ -41,8 +44,7 @@ class AddCart extends Component
         }
 
         $keranjang = Keranjang::where('status', KeranjangStatus::AKTIF)->where('id_customer', $user->id_user)->first();
-        // $keranjang = Keranjang::getKeranjangByCustomerId($user->id_user);
-
+        // dd($this->quantity);
         if (!$keranjang) {
             $keranjang = Keranjang::create([
                 'status' => CartStatus::AKTIF,
@@ -57,6 +59,8 @@ class AddCart extends Component
             'qty' => $this->quantity,
             'subtotal' => $this->kaos->harga_jual * $this->quantity
         ]);
+
+        KaosVariant::where('id', $this->variant->id)->decrement('stok_kaos', $this->quantity);
 
         $this->dispatch('toast', message: 'Berhasil ditambahkan ke keranjang');
     }
