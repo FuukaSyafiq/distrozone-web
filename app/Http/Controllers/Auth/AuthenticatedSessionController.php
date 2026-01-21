@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
     {
 
         $request->authenticate();
-        if ($request->user()->status == UserStatus::BANNED){
+        if ($request->user()->status == UserStatus::BANNED) {
             $this->dispatch('toast', message: 'Akun Anda telah diblokir secara permanen. Silakan hubungi administrator.');
         }
 
@@ -48,8 +48,8 @@ class AuthenticatedSessionController extends Controller
         } else if ($request->user()->role_id == Role::getIdByRole("KASIR")) {
             return redirect('/kasir');
         }
-        
-        return redirect('/');
+
+        return redirect()->to('/');
     }
 
     /**

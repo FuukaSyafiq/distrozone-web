@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pembayaran', function (Blueprint $table) {
             $table->id("id_pembayaran");
-            $table->integer("id_transaksi");
+            $table->unsignedInteger("id_transaksi");
             $table->enum('status', [
                 'MENUNGGU',
                 'DITERIMA',
@@ -21,10 +21,9 @@ return new class extends Migration
             ])->default("MENUNGGU");
 
             $table->string("no_invoice");   
-            $table->unsignedInteger("bukti_transfer")->nullable();
+            $table->string("bukti_transfer")->nullable();
             $table->timestamps();
 
-            $table->foreign("bukti_transfer")->references("id")->on("images")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign("id_transaksi")->references("id_transaksi")->on("transaksi")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }

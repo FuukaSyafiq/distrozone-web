@@ -16,7 +16,7 @@ class Warna extends Model
     protected $fillable = [
         'key',
         'label',
-        'tw_class',
+        'rgb',
     ];
 
     public static function getWarna($key)

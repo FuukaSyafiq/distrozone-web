@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="bg-gray-900 w-full text-gray-300 mt-16">
+<footer class="bg-gray-900 w-full text-gray-300 ">
     <div class="max-w-7xl mx-auto px-6 py-12">
         <div class="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-4 gap-10">
             <!-- Brand -->
@@ -22,6 +22,7 @@
                     <li><a href="/" class="hover:text-white transition">Home</a></li>
                     @if (auth()->user())
                     <li><a href="{{ route('cart') }}" class="hover:text-white transition">Cart</a></li>
+                    <li><a href="{{ route('transaksi.render') }}" class="hover:text-white transition">Orders</a></li>
                     <li><a href="/profile" class="hover:text-white transition">Profile</a></li>
 
                     @endif
@@ -34,9 +35,7 @@
                     Bantuan
                 </h3>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="/faq" class="hover:text-white transition">FAQ</a></li>
-                    <li><a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
-                            class="hover:text-white transition">Customer service</a></li>
+                    <li><a href="https://distrozonesyafiq.tawk.help" target="_blank" class="hover:text-white transition">FAQ</a></li>
                 </ul>
             </div>
 
@@ -57,14 +56,7 @@
 
                 </ul>
 
-                <!-- Social Icons -->
-                <div class="flex items-center gap-4 mt-5">
-                    <a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
-                        class="hover:text-white transition" target="_blank">
-                        <x-bi-telegram class="w-8 h-8" />
-                    </a>
-                </div>
-            </div>
+           </div>
 
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\KaosResource\Pages;
 use App\Filament\Resources\KaosResource\RelationManagers;
 use App\Models\Kaos;
+use App\Models\KaosVariant;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\View;
@@ -22,6 +23,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Storage;
+use Filament\Infolists\Components\RepeatableEntry;
 use App\Models\Image;
 use App\Models\Kota;
 use Filament\Infolists\Components\Actions;
@@ -35,8 +37,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use App\Models\Warna;
-use App\Models\KaosVariant;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
+use App\Models\Role;
 
 class KaosResource extends Resource
 {
@@ -82,8 +85,40 @@ class KaosResource extends Resource
                         ->required(),
                 ])
                 ->columns(2), // tampil 2 kolom untuk layout lebih rapi
+            Repeater::make('variants')->columnSpanFull()
+                ->label('Varian Kaos')
+                ->relationship('variants') // relasi hasMany di model Kaos
+                ->schema([
+                    Select::make('warna_id')
+                        ->label('Warna')
+                        ->relationship('warna', 'label')
+                        ->required(),
+
+                    Select::make('ukuran_id')
+                        ->label('Ukuran')
+                        ->relationship('ukuran', 'ukuran')
+                        ->required(),
+
+                    TextInput::make('stok_kaos')
+                        ->label('Stok')
+                        ->numeric()
+                        ->required(),
+
+                    FileUpload::make('image_path')
+                        ->label('Foto')
+                        ->disk('s3')
+                        ->directory('kaos')
+                        ->image()
+                        ->imageEditor()
+                        ->required(),
+                ])
+                ->columns(2)
+                ->addActionLabel('Tambah Varian')
+                ->minItems(1)
+                ->collapsible(),
         ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -92,14 +127,17 @@ class KaosResource extends Resource
             ->columns([
                 TextColumn::make('nama_kaos')
                     ->label('Nama'),
+                TextColumn::make('description')
+                    ->label('Description'),
                 TextColumn::make('merek.merek')
                     ->label('Merek'),
                 TextColumn::make('type.type')
-                    ->label('Tipe'),
+                    ->label('Type'),
                 TextColumn::make('harga_jual')
                     ->label('Harga jual')->money('IDR', true),
                 TextColumn::make('harga_pokok')
                     ->label('Harga pokok')->money('IDR', true),
+
                 TextColumn::make('nama_kaos')
                     ->searchable(),
             ])
@@ -140,31 +178,23 @@ class KaosResource extends Resource
                         TextEntry::make('harga_pokok')
                             ->label('Harga pokok')
                             ->money('IDR'),
-                    ]),
-
-                SectionEntry::make('Deskripsi')
-                    ->schema([
                         TextEntry::make('description')
                             ->label('Deskripsi'),
                     ]),
-
-                Actions::make([
-                    Action::make('edit')
-                        ->label('Edit')
-                        ->icon('heroicon-o-pencil')
-                        ->url(fn($record) => static::getUrl('edit', ['record' => $record])),
-
-                    Action::make('delete')
-                        ->label('Hapus')
-                        ->icon('heroicon-o-trash')
-                        ->color('danger')
-                        ->requiresConfirmation()
-                        ->action(function ($record) {
-                            Storage::disk('s3')->delete($record->image_path);
-                            $record->delete();
-                        }),
-                ])
-                    ->columns(2),
+                RepeatableEntry::make('variants')
+                    ->label('Daftar Kaos')->columnSpanFull()->columns(2)
+                    ->schema([
+                        TextEntry::make('ukuran.ukuran')
+                            ->label('Ukuran kaos')
+                            ->badge(),
+                        TextEntry::make('warna.label')
+                            ->label('Warna'),
+                        TextEntry::make('stok_kaos')
+                            ->label('Stok kaos'),
+                        ImageEntry::make('image_path')->label('Foto kaos')
+                            ->disk('s3')
+                            ->height(100),
+                    ]),
             ]);
     }
 

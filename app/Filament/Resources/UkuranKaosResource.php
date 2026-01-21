@@ -14,6 +14,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Role;
+
 
 class UkuranKaosResource extends Resource
 {
@@ -23,6 +25,15 @@ class UkuranKaosResource extends Resource
 
     protected static ?string $navigationGroup = 'Kaos';
     protected static ?string $label = "Ukuran kaos";
+
+
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+   
+
+
     public static function form(Form $form): Form
     {
         return $form

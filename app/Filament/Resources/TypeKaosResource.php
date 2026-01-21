@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use App\Models\Role;
 class TypeKaosResource extends Resource
 {
     protected static ?string $model = TypeKaos::class;
@@ -23,7 +24,17 @@ class TypeKaosResource extends Resource
 
     protected static ?string $navigationGroup = 'Kaos';
     protected static ?string $label = "Type kaos";
+
+
+public static function canAccess(): bool
+{
+    return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+}
+
+
     public static function form(Form $form): Form
+
+
     {
         return $form
             ->schema([

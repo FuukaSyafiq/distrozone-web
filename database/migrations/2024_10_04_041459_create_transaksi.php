@@ -16,9 +16,6 @@ return new class extends Migration
 
             $table->string('kode_transaksi', 30)->unique();
 
-            $table->integer('id_kasir');
-            $table->integer('id_customer');
-
             $table->unsignedBigInteger('id_kasir')->nullable();
             $table->unsignedBigInteger('id_customer')->nullable();
             $table->unsignedBigInteger('id_ongkir')->nullable();
@@ -28,12 +25,12 @@ return new class extends Migration
 
             $table->enum('metode_pembayaran', [
                 'CASH',
-                'TRANSFER',
+                'JAGO',
+                'BCA'
             ]);
 
             $table->decimal('total_harga', 12, 2);
             $table->decimal('ongkir', 12, 2)->nullable();
-            $table->integer('id_ongkir');
             $table->enum('status', [
                 'PENDING',
                 'ACC_KASIR',
@@ -56,9 +53,9 @@ return new class extends Migration
                 ->onDelete('set null')->cascadeOnUpdate();
 
             $table->foreign('id_customer')
-                  ->references('id_user')
-                  ->on('users')
-                  ->onDelete('set null')->cascadeOnUpdate();
+                ->references('id_user')
+                ->on('users')
+                ->onDelete('set null')->cascadeOnUpdate();
         });
     }
 

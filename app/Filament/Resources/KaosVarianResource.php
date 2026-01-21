@@ -25,6 +25,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
+use Filament\Forms\Components\Textarea;
+use App\Models\Role;
 
 class KaosVarianResource extends Resource
 {
@@ -33,18 +35,16 @@ class KaosVarianResource extends Resource
     protected static ?string $label = "Varian Kaos";
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+   
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                SectionForm::make('Varian Kaos')
-                    ->schema([
-
-                        Select::make('kaos_id')
-                            ->label('Kaos')
-                            ->relationship('kaos', 'nama_kaos')
-                            ->required(),
-                    ]),
                 SectionForm::make('Varian')
                     ->schema([
                         Select::make('warna_id')
@@ -61,11 +61,6 @@ class KaosVarianResource extends Resource
                             ->numeric()
                             ->label('Stok')
                             ->required(),
-                    ])
-                    ->columns(3),
-
-                SectionForm::make('Foto Kaos')
-                    ->schema([
                         FileUpload::make('image_path')
                             ->label('Foto')
                             ->disk('s3')
@@ -74,6 +69,7 @@ class KaosVarianResource extends Resource
                             ->imageEditor()
                             ->required(),
                     ])
+                    ->columns(2),
             ]);
     }
 

@@ -2,7 +2,7 @@
     {{--
     <x-carousel /> --}}
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 my-4">
         <h1 class="text-xl font-bold text-gray-800 mb-8">Koleksi Kaos Kami</h1>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -65,9 +65,9 @@
             @endforeach
         </div>
     </div>
-  <div class="w-full flex justify-center items-center py-4 bg-purple-800">
+  <div class="w-full flex py-10 justify-center items-center bg-purple-800">
         <div class="text-center">
-            <p class="mb-2 text-sm text-white">
+            <p class="my-3 text-lg text-white">
                 Butuh bantuan cepat? Cek FAQ dulu sebelum chat.
             </p>
             <a href="https://distrozonesyafiq.tawk.help" target="_blank"
@@ -75,5 +75,5 @@
                 FAQ
             </a>
         </div>
-    </div>      
+    </div>
 </x-app-layout>

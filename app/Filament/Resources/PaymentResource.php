@@ -30,6 +30,9 @@ use Illuminate\Support\Facades\Request;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action as ActionTable;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PembayaranAnnounce;
+use App\Mail\MengirimAnnounce;
 
 class PaymentResource extends Resource
 {
@@ -95,6 +98,8 @@ class PaymentResource extends Resource
                     ->label('Status transaksi')->badge(),
                 TextColumn::make('no_invoice')
                     ->label('No invoice'),
+                TextColumn::make('created_at')
+                    ->label('Tanggal'),
                 ImageColumn::make('bukti_transfer')->disk('s3')
                     ->label('Bukti transfer'),
 
@@ -149,10 +154,13 @@ class PaymentResource extends Resource
                                 'jenis' => "ONLINE"
                             ]);
 
+
                             $record->status = PembayaranStatus::DITERIMA;
                             $record->save();
                             $record->transaksi->status = TransaksiStatus::ACC_KASIR;
                             $record->transaksi->save();
+                            Mail::to($record->transaksi->customer->email)
+                                ->send(new PembayaranAnnounce($record->transaksi));
                         }),
                     ActionEntry::make('dikirim')
                         ->label('Dikirim')
@@ -169,7 +177,9 @@ class PaymentResource extends Resource
                             $record->save();
                             $record->transaksi->status = TransaksiStatus::DIKIRIM;
                             $record->transaksi->save();
-                        }),
+                    Mail::to($record->transaksi->customer->email)
+                        ->send(new MengirimAnnounce($record->transaksi));
+                }),
                     ActionEntry::make('ditolak')
                         ->label('Tolak')
                         ->visible(fn($record) => $record->status === PembayaranStatus::MENUNGGU ? true : false)

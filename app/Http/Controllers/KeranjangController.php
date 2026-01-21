@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class KeranjangController extends Controller
 {
     public function create() {
-        
+
         $cartItems = KeranjangDetail::getKeranjangUserLogin();
         // dd($cartItems->toJson());
 
@@ -29,7 +29,6 @@ class KeranjangController extends Controller
 
         if (!auth()->check()) {
             return redirect()->to('login');
-            return;
         }
 
         DB::beginTransaction();
@@ -67,7 +66,6 @@ class KeranjangController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             // kalau perlu log error
             logger()->error($e);
 

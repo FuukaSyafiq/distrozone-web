@@ -34,10 +34,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Infolists\Components\RepeatableEntry;
 
 class TransactionResource extends Resource
 {
-    protected static ?string $model = TransaksiDetail::class;
+    protected static ?string $model = Transaksi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Transaksi';
@@ -83,20 +84,24 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('transaksi.kode_transaksi')
+                TextColumn::make('kode_transaksi')
                     ->label('Kode transaksi'),
-                TextColumn::make('kaos_varian.kaos.nama_kaos')
-                    ->label('Kaos'),
-                TextColumn::make('transaksi.metode_pembayaran')
+                TextColumn::make('customer.nama')
+                    ->label('Customer'),
+                TextColumn::make('kasir.nama')
+                    ->label('Kasir'),
+                TextColumn::make('metode_pembayaran')
                     ->label('Metode pembayaran'),
-                TextColumn::make('transaksi.status')
+                TextColumn::make('status')
                     ->label('Status')->badge(),
-                TextColumn::make('qty')
-                    ->label('Quantity'),
-                TextColumn::make('harga_satuan')
-                    ->label('Harga satuan')->money('IDR', true),
-                TextColumn::make('subtotal')
-                    ->label('Subtotal')->money('IDR', true),
+                TextColumn::make('jenis_transaksi')
+                    ->label('Jenis transaksi')->badge(),
+                TextColumn::make('ongkir')
+                    ->label('Ongkir')->money('IDR', true),
+                TextColumn::make('total_harga')
+                    ->label('Total harga')->money('IDR', true),
+                TextColumn::make('created_at')
+                    ->label('Tanggal')->date('d M Y'),
             ])
             ->filters([
                 SelectFilter::make('status_transaksi')->options([
@@ -109,9 +114,7 @@ class TransactionResource extends Resource
                         return;
                     }
 
-                    $query->whereHas('transaksi', function ($q) use ($data) {
-                        $q->where('status', $data['value']);
-                    });
+                    $query->where('status', $data['value']);
                 })
             ])
             ->actions([
@@ -142,58 +145,24 @@ class TransactionResource extends Resource
             ->schema([
                 SectionEntry::make('Detail')->columns(3)
                     ->schema([
-                        TextEntry::make('transaksi.kode_transaksi')
+                        TextEntry::make('kode_transaksi')
                             ->label('Kode transaksi'),
-                        TextEntry::make('transaksi.jenis_transaksi')
+                        TextEntry::make('jenis_transaksi')
                             ->label('Jenis transaksi')->badge(),
-                        TextEntry::make('transaksi.metode_pembayaran')
+                        TextEntry::make('metode_pembayaran')
                             ->label('Metode pembayaran')->badge(),
-                        TextEntry::make('transaksi.total_harga')
+                        TextEntry::make('total_harga')
                             ->label('Total harga')->money('IDR', true),
-                        TextEntry::make('transaksi.ongkir')
+                        TextEntry::make('ongkir')
                             ->label('Ongkir')->money('IDR', true),
-                        TextEntry::make('transaksi.ongkir.tarif_per_kg')
+                        TextEntry::make('ongkir.tarif_per_kg')
                             ->label('Tarif ongkir / kg')->money('IDR', true),
-                        TextEntry::make('transaksi.status')
+                        TextEntry::make('status')
                             ->label('Status transaksi')->badge(),
-                        TextEntry::make('transaksi.kasir.nama')
+                        TextEntry::make('kasir.nama')
                             ->label('Kasir'),
 
 
-                    ]),
-                SectionEntry::make('Customer')->columns(2)
-                    ->schema([
-                        TextEntry::make('transaksi.customer.nama')
-                            ->label('Customer'),
-                        TextEntry::make('transaksi.customer.no_telepon')
-                            ->label('No telepon'),
-                        TextEntry::make('transaksi.customer.kota.kota')
-                            ->label('Kota'),
-                        TextEntry::make('transaksi.customer.kota.provinsi.provinsi')
-                            ->label('Provinsi'),
-                        TextEntry::make('transaksi.customer.alamat_lengkap')
-                            ->label('Alamat'),
-                        TextEntry::make('transaksi.customer.nik')
-                            ->label('NIK'),
-                        TextEntry::make('transaksi.customer.email')
-                            ->label('Email'),
-                    ]),
-                SectionEntry::make('Kaos')->columns(2)
-                    ->schema([
-                        TextEntry::make('kaos_varian.kaos.nama_kaos')
-                            ->label('Kaos'),
-                        TextEntry::make('kaos_varian.kaos.merek.merek')
-                            ->label('Merek kaos'),
-                        TextEntry::make('kaos_varian.kaos.type.type')
-                            ->label('Type kaos')->badge(),
-                        TextEntry::make('kaos_varian.warna.label')
-                            ->label('Warna kaos')->badge(),
-                        TextEntry::make('kaos_varian.ukuran.ukuran')
-                            ->label('Ukuran kaos')->badge(),
-                        TextEntry::make('kaos_varian.kaos.harga_jual')
-                            ->label('Harga jual')->money('IDR', true),
-                        TextEntry::make('kaos_varian.stok_kaos')
-                            ->label('Stok kaos'),
                     ])->footerActions([
                         ActionEntry::make('cetak')
                             ->label('Cetak')
@@ -204,12 +173,56 @@ class TransactionResource extends Resource
                                 'date' => $record->created_at->toDateString()
                             ]))->openUrlInNewTab()
                     ]),
-                SectionEntry::make('Foto kaos')->columns(2)
+                SectionEntry::make('Customer')->columns(2)
                     ->schema([
-                        ImageEntry::make('customer_image_by_kaos')->label("")
+                        TextEntry::make('customer.nama')
+                            ->label('Customer'),
+                        TextEntry::make('customer.no_telepon')
+                            ->label('No telepon'),
+                        TextEntry::make('customer.kota.kota')
+                            ->label('Kota'),
+                        TextEntry::make('customer.kota.provinsi.provinsi')
+                            ->label('Provinsi'),
+                        TextEntry::make('customer.alamat_lengkap')
+                            ->label('Alamat'),
+                        TextEntry::make('customer.nik')
+                            ->label('NIK'),
+                        TextEntry::make('customer.email')
+                            ->label('Email'),
+                    ]),
+
+                RepeatableEntry::make('details')
+                    ->label('Daftar Kaos')->columnSpanFull()->columns(2)
+                    ->schema([
+                        TextEntry::make('kaos_varian.kaos.nama_kaos')
+                            ->label('Kaos'),
+
+                        TextEntry::make('kaos_varian.kaos.merek.merek')
+                            ->label('Merek kaos'),
+
+                        TextEntry::make('kaos_varian.kaos.type.type')
+                            ->label('Type kaos')
+                            ->badge(),
+
+                        TextEntry::make('kaos_varian.warna.label')
+                            ->label('Warna kaos')
+                            ->badge(),
+
+                        TextEntry::make('kaos_varian.ukuran.ukuran')
+                            ->label('Ukuran kaos')
+                            ->badge(),
+
+                        TextEntry::make('kaos_varian.kaos.harga_jual')
+                            ->label('Harga jual')
+                            ->money('IDR', true),
+
+                        TextEntry::make('kaos_varian.stok_kaos')
+                            ->label('Stok kaos'),
+
+                        ImageEntry::make('kaos_varian.image_path')->label('Foto kaos')
                             ->disk('s3')
-                            ->height(300),
-                    ])
+                            ->height(100),
+                    ]),
             ]);
     }
     public static function getPages(): array

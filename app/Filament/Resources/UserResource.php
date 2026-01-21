@@ -35,18 +35,18 @@ class UserResource extends Resource
 
     protected static ?string $label = "Customer";
 
-    protected static ?string $navigationGroup = 'Customer';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+    }
+
+   protected static ?string $navigationGroup = 'Customer';
 
     public static function canCreate(): bool
     {
         return false;
     }
-
-    public static function canAccess(): bool
-    {
-        return auth()->user()->role_id === Role::getIdByRole('ADMIN') || auth()->user()->role_id === Role::getIdByRole('KASIR');
-    }
-
     public static function canView(Model $record): bool
     {
         return true;

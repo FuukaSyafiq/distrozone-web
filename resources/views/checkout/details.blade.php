@@ -14,14 +14,15 @@
 
 	// safety check
 	$ongkirValue = $ongkirTarif?->tarif_per_kg ?? 0;
-
+	
 	// total qty
 	$totalQty = $keranjang->sum('qty');
-
-	// jika > 3 kaos → ongkir x2
-	if ($totalQty > 3) {
-	$ongkirValue *= 2;
-	}
+	
+	// hitung multiplier
+	$multiplier = (int) ceil($totalQty / 3); // setiap 3 kaos = 1x ongkir
+	
+	// total ongkir
+	$ongkirValue *= $multiplier;
 
 	$total = $subtotal + $ongkirValue;
 	@endphp
@@ -334,7 +335,10 @@
 						<form method="POST" action="{{ route('payment.confirm') }}" enctype="multipart/form-data"
 							id="paymentForm">
 							@csrf
-							<input type="hidden" name="keranjang_id" value="{{ $keranjangUtama->id_keranjang }}">
+							@foreach ($keranjang as $k)
+							<input type="hidden" name="keranjang_details[]" value="{{ $k->id_keranjang_detail }}">
+
+							@endforeach
 							<input type="hidden" name="payment_method" x-model="paymentMethod">
 							<input type="hidden" name="total_amount" x-bind:value="total">
 							<input type="hidden" name="ongkir_tarif_id" value="{{ $ongkirTarif->id }}">

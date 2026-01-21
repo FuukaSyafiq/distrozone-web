@@ -27,7 +27,7 @@ class TransaksiController extends Controller
 
     public function langsung(Request $request)
     {
-        $keranjangDetailId = $request->query('keranjang_details'); // single ID
+        $keranjangDetailId = $request->query('keranjang_details');
 
         if (!$keranjangDetailId) {
             return redirect('/');
@@ -68,23 +68,18 @@ class TransaksiController extends Controller
                 'bukti-transfer', // folder di bucket
                 $file
             );
-            $keranjangId   = $request->input('keranjang_id');
+            $keranjangDetailId = $request->keranjang_details;
+
+            // $keranjangId   = $request->input('keranjang_id');
             $paymentMethod = $request->input('payment_method');
             $ongkirTarifId = $request->input('ongkir_tarif_id');
             $ongkirTotal = $request->input('ongkir_total');
             $total = $request->input('total');
-
-
-            // 1️⃣ Ambil item keranjang user
-            $items = Keranjang::where('id_keranjang', $keranjangId)
-                ->where('status', KeranjangStatus::AKTIF)->where('id_customer', $customer->id_user)
-                ->first();
-
             // 6️⃣ Transaksi (HEADER)
             $transaksi = Transaksi::create([
                 'kode_transaksi'     => Kode::GenerateKodeTransaksi(),
                 'jenis_transaksi'    => 'ONLINE',
-                'metode_pembayaran'  => 'TRANSFER',
+                'metode_pembayaran'  => strtoupper($paymentMethod),
                 'total_harga'        => $total,
                 'id_kasir' => null,
                 'id_customer'        => $customer->id_user,
@@ -92,10 +87,21 @@ class TransaksiController extends Controller
                 'ongkir'             => $ongkirTotal,
                 'status'             => TransaksiStatus::PENDING,
             ]);
+            $keranjangDetails = KeranjangDetail::whereIn('id_keranjang_detail', $keranjangDetailId)->get();
+            // 9️⃣ Update status keranjang → CHECKOUT
+            $keranjangUser = Keranjang::where('id_customer', $customer->id_user)->where('status', CartStatus::CHECKOUT)->first();
+            if (!$keranjangUser) {
+              $keranjangUser =  Keranjang::create([
+                    'id_customer' => $customer->id_user,
+                    'status' => CartStatus::CHECKOUT
+                ]);
+            }
+            // dd($keranjangUser);
 
             // 7️⃣ Transaksi Detail
-            foreach ($items->details as $item) {
+            foreach ($keranjangDetails as $item) {
                 $kaos = Kaos::where('id_kaos', $item->kaos_varian->kaos_id)->first();
+                KeranjangDetail::where('id_keranjang_detail', $item->id_keranjang_detail)->update(["id_keranjang" => $keranjangUser->id_keranjang]);
 
                 TransaksiDetail::create([
                     'id_transaksi'   => $transaksi->id_transaksi,
@@ -116,9 +122,7 @@ class TransaksiController extends Controller
                 'bukti_transfer' => $path
             ]);
 
-            // 9️⃣ Update status keranjang → CHECKOUT
-            Keranjang::where('id_keranjang', $items->id_keranjang)
-                ->update(['status' => 'CHECKOUT']);
+
 
 
             DB::commit();

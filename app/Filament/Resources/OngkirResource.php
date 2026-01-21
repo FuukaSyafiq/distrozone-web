@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use App\Models\Role;
 class OngkirResource extends Resource
 {
     protected static ?string $model = Ongkir::class;
@@ -24,6 +25,14 @@ class OngkirResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-s-chart-bar';
     protected static ?string $navigationLabel = 'Ongkir';
     protected static ?string $navigationGroup = 'Toko';
+
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+    }
+
+
 
     public static function form(Form $form): Form
     {

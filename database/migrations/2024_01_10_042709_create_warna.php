@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('key');
             $table->string('label');
-            $table->string('tw_class');
+            $table->string('rgb');
         });
     }
 

@@ -7,6 +7,7 @@ use App\Filament\Resources\WarnaKaosResource\RelationManagers;
 use App\Models\Warna;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,17 +30,29 @@ class WarnaKaosResource extends Resource
             ->schema([
                 TextInput::make('key')->label('Key'),
                 TextInput::make('label')->label('Label'),
-                TextInput::make('tw_class')->label('Tailwind class')
-            ]);
+            ColorPicker::make('rgb')
+                ->label('RGB')
+                ->required()
+                ->default('#ff0000'), // default warna
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-            TextColumn::make('key')->label('Key'),
-            TextColumn::make('label')->label('Label'),
-            TextColumn::make('tw_class')->label('Tailwind class')
+                TextColumn::make('key')->label('Key'),
+                TextColumn::make('label')->label('Label'),
+                TextColumn::make('rgb')->label('RGB') ->formatStateUsing(function ($state) {
+                    return '<div style="
+                        width: 30px;
+                        height: 20px;
+                        background-color: '.$state.';
+                        border: 1px solid #ccc;
+                        border-radius: 3px;
+                    "></div>';
+                })
+                ->html()
             ])
             ->filters([
                 //
