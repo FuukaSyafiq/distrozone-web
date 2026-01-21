@@ -29,7 +29,7 @@ class PDFController extends Controller
         $pendapatan = Pendapatan::whereIn('id', $idArray)->get();
 
         $totalKeuntungan = $pendapatan->sum(function ($record) {
-            return $record->total_harga_jual - $record->total_harga_pokok;
+            return $record->keuntungan;
         });
 
 

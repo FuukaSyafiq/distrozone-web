@@ -15,6 +15,7 @@ class TransaksiDetail extends Model
         'id_kaos_varian',
         'qty',
         'harga_satuan',
+        'harga_pokok',
         'subtotal',
     ];
 
@@ -28,10 +29,4 @@ class TransaksiDetail extends Model
         return $this->belongsTo(Transaksi::class, 'id_transaksi');
     }
 
-    public function getCustomerImageByKaosAttribute()
-    {
-        return Image
-            ::where('id_kaos', $this->id_kaos)
-            ->value('path');
-    }
 }

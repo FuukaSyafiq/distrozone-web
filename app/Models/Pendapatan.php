@@ -8,20 +8,50 @@ use Illuminate\Database\Eloquent\Model;
 class Pendapatan extends Model
 {
     use HasFactory;
-    public $incrementing = true;
-    protected $table = "pendapatan";
-    protected $keyType = 'int';
-    protected $appends = ['keuntungan'];
+
+    protected $table = 'pendapatan';
+
     protected $fillable = [
-        'qty',
-        'nama_kaos',
-        'total_harga_jual',
-        'total_harga_pokok',
-        'ongkir'
+        'tanggal',
+        'transaksi_id',
+        'jumlah',
+        'jenis', // ONLINE / OFFLINE
     ];
 
+    protected $appends = ['modal', 'keuntungan'];
+
+    // =====================
+    // RELATION
+    // =====================
+    public function transaksi()
+    {
+        return $this->belongsTo(Transaksi::class, 'transaksi_id');
+    }
+
+    // =====================
+    // ACCESSOR
+    // =====================
+
+    /**
+     * Modal = total HPP barang terjual
+     */
+    public function getModalAttribute()
+    {
+        if (!$this->transaksi) {
+            return 0;
+        }
+
+        return $this->transaksi->details
+            ->sum(fn($d) => $d->qty * $d->harga_pokok);
+    }
+
+    /**
+     * Keuntungan = omset - modal - ongkir
+     */
     public function getKeuntunganAttribute()
     {
-        return $this->total_harga_jual - $this->total_harga_pokok;
+        $ongkir = $this->transaksi->ongkir;
+
+        return $this->jumlah - $this->modal - $ongkir;
     }
 }

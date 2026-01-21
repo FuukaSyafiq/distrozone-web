@@ -61,29 +61,50 @@ class PendapatanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_kaos')
-                    ->label('Nama Kaos'), // bukan kode transaksi
+                TextColumn::make('transaksi.metode_pembayaran')
+                    ->label('Metode Pembayaran')
+                    ->badge(),
 
-                TextColumn::make('total_harga_jual')
-                    ->label('Total Harga Jual')
+                TextColumn::make('jenis')
+                    ->label('Jenis Pendapatan')
+                    ->badge(),
+
+                TextColumn::make('jumlah')
+                    ->label('Omset')
                     ->money('IDR'),
 
-                TextColumn::make('total_harga_pokok')
+                TextColumn::make('modal')
                     ->label('Total Harga Pokok')
-                    ->money('IDR'),
-                TextColumn::make('ongkir')
+                    ->money('IDR')
+                // ->getStateUsing(
+                //     fn($record) =>
+                //     $record->transaksi->details
+                //         ->sum(fn($d) => $d->qty * $d->harga_pokok)
+                // ),
+                ,
+                TextColumn::make('transaksi.ongkir')
                     ->label('Ongkir')
-                    ->money('IDR'),
+                    ->money('IDR')
+                // ->getStateUsing(
+                //     fn($record) =>
+                //     $record->transaksi->ongkir
+                // ),
+                ,
                 TextColumn::make('keuntungan')
                     ->label('Keuntungan')
-                    ->money('IDR'),
+                    ->money('IDR')
+                // ->getStateUsing(
+                //     fn($record) =>
 
-
-
-                TextColumn::make('created_at')
+                //     $record->jumlah
+                //         - $record->transaksi->details
+                //         ->sum(fn($d) => $d->qty * $d->harga_pokok)
+                //         - $record->transaksi->ongkir
+                // ),
+                ,
+                TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->date('d M Y'),
-
             ])
             ->filters([
                 SelectFilter::make('bulan')
@@ -121,8 +142,7 @@ class PendapatanResource extends Resource
                     }),
 
             ])
-            ->actions([
-            ])
+            ->actions([])
             ->bulkActions([
                 BulkAction::make('cetak')
                     ->label('Cetak')
@@ -134,12 +154,11 @@ class PendapatanResource extends Resource
                         $startDate = $records->min('created_at')->toDateString();
                         $endDate   = $records->max('created_at')->toDateString();
 
-                       return redirect()->route('pendapatan.cetak.pdf', [
+                        return redirect()->route('pendapatan.cetak.pdf', [
                             'ids'        => $ids,
                             'start_date' => $startDate,
                             'end_date'  => $endDate,
                         ]);
-                      
                     }),
 
             ]);

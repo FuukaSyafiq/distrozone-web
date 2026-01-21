@@ -8,6 +8,7 @@ use App\Helpers\Kode;
 use App\Helpers\PembayaranStatus;
 use App\Helpers\TransaksiStatus;
 use App\Models\JamOperasional;
+use App\Models\Kaos;
 use App\Models\Keranjang;
 use App\Models\KeranjangDetail;
 use App\Models\Ongkir;
@@ -46,9 +47,10 @@ class TransaksiController extends Controller
             'keranjangUtama' => $keranjang,
         ]);
     }
-    public function selesai($id) {
+    public function selesai($id)
+    {
         Transaksi::where('id_transaksi', $id)->where('id_customer', Auth::id())->update(['status' => TransaksiStatus::SUKSES]);
-        
+
         return redirect()->back();
     }
 
@@ -61,7 +63,7 @@ class TransaksiController extends Controller
 
             $hariSekarang = Carbon::now()->translatedFormat('l');
 
-          
+
             $path = Storage::disk('s3')->put(
                 'bukti-transfer', // folder di bucket
                 $file
@@ -78,8 +80,6 @@ class TransaksiController extends Controller
                 ->where('status', KeranjangStatus::AKTIF)->where('id_customer', $customer->id_user)
                 ->first();
 
-
-
             // 6️⃣ Transaksi (HEADER)
             $transaksi = Transaksi::create([
                 'kode_transaksi'     => Kode::GenerateKodeTransaksi(),
@@ -95,16 +95,16 @@ class TransaksiController extends Controller
 
             // 7️⃣ Transaksi Detail
             foreach ($items->details as $item) {
+                $kaos = Kaos::where('id_kaos', $item->kaos_varian->kaos_id)->first();
+
                 TransaksiDetail::create([
                     'id_transaksi'   => $transaksi->id_transaksi,
                     'id_kaos_varian' => $item->id_kaos_varian,
                     'harga_satuan'   => $item->harga_satuan,
+                    'harga_pokok' => $kaos->harga_pokok,
                     'qty'            => $item->qty,
                     'subtotal'       => $item->subtotal,
                 ]);
-
-                // Kurangi stok
-                // $item->kaos_varian->decrement('stok_kaos', $item->qty);
             }
 
 

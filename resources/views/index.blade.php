@@ -65,4 +65,15 @@
             @endforeach
         </div>
     </div>
+  <div class="w-full flex justify-center items-center py-4 bg-purple-800">
+        <div class="text-center">
+            <p class="mb-2 text-sm text-white">
+                Butuh bantuan cepat? Cek FAQ dulu sebelum chat.
+            </p>
+            <a href="https://distrozonesyafiq.tawk.help" target="_blank"
+                class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
+                FAQ
+            </a>
+        </div>
+    </div>      
 </x-app-layout>

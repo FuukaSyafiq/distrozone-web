@@ -334,7 +334,7 @@
 						<form method="POST" action="{{ route('payment.confirm') }}" enctype="multipart/form-data"
 							id="paymentForm">
 							@csrf
-							<input type="hidden" name="keranjang_id" value="{{ request('keranjang') }}">
+							<input type="hidden" name="keranjang_id" value="{{ $keranjangUtama->id_keranjang }}">
 							<input type="hidden" name="payment_method" x-model="paymentMethod">
 							<input type="hidden" name="total_amount" x-bind:value="total">
 							<input type="hidden" name="ongkir_tarif_id" value="{{ $ongkirTarif->id }}">

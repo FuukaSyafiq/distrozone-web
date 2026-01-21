@@ -73,7 +73,7 @@ class PaymentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->modifyQueryUsing(
+            ->modifyQueryUsing(
                 fn($query) =>
                 $query->where('status', '!=', PembayaranStatus::DITERIMA)
                     ->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::SUKSES))
@@ -142,17 +142,12 @@ class PaymentResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
-                            // dd($record->transaksi);
-                            foreach ($record->transaksi->details as $detail) {
-                                Pendapatan::create([
-                                    'nama_kaos' => $detail->kaos_varian->kaos->nama_kaos,
-                                    'qty' => $detail->qty,
-                                    'total_harga_jual' => $detail->subtotal,
-                                    'total_harga_pokok' =>
-                                    $detail->kaos_varian->kaos->harga_pokok * $detail->qty,
-                                    'ongkir' => $record->transaksi->ongkir,
-                                ]);
-                            }
+                            Pendapatan::create([
+                                'tanggal' => now()->toDateString(),
+                                'transaksi_id' => $record->transaksi->id_transaksi,
+                                'jumlah' => $record->transaksi->total_harga,
+                                'jenis' => "ONLINE"
+                            ]);
 
                             $record->status = PembayaranStatus::DITERIMA;
                             $record->save();

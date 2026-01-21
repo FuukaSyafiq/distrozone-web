@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('pendapatan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kaos');
-            $table->integer('qty');
-            $table->decimal('total_harga_jual', 12, 2);
-            $table->decimal('total_harga_pokok', 12, 2);
-            $table->decimal('ongkir', 12, 2)->nullable();
+            $table->unsignedInteger('transaksi_id');
+            $table->date('tanggal');
+            $table->decimal('jumlah', 12, 2);
+            $table->enum('jenis', ['OFFLINE', 'ONLINE']);
             $table->timestamps();
+          
+            $table->foreign('transaksi_id')
+                ->references('id_transaksi')
+                ->on('transaksi')
+                ->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
