@@ -1,7 +1,9 @@
 <x-app-layout>
 
 	@php
+	// use App\Models\KaosVariants;
 	$selectedVariants = $kaos->variants[0];
+	// dd($selectedVariants->warna_id);
 	@endphp
 
 	<div class="container mx-auto px-4 py-8">
@@ -78,13 +80,13 @@
 				<!-- Size Selection -->
 				<div class="mb-6">
 					<h3 class="text-sm font-semibold text-gray-700 mb-3">Ukuran:</h3>
-					<div class="flex flex-wrap gap-2">
-						@if($kaos->variants)
-						@foreach($kaos->variants as $k)
-						<button
-							class="px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700">
-							{{ $k->ukuran->ukuran }}
-						</button>
+					<div class="flex flex-wrap gap-2" id="sizeContainer">
+						@if($ukurans)
+						@foreach($ukurans as $k)
+							<button
+								class="px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700">
+								{{ $k->ukuran->ukuran }}
+							</button>
 						@endforeach
 						@endif
 					</div>
@@ -123,10 +125,33 @@
 						document.getElementById('mainImage').src = url;
 					}
 				
-					function changeVariant(id, image) {
+					async function changeVariant(id, image) {
 						// update gambar utama
 						changeImage(image);
+						const res = await fetch(`/variants/by-warna/${id}`);
+						const sizes = await res.json();
 				
+						console.log(sizes)
+						const container = document.getElementById('sizeContainer');
+						container.innerHTML = '';
+						
+						sizes.forEach(size => {
+							const btn = document.createElement('button');
+							btn.className =
+							'px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700';
+							
+							btn.textContent = size.ukuran;
+							
+							btn.onclick = () => {
+							console.log('Selected size variant ID:', size.id);
+							
+							// emit ke Livewire (kalau perlu)
+							if (window.Livewire) {
+								Livewire.dispatch('variantChanged', { variantId: size.id });
+							}
+							};
+							container.appendChild(btn);
+						});
 						// emit ke Livewire untuk update variant
 						if (window.Livewire) {
 							console.log('Emitting variantChanged event to Livewire'); // 🔹 Pastikan emit dijalankan
@@ -136,5 +161,4 @@
 						console.log('Selected variant ID:', id);
 					}
 	</script>
-	<livewire:scripts />
 </x-app-layout>

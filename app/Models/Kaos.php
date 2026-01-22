@@ -39,7 +39,7 @@ class Kaos extends Model
 
     public static function getKaosById(string $id)
     {
-        return Kaos::with([
+        $kaos = Kaos::with([
             'variants' => function ($q) {
                 $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id');
             },
@@ -48,6 +48,7 @@ class Kaos extends Model
         ])
             ->where('id_kaos', $id) // mencari berdasarkan id_kaos
             ->first();
+        return $kaos;
     }
 
 

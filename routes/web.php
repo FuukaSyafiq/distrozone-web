@@ -21,7 +21,16 @@ Route::get('/', [IndexController::class, 'gets'])->name('index');
 Route::get('/kaos/{id}', [KaosController::class, 'detail'])->name('kaos-detail');
 Route::post('/', [IndexController::class, 'store']);
 Route::get('/search', [KaosController::class , 'search'])->name('search');
-
+Route::get('/variants/by-warna/{variant}', function (\App\Models\KaosVariant $variant) {
+	return \App\Models\KaosVariant::with('ukuran')
+		->where('warna_id', $variant->warna_id)->where('kaos_id', $variant->kaos_id)
+		->get()
+		->map(fn($v) => [
+			'id' => $v->id,
+			'ukuran' => $v->ukuran->ukuran,
+		'kaos_id'  => $v->kaos_id,
+	]);
+});
 Route::delete('/images/{image}', [ImageController::class, 'destroy'])
 	->name('images.destroy');
 
