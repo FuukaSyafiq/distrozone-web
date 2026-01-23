@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use App\Models\Role;
+
 class TypeKaosResource extends Resource
 {
     protected static ?string $model = TypeKaos::class;
@@ -26,10 +27,10 @@ class TypeKaosResource extends Resource
     protected static ?string $label = "Type kaos";
 
 
-public static function canAccess(): bool
-{
-    return auth()->user()->role_id === Role::getIdByRole('ADMIN');
-}
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role_id === Role::getIdByRole('ADMIN');
+    }
 
 
     public static function form(Form $form): Form
@@ -46,8 +47,10 @@ public static function canAccess(): bool
     {
         return $table
             ->columns([
-                TextColumn::make('type')
-
+                TextColumn::make('type'),
+                TextColumn::make('kaos_count')
+                    ->label('Jumlah Kaos')
+                    ->counts('kaos') // 'kaos' adalah nama relationship di model Merek
             ])
             ->filters([
                 //

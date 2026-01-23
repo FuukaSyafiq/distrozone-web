@@ -25,7 +25,7 @@ class KaosController extends Controller
         $firstVariant = $kaos->variants->first();
 
         $ukurans = KaosVariant::with('ukuran')
-            ->where('kaos_id', $kaos->id)
+            ->where('kaos_id', $kaos->id_kaos)
             ->where('warna_id', $firstVariant->warna_id)
             ->get();
 

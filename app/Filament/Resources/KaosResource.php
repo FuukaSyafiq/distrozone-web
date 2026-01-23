@@ -90,10 +90,24 @@ class KaosResource extends Resource
                 ->relationship('variants') // relasi hasMany di model Kaos
                 ->schema([
                     Select::make('warna_id')
-                        ->label('Warna')
-                        ->relationship('warna', 'label')
-                        ->required(),
-
+                    ->label('Warna')
+                    ->relationship('warna', 'label')
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->allowHtml() // Penting: ini harus ada
+                    ->getOptionLabelFromRecordUsing(fn($record) => 
+                        "<div style='display: flex; align-items: center; gap: 4px;'>
+                            <div style='
+                                width: 20px; 
+                                height: 20px; 
+                                background-color: {$record->hex};
+                                border-radius: 3px; 
+                                border: 1px solid #ccc;
+                            '></div>
+                            <span>{$record->label}</span>
+                        </div>"
+                ),
                     Select::make('ukuran_id')
                         ->label('Ukuran')
                         ->relationship('ukuran', 'ukuran')

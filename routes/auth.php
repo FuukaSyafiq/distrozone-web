@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
@@ -42,11 +43,15 @@ Route::middleware(['web'])->group(
             ->name('password.store');
     }
 );
-
+Route::middleware('auth')->group(function () {
+    Route::get('/otp/verify', [OtpController::class, 'show'])->name('otp.verify');
+    Route::post('/otp/verify', [OtpController::class, 'verify']);
+    Route::post('/otp/resend', [OtpController::class, 'resend'])->name('otp.resend');
+});
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
-
+  
     Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
     Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
     Route::post('beli-langsung-check/{id_varian}', [KeranjangController::class, 'belilangsung'])->name('beli.langsung.check');

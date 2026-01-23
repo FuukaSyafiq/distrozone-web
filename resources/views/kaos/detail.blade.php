@@ -68,7 +68,8 @@
 						@foreach ($kaos->variants as $k)
 						<div class="flex flex-col justify-center items-center gap-2">
 							<button onclick="changeVariant({{ $k->id }}, '{{ Storage::url($k->image_path) }}')"
-								class="w-8 h-8 rounded-full {{ $k->warna->tw_class }} border-2 border-gray-300">
+								class="w-8 h-8 rounded-full border-2 border-gray-300"
+								style="background-color: {{ $k->warna->hex }};">
 							</button>
 							<span class="text-xs font-semibold text-gray-800">{{ $k->warna->label }}</span>
 						</div>
@@ -83,10 +84,10 @@
 					<div class="flex flex-wrap gap-2" id="sizeContainer">
 						@if($ukurans)
 						@foreach($ukurans as $k)
-							<button
-								class="px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700">
-								{{ $k->ukuran->ukuran }}
-							</button>
+						<button
+							class="px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700">
+							{{ $k->ukuran->ukuran }}
+						</button>
 						@endforeach
 						@endif
 					</div>

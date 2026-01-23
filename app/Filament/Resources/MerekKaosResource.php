@@ -46,7 +46,10 @@ class MerekKaosResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('merek')
+                TextColumn::make('merek'),
+            TextColumn::make('kaos_count')
+                ->label('Jumlah Kaos')
+                ->counts('kaos') // 'kaos' adalah nama relationship di model Merek
             ])
             ->filters([
                 //

@@ -30,6 +30,12 @@
                 <p class="text-sm font-medium text-gray-700">
                     {{ $kaos->nama_kaos }}
                 </p>
+                <p class="text-sm font-medium text-gray-700">
+                    Warna: {{ $variant->warna->label }}
+                </p>
+                <p class="text-sm font-medium text-gray-700">
+                   Ukuran: {{ $variant->ukuran->ukuran }}
+                </p>
             </div>
         </div>
 

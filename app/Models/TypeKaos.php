@@ -16,4 +16,9 @@ class TypeKaos extends Model
     protected $fillable = [
         'type'
     ];
+
+    public function kaos()
+    {
+        return $this->hasMany(Kaos::class, 'merek_id');
+    }
 }

@@ -30,8 +30,8 @@ class WarnaKaosResource extends Resource
             ->schema([
                 TextInput::make('key')->label('Key'),
                 TextInput::make('label')->label('Label'),
-            ColorPicker::make('rgb')
-                ->label('RGB')
+            ColorPicker::make('hex')
+                ->label('Hex')
                 ->required()
                 ->default('#ff0000'), // default warna
         ]);
@@ -43,7 +43,7 @@ class WarnaKaosResource extends Resource
             ->columns([
                 TextColumn::make('key')->label('Key'),
                 TextColumn::make('label')->label('Label'),
-                TextColumn::make('rgb')->label('RGB') ->formatStateUsing(function ($state) {
+                TextColumn::make('hex')->label('Hex')->formatStateUsing(function ($state) {
                     return '<div style="
                         width: 30px;
                         height: 20px;
