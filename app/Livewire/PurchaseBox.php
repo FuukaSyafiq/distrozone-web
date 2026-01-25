@@ -34,8 +34,7 @@ class PurchaseBox extends Component
     {
         if (!auth()->check()) {
             $this->dispatch('toast', message: "Login diperlukan untuk menambahkan produk ke keranjang.");
-            return redirect()->to('/login');
-            return;
+            return redirect("/login");
         }
 
         // return redirect()->to("/checkout?kaos={$this->kaos->id_kaos}&quantity={$this->quantity}");

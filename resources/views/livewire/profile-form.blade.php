@@ -36,16 +36,17 @@
             <input type="tel" wire:model="no_telepon" {{ $editing ? '' : 'disabled' }} value="{{ $no_telepon }}"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
         </div>
-     <div>
+        <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kota</label>
-            <select wire:model.live="kotaSelected"
+            <select wire:model.live="kotaSelected" {{ $editing ? '' : 'disabled' }}
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
                 <option value="">-- Pilih Kota --</option>
                 @foreach ($kota as $k)
                 {{-- Jangan pakai atribut 'selected', Livewire yang akan mengaturnya --}}
-                <option value="{{ $k->id }}">{{ $k->kota }}</option>
+                <option value="{{ $k->id }}" {{ $kotaSelected==$k->id ? 'selected' : '' }}>{{ $k->kota }}</option>
                 @endforeach
-            </select>  </div>
+            </select>
+        </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Provinsi</label>
             <input type="text" wire:model="provinsi" disabled value="{{ $provinsi }}"
@@ -79,6 +80,8 @@
                 value="{{ $alamat_lengkap }}"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
         </div>
+    </div>
+    <div>
     </div>
     @if($editing)
     <div class="w-full justify-end flex">

@@ -21,15 +21,13 @@ class Kaos extends Model
         'merek_id',
         'type_id',
         'description',
-        'harga_jual',
-        'harga_pokok',
-    ];
+   ];
 
     public static function getAllKaos()
     {
         return Kaos::with([
             'variants' => function ($q) {
-                $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id');
+                $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id', 'harga_jual');
             },
             'variants.warna',
             'variants.ukuran',
@@ -41,7 +39,7 @@ class Kaos extends Model
     {
         $kaos = Kaos::with([
             'variants' => function ($q) {
-                $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id');
+                $q->select('id', 'kaos_id', 'warna_id', 'image_path', 'stok_kaos', 'ukuran_id', 'harga_jual');
             },
             'variants.warna',
             'variants.ukuran',

@@ -5,6 +5,34 @@
 			<h1 class="text-3xl font-bold text-gray-900">Keranjang Belanja</h1>
 			<p class="text-gray-600 mt-2">Kelola item yang ada di keranjang Anda</p>
 		</div>
+		@if(session('message'))
+		<div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300"
+			x-transition:enter-start="opacity-0 transform -translate-y-2"
+			x-transition:enter-end="opacity-100 transform translate-y-0"
+			class="mb-6 flex items-center p-4 text-orange-800 border-l-4 border-orange-500 bg-orange-50 rounded-r-xl shadow-sm"
+			role="alert">
+
+			<svg class="flex-shrink-0 w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+				<path fill-rule="evenodd"
+					d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+					clip-rule="evenodd"></path>
+			</svg>
+
+			<div class="ml-3 text-sm font-bold tracking-wide uppercase">
+				{{ session('message') }}
+			</div>
+
+			<button @click="show = false"
+				class="ml-auto -mx-1.5 -my-1.5 bg-orange-50 text-orange-500 rounded-lg focus:ring-2 focus:ring-orange-400 p-1.5 hover:bg-orange-100 inline-flex h-8 w-8 transition-colors">
+				<span class="sr-only">Close</span>
+				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd"
+						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+						clip-rule="evenodd"></path>
+				</svg>
+			</button>
+		</div>
+		@endif
 
 		<!-- AKTIF Cart Table -->
 		<div class="mb-8">
@@ -71,6 +99,9 @@
 										Hapus
 									</button>
 								</form>
+								<a href="/kaos/{{ $item->kaos_varian->kaos->id_kaos }}" class="text-green-600 hover:text-green-900 font-medium">
+									Lihat
+								</a>
 							</td>
 						</tr>
 						@empty
@@ -89,7 +120,7 @@
 			<div class="mt-6 flex justify-end">
 				<div class="bg-white rounded-lg shadow p-6 w-full md:w-96">
 					<h3 class="text-lg font-semibold text-gray-900 mb-4">Ringkasan Belanja</h3>
-			
+
 					<div class="space-y-3">
 						<div class="flex justify-between text-sm">
 							<span class="text-gray-600">Total Item</span>
@@ -100,23 +131,24 @@
 						<div class="flex justify-between text-sm">
 							<span class="text-gray-600">Total Belanja</span>
 							<span class="font-semibold text-lg text-gray-900">
-								Rp{{ number_format($cartItems->where('keranjang.status', 'AKTIF')->sum('subtotal'), 0, ',', '.') }}
+								Rp{{ number_format($cartItems->where('keranjang.status', 'AKTIF')->sum('subtotal'), 0,
+								',', '.') }}
 							</span>
 						</div>
 					</div>
-			
+
 					@php
 					$activeItems = $cartItems->where('keranjang.status', 'AKTIF');
 					@endphp
-			
+
 					<form action="{{ route('cart.check') }}" method="POST" class="mt-6">
 						@csrf
-			
+
 						@forelse($activeItems as $item)
 						<input type="hidden" name="keranjang_detail_ids[]" value="{{ $item->id_keranjang_detail }}">
 						@empty
 						@endforelse
-			
+
 						<button type="submit"
 							class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-colors">
 							Checkout

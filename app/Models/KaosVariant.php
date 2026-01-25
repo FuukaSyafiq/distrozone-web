@@ -16,6 +16,8 @@ class KaosVariant extends Model
         'kaos_id',
         'warna_id',
         'ukuran_id',
+        'harga_jual',
+        'harga_pokok',
         'stok_kaos',
         'image_path'
     ];

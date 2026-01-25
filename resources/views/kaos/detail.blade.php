@@ -1,9 +1,7 @@
 <x-app-layout>
 
 	@php
-	// use App\Models\KaosVariants;
 	$selectedVariants = $kaos->variants[0];
-	// dd($selectedVariants->warna_id);
 	@endphp
 
 	<div class="container mx-auto px-4 py-8">
@@ -54,8 +52,8 @@
 				<!-- Price -->
 				<div class="mb-6">
 					<div class="flex items-baseline gap-3">
-						<span class="text-3xl font-bold text-gray-900" id="productPrice">
-							Rp{{ number_format($kaos->harga_jual, 0, ',', '.') }}
+						<span id="hargaJual" class="text-3xl font-bold text-gray-900" id="productPrice">
+							Rp. {{ number_format($selectedVariants->harga_jual, 0, ',', '.') }}
 						</span>
 					</div>
 				</div>
@@ -132,6 +130,7 @@
 						const res = await fetch(`/variants/by-warna/${id}`);
 						const sizes = await res.json();
 				
+						const harga = document.getElementById('hargaJual');
 						console.log(sizes)
 						const container = document.getElementById('sizeContainer');
 						container.innerHTML = '';
@@ -142,24 +141,31 @@
 							'px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700';
 							
 							btn.textContent = size.ukuran;
-							
+							console.log(size);
 							btn.onclick = () => {
-							console.log('Selected size variant ID:', size.id);
-							
-							// emit ke Livewire (kalau perlu)
+							console.log('Selected size variant ID:', size.harga_jual);
+        
+							harga.textContent =  "Rp. "  + formatCurrency(size.harga_jual)
+        
 							if (window.Livewire) {
 								Livewire.dispatch('variantChanged', { variantId: size.id });
 							}
 							};
 							container.appendChild(btn);
-						});
-						// emit ke Livewire untuk update variant
+		                     });
+
+							harga.textContent =  "Rp. " + formatCurrency(sizes[0].harga_jual);
+
 						if (window.Livewire) {
 							console.log('Emitting variantChanged event to Livewire'); // 🔹 Pastikan emit dijalankan
 							Livewire.dispatch('variantChanged', { variantId: id });
 						}
 				
 						console.log('Selected variant ID:', id);
-					}
+		}
+
+    function formatCurrency(amount) {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
 	</script>
 </x-app-layout>

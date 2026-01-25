@@ -108,17 +108,10 @@
                                 <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
                                 Keranjang saya
                             </a>
-                            <a href="/transaction" :class="tab === 'transactions'
-                                                                ? 'bg-indigo-50 border-indigo-600 text-gray-900 font-medium'
-                                                                : 'border-transparent text-gray-700 hover:bg-gray-50'"
-                                class="flex items-center px-6 py-3 border-l-4">
-                                <x-heroicon-o-clock class="w-5 h-5 mr-3" />
-                                Transaksi saya
-                            </a>
+
                         </nav>
                     </div>
                 </div>
-
                 <!-- Main Content -->
                 <div class=" space-y-6 w-full">
                     <!-- Personal Information -->
@@ -126,7 +119,6 @@
                     <div x-show="tab === 'profile'" x-cloak>
                         <livewire:profile-form />
                     </div>
-
                     <!-- PESANAN -->
                     {{-- <div x-show="tab === 'pesanan'" x-cloak>
                         <livewire:pesanansaya />

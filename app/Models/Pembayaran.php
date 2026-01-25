@@ -14,7 +14,8 @@ class Pembayaran extends Model
         'id_transaksi',
         'status',
         'no_invoice',
-        'bukti_transfer'
+        'bukti_transfer',
+        'catatan'
     ];
 
     public function transaksi()

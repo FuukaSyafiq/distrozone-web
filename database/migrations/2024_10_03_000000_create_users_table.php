@@ -20,13 +20,13 @@ return new class extends Migration {
             $table->string('alamat_lengkap')->nullable();
             $table->unsignedInteger('kota_id')->nullable();
             $table->string('no_telepon')->nullable()->unique();
-            $table->enum('nik_verified', ['EMPTY', 'PENDING','APPROVED','REJECTED'])->default('empty')->nullable();
+            $table->enum('nik_verified', ['EMPTY', 'PENDING', 'APPROVED', 'REJECTED'])->default('empty')->nullable();
             $table->string('nik')->nullable()->unique();
             $table->unsignedInteger('role_id');
             $table->string('foto_user')->nullable();
             $table->string('otp_code')->nullable();        // hash OTP
             $table->timestamp('otp_expires_at')->nullable();
-        $table->boolean('otp_verified')->default(false);
+            $table->boolean('otp_verified')->default(false);
             $table->rememberToken()->nullable();
             $table->timestamps();
 

@@ -18,8 +18,8 @@ class PembayaranStatus
 
 class TransaksiStatus
 {
+	const BELUMBAYAR = 'BELUMBAYAR';
 	const PENDING = 'PENDING';
-	const ACC_KASIR = 'ACC_KASIR';
 	const SUKSES = 'SUKSES';
 	const GAGAL = 'GAGAL';
 	const DIKIRIM = 'DIKIRIM';

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OtpMail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,8 +21,10 @@ class OtpController extends Controller
         $request->validate([
             'otp' => 'required|string|size:6',
         ]);
+        $userId = session('otp_user_id');
+        if (!$userId) return redirect('/login');
 
-        $user = Auth::user();
+        $user = User::findOrFail($userId);
 
         // Cek apakah OTP sudah expired
         if (now()->isAfter($user->otp_expires_at)) {
@@ -32,11 +35,15 @@ class OtpController extends Controller
 
         // Verifikasi OTP
         if (Hash::check($request->otp, $user->otp_code)) {
+            Auth::login($user);
             $user->update([
                 'otp_verified' => true,
                 'otp_code' => null,
                 'otp_expires_at' => null,
             ]);
+
+            session()->forget('otp_user_id');
+            $request->session()->regenerate();
             if (
                 $user->role_id == \App\Models\Role::getIdByRole('ADMIN')
             ) {
@@ -50,13 +57,15 @@ class OtpController extends Controller
 
         return back()->withErrors([
             'otp' => 'Kode OTP tidak valid.'
-        ]);
+        ])->withInput();;
     }
 
     public function resend()
     {
-        $user = Auth::user();
+        $userId = session('otp_user_id');
+        if (!$userId) return redirect('/login');
 
+        $user = User::findOrFail($userId);
         $otp = random_int(100000, 999999);
 
         $user->update([

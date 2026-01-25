@@ -4,6 +4,9 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KaosController;
+use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\OtpController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,19 +20,35 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [IndexController::class, 'gets'])->name('index');
-Route::get('/kaos/{id}', [KaosController::class, 'detail'])->name('kaos-detail');
-Route::post('/', [IndexController::class, 'store']);
-Route::get('/search', [KaosController::class , 'search'])->name('search');
-Route::get('/variants/by-warna/{variant}', function (\App\Models\KaosVariant $variant) {
-	return \App\Models\KaosVariant::with('ukuran')
-		->where('warna_id', $variant->warna_id)->where('kaos_id', $variant->kaos_id)
-		->get()
-		->map(fn($v) => [
-			'id' => $v->id,
-			'ukuran' => $v->ukuran->ukuran,
-		'kaos_id'  => $v->kaos_id,
-	]);
+Route::middleware(['web'])->group(function () {
+	Route::get('/', [IndexController::class, 'gets'])->name('index');
+	Route::get('/kaos/{id}', [KaosController::class, 'detail'])->name('kaos-detail');
+	Route::post('/', [IndexController::class, 'store']);
+	Route::get('/search', [KaosController::class, 'search'])->name('search');
+	Route::get('/variants/by-warna/{variant}', function (\App\Models\KaosVariant $variant) {
+		return \App\Models\KaosVariant::with('ukuran')
+			->where('warna_id', $variant->warna_id)->where('kaos_id', $variant->kaos_id)
+			->get()
+			->map(fn($v) => [
+				'id' => $v->id,
+				'ukuran' => $v->ukuran->ukuran,
+				'harga_jual' => $v->harga_jual,
+				'kaos_id'  => $v->kaos_id,
+			]);
+	});
+	Route::get('/otp/verify', [OtpController::class, 'show'])->name('otp.verify');
+	Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify.post');
+	Route::post('/otp/resend', [OtpController::class, 'resend'])->name('otp.resend');
+});
+
+Route::middleware(['web', 'auth'])->group(function () {
+	Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
+	Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
+	Route::post('beli-langsung-check/{id_varian}', [KeranjangController::class, 'belilangsung'])->name('beli.langsung.check');
+
+	Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
+	Route::post('pesan', [TransaksiController::class, 'pesan'])->name('payment.confirm');
+	Route::post('bayar/{id}', [TransaksiController::class, 'bayar'])->name('payment.bayar');
 });
 Route::delete('/images/{image}', [ImageController::class, 'destroy'])
 	->name('images.destroy');

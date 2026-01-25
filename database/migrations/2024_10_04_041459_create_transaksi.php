@@ -19,25 +19,21 @@ return new class extends Migration
             $table->unsignedBigInteger('id_kasir')->nullable();
             $table->unsignedBigInteger('id_customer')->nullable();
             $table->unsignedBigInteger('id_ongkir')->nullable();
-
+            $table->timestamp('expires_at')->nullable();
 
             $table->enum('jenis_transaksi', ['OFFLINE', 'ONLINE']);
 
-            $table->enum('metode_pembayaran', [
-                'CASH',
-                'JAGO',
-                'BCA'
-            ]);
+            $table->string('metode_pembayaran');
 
             $table->decimal('total_harga', 12, 2);
             $table->decimal('ongkir', 12, 2)->nullable();
             $table->enum('status', [
+                'BELUMBAYAR',
                 'PENDING',
-                'ACC_KASIR',
                 'SUKSES',
                 'GAGAL',
                 'DIKIRIM'
-            ])->default("PENDING");
+            ])->default("BELUMBAYAR");
 
             $table->timestamps();
 

@@ -21,6 +21,7 @@ return new class extends Migration
             ])->default("MENUNGGU");
 
             $table->string("no_invoice");   
+            $table->string("catatan")->nullable();   
             $table->string("bukti_transfer")->nullable();
             $table->timestamps();
 

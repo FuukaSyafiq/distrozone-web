@@ -1,11 +1,9 @@
-import './bootstrap';
-import 'flowbite';
-import {initFlowbite} from "flowbite"
-import Alpine from 'alpinejs';
+// resources/js/app.js - tambah di akhir
+import "./bootstrap";
+import "flowbite";
+import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
-initFlowbite()
 
 
 Alpine.start();
-

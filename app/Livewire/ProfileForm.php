@@ -32,7 +32,7 @@ class ProfileForm extends Component
         $this->email_verified_at = $user->email_verified_at;
         $this->userId = auth()->id();
         $this->kota = Kota::all();
-        $this->kotaSelected = $user->kota_id || "";
+        $this->kotaSelected = $user->kota_id ? $user->kota_id : null;
         $this->provinsi = $user->kota?->provinsi?->provinsi ?? "";
 
         $this->email = $user->email;

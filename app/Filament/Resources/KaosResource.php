@@ -73,17 +73,7 @@ class KaosResource extends Resource
                         ->label('Deskripsi')
                         ->rows(4)
                         ->maxLength(1000),
-
-                    TextInput::make('harga_jual')
-                        ->label('Harga Jual')
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('harga_pokok')
-                        ->label('Harga Pokok')
-                        ->numeric()
-                        ->required(),
-                ])
+               ])
                 ->columns(2), // tampil 2 kolom untuk layout lebih rapi
             Repeater::make('variants')->columnSpanFull()
                 ->label('Varian Kaos')
@@ -108,6 +98,17 @@ class KaosResource extends Resource
                             <span>{$record->label}</span>
                         </div>"
                 ),
+
+                    TextInput::make('harga_jual')
+                        ->label('Harga Jual')
+                        ->numeric()
+                        ->required(),
+
+                    TextInput::make('harga_pokok')
+                        ->label('Harga Pokok')
+                        ->numeric()
+                        ->required(),
+
                     Select::make('ukuran_id')
                         ->label('Ukuran')
                         ->relationship('ukuran', 'ukuran')
@@ -147,11 +148,6 @@ class KaosResource extends Resource
                     ->label('Merek'),
                 TextColumn::make('type.type')
                     ->label('Type'),
-                TextColumn::make('harga_jual')
-                    ->label('Harga jual')->money('IDR', true),
-                TextColumn::make('harga_pokok')
-                    ->label('Harga pokok')->money('IDR', true),
-
                 TextColumn::make('nama_kaos')
                     ->searchable(),
             ])
@@ -185,13 +181,6 @@ class KaosResource extends Resource
 
                         TextEntry::make('type.type')
                             ->label('Tipe'),
-                        TextEntry::make('harga_jual')
-                            ->label('Harga jual')
-                            ->money('IDR'),
-
-                        TextEntry::make('harga_pokok')
-                            ->label('Harga pokok')
-                            ->money('IDR'),
                         TextEntry::make('description')
                             ->label('Deskripsi'),
                     ]),
@@ -203,6 +192,14 @@ class KaosResource extends Resource
                             ->badge(),
                         TextEntry::make('warna.label')
                             ->label('Warna'),
+                        TextEntry::make('harga_jual')
+                            ->label('Harga jual')
+                            ->money('IDR'),
+
+                        TextEntry::make('harga_pokok')
+                            ->label('Harga pokok')
+                            ->money('IDR'),
+
                         TextEntry::make('stok_kaos')
                             ->label('Stok kaos'),
                         ImageEntry::make('image_path')->label('Foto kaos')

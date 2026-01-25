@@ -35,7 +35,11 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
         "password",
         "no_telepon",
         "alamat_lengkap",
-        "kota_id"
+        "kota_id",
+        "status",
+        "otp_code",
+        "otp_expires_at",
+        "otp_verified"
     ];
 
     /**

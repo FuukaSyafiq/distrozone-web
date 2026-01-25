@@ -11,9 +11,10 @@ class IndexController extends Controller
 {
     public function gets()
     {
+
         $kaoss = Kaos::getAllKaos();
        
-        return view('index', ['kaoss' => $kaoss]);
+        return view('index', ['kaoss' => $kaoss, 'title' => 'Koleksi Kaos Kami']);
     }
     public function store(Request $request) {
 

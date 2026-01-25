@@ -135,8 +135,8 @@ class PaymentResource extends Resource
                         ->label('No invoice'),
                 ])
                 ->footerActions([
-                    ActionEntry::make('acc_kasir')
-                        ->label('Konfirmasi')
+                    ActionEntry::make('dikirim')
+                        ->label('Kirim')
                         ->icon(
                             'heroicon-o-check-circle'
                         )
@@ -157,29 +157,11 @@ class PaymentResource extends Resource
 
                             $record->status = PembayaranStatus::DITERIMA;
                             $record->save();
-                            $record->transaksi->status = TransaksiStatus::ACC_KASIR;
-                            $record->transaksi->save();
-                            Mail::to($record->transaksi->customer->email)
-                                ->send(new PembayaranAnnounce($record->transaksi));
-                        }),
-                    ActionEntry::make('dikirim')
-                        ->label('Dikirim')
-                        ->icon(
-                            'heroicon-o-check-circle'
-                        )
-                        ->visible(fn($record) => $record->status === PembayaranStatus::DITERIMA && $record->transaksi->status !== TransaksiStatus::DIKIRIM && $record->transaksi->status !== TransaksiStatus::SUKSES)
-                        ->color(
-                            'success'
-                        )
-                        ->requiresConfirmation()
-                        ->action(function ($record) {
-                            $record->status = PembayaranStatus::DITERIMA;
-                            $record->save();
                             $record->transaksi->status = TransaksiStatus::DIKIRIM;
                             $record->transaksi->save();
-                    Mail::to($record->transaksi->customer->email)
-                        ->send(new MengirimAnnounce($record->transaksi));
-                }),
+                            Mail::to($record->transaksi->customer->email)
+                                ->send(new MengirimAnnounce($record->transaksi));
+                        }),
                     ActionEntry::make('ditolak')
                         ->label('Tolak')
                         ->visible(fn($record) => $record->status === PembayaranStatus::MENUNGGU ? true : false)
@@ -212,7 +194,9 @@ class PaymentResource extends Resource
                             }
                             $record->transaksi->status = TransaksiStatus::SUKSES;
                             $record->transaksi->save();
-                        }),
+                    Mail::to($record->transaksi->customer->email)
+                        ->send(new MengirimAnnounce($record->transaksi));
+                }),
                 ]),
             InfolistSection::make('Bukti transfer')->columns(3)
                 ->schema([

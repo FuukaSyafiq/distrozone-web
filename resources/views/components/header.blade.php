@@ -29,21 +29,19 @@
             </div>
 
             <!-- Search Bar (Desktop) -->
-            <div class="hidden md:flex flex-1 max-w-xl mx-4">
-                <form action="/search" method="GET" class="w-full relative">
-                    <input type="text" name="q" id="searchInput"
-                        class="w-full rounded-lg border-2 border-gray-200 py-2.5 pl-4 pr-12 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
-                        placeholder="Cari kaos, merek, atau kategori..." autocomplete="off" />
-                    <button type="submit"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
-                </form>
+            <div class="hidden md:flex flex-1 justify-center items-center gap-10">
+                <a href="/" class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
+                    Home
+                </a>
+                <a href="/#about"
+                    class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
+                    About
+                </a>
+                <a href="https://distrozonesyafiq.tawk.help" target="_blank"
+                    class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
+                    FAQ
+                </a>
             </div>
-
             <!-- Right Section: Cart & Auth -->
             <div class="flex items-center gap-3">
 

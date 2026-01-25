@@ -2,8 +2,8 @@
     <div x-data="{
         quantity: {{ $quantity }},
         maxStock: {{ $variant->stok_kaos }},
-        pricePerItem: {{ $kaos->harga_jual }},
-        originalPrice: {{ $kaos->harga_jual }},
+        pricePerItem: {{ $variant->harga_jual }},
+        originalPrice: {{ $variant->harga_jual }},
         increment() {
             if (this.quantity < this.maxStock) {
                 this.quantity++;
@@ -64,7 +64,7 @@
         <div class="mb-4 pb-4 border-b">
             <div class="flex justify-between items-baseline">
                 <span class="text-gray-700">Subtotal</span>
-                <span class="text-2xl font-bold text-gray-900">Rp {{ number_format($quantity * $kaos->harga_jual, 0,
+                <span class="text-2xl font-bold text-gray-900">Rp {{ number_format($quantity * $variant->harga_jual, 0,
                     ',', '.') }}</span>
             </div>
         </div>

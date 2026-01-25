@@ -10,6 +10,7 @@ use Filament\Infolists\Components\Section as SectionEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Actions\Action as ActionEntry;
 use App\Models\Image;
+use App\Models\KeranjangDetail;
 use App\Models\Role;
 use App\Models\Tagihan;
 use App\Models\Transaksi;
@@ -100,6 +101,8 @@ class TransactionResource extends Resource
                     ->label('Ongkir')->money('IDR', true),
                 TextColumn::make('total_harga')
                     ->label('Total harga')->money('IDR', true),
+                TextColumn::make('expires_at')
+                    ->label('Tanggal expired')->date('d M Y, H:i')->sortable(),
                 TextColumn::make('created_at')
                     ->label('Tanggal')->date('d M Y'),
             ])
@@ -164,6 +167,25 @@ class TransactionResource extends Resource
 
 
                     ])->footerActions([
+                        ActionEntry::make('selesai')
+                            ->label('Selesai')
+                            ->visible(fn($record) => $record->status === TransaksiStatus::DIKIRIM)
+                            ->icon(
+                                'heroicon-o-check-circle'
+                            )
+                            ->color(
+                                'success'
+                            )
+                            ->requiresConfirmation()
+                            ->action(function ($record) {
+                                foreach ($record->details as $d) {
+                                    KeranjangDetail::where('id_kaos_varian', $d->id_kaos_varian)->delete();
+                                }
+                                $record->status = TransaksiStatus::SUKSES;
+                                $record->save();
+                                // Mail::to($record->transaksi->customer->email)
+                                //     ->send(new MengirimAnnounce($record->transaksi));
+                            }),
                         ActionEntry::make('cetak')
                             ->label('Cetak')
                             ->icon('heroicon-o-printer')
@@ -212,7 +234,7 @@ class TransactionResource extends Resource
                             ->label('Ukuran kaos')
                             ->badge(),
 
-                        TextEntry::make('kaos_varian.kaos.harga_jual')
+                        TextEntry::make('kaos_varian.harga_jual')
                             ->label('Harga jual')
                             ->money('IDR', true),
 

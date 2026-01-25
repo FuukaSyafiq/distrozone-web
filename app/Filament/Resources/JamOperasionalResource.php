@@ -76,13 +76,7 @@ class JamOperasionalResource extends Resource
                     ->label('Hari')
                     ->sortable()
                     ->formatStateUsing(fn($state) => ucfirst(strtolower($state))),
-                // TextInputColumn::make('jam_operasional')->label('Jam operasional')->state(function ($record) {
-                //     if ($record->status !== 'BUKA') {
-                //         return '-';
-                //     }
-
-                //     return $record->jam_buka . ' – ' . $record->jam_tutup;
-                // }),
+           
                 TextInputColumn::make('jam_buka')
                     ->label('Jam Buka')
                     ->type('time')
@@ -92,26 +86,7 @@ class JamOperasionalResource extends Resource
                     ->label('Jam Tutup')
                     ->type('time')
                     ->disabled(fn($record) => $record->status !== 'BUKA'),
-                // TextColumn::make('jam_operasional')
-                //         ->label('Jam Operasional')
-                //         ->state(function ($record) {
-                //             if ($record->status !== 'BUKA') {
-                //                 return '-';
-                //             }
-
-                //             return $record->jam_buka . ' – ' . $record->jam_tutup;
-                //         }),
-                // TextColumn::make('status')
-                //     ->label('Status')->badge()
-                //     ->colors([
-                //         'success' => 'BUKA',
-                //         'danger' => 'TUTUP',
-                //     ]),
                 SelectColumn::make('status')
-                    // ->colors([
-                    //     'success' => 'BUKA',
-                    //     'danger' => 'TUTUP',
-                    // ])
                     ->options([
                         'BUKA' => 'BUKA',
                         'TUTUP' => 'TUTUP',

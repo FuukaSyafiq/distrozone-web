@@ -44,17 +44,14 @@ Route::middleware(['web'])->group(
     }
 );
 Route::middleware('auth')->group(function () {
-    Route::get('/otp/verify', [OtpController::class, 'show'])->name('otp.verify');
-    Route::post('/otp/verify', [OtpController::class, 'verify']);
-    Route::post('/otp/resend', [OtpController::class, 'resend'])->name('otp.resend');
+   
 });
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
   
-    Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
-    Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
-    Route::post('beli-langsung-check/{id_varian}', [KeranjangController::class, 'belilangsung'])->name('beli.langsung.check');
+    // Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
+    // Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
 
     Route::delete('cart-varian/{id}', [KeranjangController::class, 'delete'])->name('cart-delete');
 
@@ -62,8 +59,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{id}', [TransaksiController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/confirm', [TransaksiController::class, 'confirm'])->name('orders.confirm');
 
-    Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
-    Route::post('payment', [TransaksiController::class, 'bayar'])->name('payment.confirm');
 
     Route::delete('/images/{image}', [ImageController::class, 'destroy'])
         ->name('images.destroy');

@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string("nama_kaos")->unique();
             $table->text("description")->nullable();
             $table->unsignedInteger("type_id");
-            $table->decimal('harga_jual');
-            $table->decimal("harga_pokok");
-            $table->timestamps();
+           $table->timestamps();
 
             $table->foreign("merek_id")->references("id")->on("merek_kaos")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign("type_id")->references("id")->on("type_kaos")->cascadeOnUpdate()->cascadeOnDelete();

@@ -20,6 +20,7 @@ class Transaksi extends Model
         'ongkir',
         'id_ongkir',
         'status',
+        'expires_at'
     ];
 
     public function details()

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedInteger('kaos_id');
             $table->unsignedInteger('warna_id');
             $table->unsignedInteger('ukuran_id');
+             $table->decimal('harga_jual');
+            $table->decimal("harga_pokok");
             $table->unsignedInteger("stok_kaos");
             $table->string('image_path')->nullable();
             $table->timestamps();

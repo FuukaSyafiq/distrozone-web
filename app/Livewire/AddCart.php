@@ -39,8 +39,7 @@ class AddCart extends Component
         $user = auth()->user();
 
         if (!auth()->check()) {
-            $this->dispatch('toast', message: "Login diperlukan untuk menambahkan produk ke keranjang.");
-            return;
+            return redirect("/login");
         }
 
         $keranjang = Keranjang::where('status', KeranjangStatus::AKTIF)->where('id_customer', $user->id_user)->first();
@@ -55,9 +54,9 @@ class AddCart extends Component
         KeranjangDetail::create([
             'id_keranjang' => $keranjang->id_keranjang,
             'id_kaos_varian' => $this->variant->id,
-            'harga_satuan' => $this->kaos->harga_jual,
+            'harga_satuan' => $this->variant->harga_jual,
             'qty' => $this->quantity,
-            'subtotal' => $this->kaos->harga_jual * $this->quantity
+            'subtotal' => $this->variant->harga_jual * $this->quantity
         ]);
 
         KaosVariant::where('id', $this->variant->id)->decrement('stok_kaos', $this->quantity);

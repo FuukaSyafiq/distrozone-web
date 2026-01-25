@@ -32,25 +32,19 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
 
-        $request->authenticate(); 
-        $user = $request->user();
+        // $request->authenticate(); 
+        // $user = $request->user();
+        $user = \App\Models\User::where('email', $request->email)->first();
 
-        if ($user->status == UserStatus::BANNED) {
-            $this->dispatch('toast', message: 'Akun Anda telah diblokir secara permanen. Silakan hubungi administrator.');
-        }
-
-        if ($user->status == UserStatus::SUSPENDED) {
-            $this->dispatch('toast', message: 'Akun Anda sedang ditangguhkan sementara. Silakan coba lagi nanti.');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['email' => 'Kredensial tidak cocok dengan data kami.']);
         }
 
         if ($user->status != UserStatus::ACTIVE) {
-            auth()->logout();
-
-            return redirect('/login')->withErrors([
-                'email' => 'Akun Anda tidak aktif.'
-            ]);
+            $msg = $user->status == UserStatus::BANNED ? 'Akun diblokir.' : 'Akun ditangguhkan.';
+            return back()->withErrors(['email' => $msg]);
         }
-        $request->session()->regenerate();
+
         if (in_array($user->role_id, [
             Role::getIdByRole('ADMIN'),
             Role::getIdByRole('KASIR')
@@ -62,13 +56,13 @@ class AuthenticatedSessionController extends Controller
                 'otp_expires_at' => now()->addMinutes(5),
                 'otp_verified' => false,
             ]);
-
+            session(['otp_user_id' => $user->id_user]);
             Mail::to($user->email)->send(new OtpMail($otp, $user));
 
             return redirect()->route('otp.verify');
         }
-       
 
+        $request->session()->regenerate();
         return redirect()->to('/');
     }
 
