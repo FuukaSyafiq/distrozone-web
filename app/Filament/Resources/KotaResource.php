@@ -24,7 +24,13 @@ class KotaResource extends Resource
     protected static ?string $model = Kota::class;
     protected static ?string $navigationGroup = 'Toko';
     protected static ?string $navigationIcon = 'heroicon-s-home-modern';
+    protected static ?string $navigationLabel = 'Wilayah';
 
+    // 2. Mengubah judul di halaman Index (Daftar Data)
+    protected static ?string $pluralLabel = 'Wilayah';
+
+    // 3. Mengubah label satuan (misal saat tombol "Tambah Kota" -> "Tambah Wilayah")
+    protected static ?string $modelLabel = 'Wilayah';
 
 
     public static function canAccess(): bool

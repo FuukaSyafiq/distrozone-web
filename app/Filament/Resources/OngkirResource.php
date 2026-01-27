@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use App\Models\Role;
+
 class OngkirResource extends Resource
 {
     protected static ?string $model = Ongkir::class;
@@ -40,11 +41,24 @@ class OngkirResource extends Resource
             ->schema([
                 Select::make('wilayah')
                     ->label('Wilayah')
-                    ->options(
-                        Kota::query()
+                    ->options(function () {
+                        $provinsi = \App\Models\Provinsi::query()
+                            ->orderBy('provinsi')
+                            ->pluck('provinsi', 'provinsi') // Simpan nama, tampilkan nama
+                            ->toArray();
+
+                        // Ambil data Kota
+                        $kota = \App\Models\Kota::query()
                             ->orderBy('kota')
                             ->pluck('kota', 'kota')
-                    )
+                            ->toArray();
+
+                        // Gabungkan dengan Grouping
+                        return [
+                            'Provinsi' => $provinsi,
+                            'Kota / Kabupaten' => $kota,
+                        ];
+                    })
                     ->searchable()
                     ->required(),
                 TextInput::make('tarif_per_kg')

@@ -69,7 +69,11 @@ class JamOperasionalResource extends Resource
                 TextColumn::make('jenis')
                     ->label('Jenis')
                     ->badge()
-                    ->color(fn(string $state) => $state === 'offline' ? 'gray' : 'info')
+                ->color(fn(string $state): string => match ($state) {
+                    'OFFLINE' => 'danger',  // Warna Merah
+                    'ONLINE' => 'success',  // Warna Hijau
+                    default => 'gray',      // Warna default jika tidak cocok
+                })
                     ->formatStateUsing(fn($state) => strtoupper($state)),
 
                 TextColumn::make('hari')

@@ -33,7 +33,10 @@ class PendapatanResource extends Resource
     {
         return false;
     }
-
+    public static function canAccess(): bool
+    {
+        return false;
+    }
     public static function getBreadcrumb(): string
     {
         return '';
@@ -75,33 +78,13 @@ class PendapatanResource extends Resource
 
                 TextColumn::make('modal')
                     ->label('Total Harga Pokok')
-                    ->money('IDR')
-                // ->getStateUsing(
-                //     fn($record) =>
-                //     $record->transaksi->details
-                //         ->sum(fn($d) => $d->qty * $d->harga_pokok)
-                // ),
-                ,
+                    ->money('IDR'),
                 TextColumn::make('transaksi.ongkir')
                     ->label('Ongkir')
-                    ->money('IDR')
-                // ->getStateUsing(
-                //     fn($record) =>
-                //     $record->transaksi->ongkir
-                // ),
-                ,
+                    ->money('IDR'),
                 TextColumn::make('keuntungan')
                     ->label('Keuntungan')
-                    ->money('IDR')
-                // ->getStateUsing(
-                //     fn($record) =>
-
-                //     $record->jumlah
-                //         - $record->transaksi->details
-                //         ->sum(fn($d) => $d->qty * $d->harga_pokok)
-                //         - $record->transaksi->ongkir
-                // ),
-                ,
+                    ->money('IDR'),
                 TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->date('d M Y'),

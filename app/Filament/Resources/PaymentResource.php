@@ -78,8 +78,7 @@ class PaymentResource extends Resource
         return $table
             ->modifyQueryUsing(
                 fn($query) =>
-                $query->where('status', '!=', PembayaranStatus::DITERIMA)
-                    ->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::SUKSES))
+                    $query->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::DIKIRIM))
             )
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')

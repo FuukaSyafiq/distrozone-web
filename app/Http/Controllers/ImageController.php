@@ -16,7 +16,7 @@ class ImageController extends Controller
 
     public function destroy(Image $image)
     {
-        dd("tes");
+
         if ($image->path && Storage::disk('s3')->exists($image->path)) {
             Storage::disk('s3')->delete($image->path);
         }

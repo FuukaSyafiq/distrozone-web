@@ -27,12 +27,23 @@
             <p><strong>Status transaksi : </strong>{{ $transaksi->status }}</p>
 
             <br />
-            <p><strong>Nama : </strong>{{ $transaksi->customer->nama }}</p>
-            <p><strong>Email : </strong>{{ $transaksi->customer->email }}</p>
-            <p><strong>No telepon : </strong>{{ $transaksi->customer->no_telepon }}</p>
-            <p><strong>Kota : </strong>{{ $transaksi->customer->kota->kota }}</p>
-            <p><strong>Provinsi : </strong>{{ $transaksi->customer->kota->provinsi->provinsi }}</p>
-            <p><strong>Alamat : </strong>{{ $transaksi->customer->alamat_lengkap }}</p>
+            @if($transaksi->customer)
+            <div class="customer-info">
+                <p><strong>Nama : </strong>{{ $transaksi->customer->nama }}</p>
+                <p><strong>Email : </strong>{{ $transaksi->customer->email }}</p>
+                <p><strong>No telepon : </strong>{{ $transaksi->customer->no_telepon }}</p>
+
+                {{-- Nested check untuk Kota & Provinsi --}}
+                @if($transaksi->customer->kota)
+                <p><strong>Kota : </strong>{{ $transaksi->customer->kota->kota }}</p>
+                @if($transaksi->customer->kota->provinsi)
+                <p><strong>Provinsi : </strong>{{ $transaksi->customer->kota->provinsi->provinsi }}</p>
+                @endif
+                @endif
+
+                <p><strong>Alamat : </strong>{{ $transaksi->customer->alamat_lengkap }}</p>
+            </div> 
+            @endif
             <p><strong>Metode pembayaran : </strong>{{ $transaksi->metode_pembayaran }}</p>
             <p><strong>Total harga : </strong>Rp. {{
                 number_format($transaksi->total_harga, 0, ',',

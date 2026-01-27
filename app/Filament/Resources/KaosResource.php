@@ -6,6 +6,7 @@ use App\Filament\Resources\KaosResource\Pages;
 use App\Filament\Resources\KaosResource\RelationManagers;
 use App\Models\Kaos;
 use App\Models\KaosVariant;
+use App\Models\TypeKaos;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\View;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Infolists\Components\RepeatableEntry;
 use App\Models\Image;
 use App\Models\Kota;
+use App\Models\MerekKaos;
 use Filament\Infolists\Components\Actions;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -40,6 +42,8 @@ use App\Models\Warna;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use App\Models\Role;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class KaosResource extends Resource
 {
@@ -62,32 +66,83 @@ class KaosResource extends Resource
                     Select::make('merek_id')
                         ->label('Merek')
                         ->relationship('merek', 'merek') // pastikan relasi 'merek' di model Kaos ada
-                        ->required(),
+                        ->required()
+                        ->createOptionForm([
+                            TextInput::make('merek') // Nama field harus sesuai kolom di tabel 'mereks'
+                                ->required()
+                                ->maxLength(255),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            // Logika untuk menyimpan data baru ke database
+                            return MerekKaos::create($data)->id;
+                        })->editOptionForm([
+                            TextInput::make('merek')->required(),
+                        ])->suffixAction(
+                            \Filament\Forms\Components\Actions\Action::make('delete_merek')
+                                ->icon('heroicon-m-trash')
+                                ->color('danger')
+                                ->requiresConfirmation()
+                                ->modalHeading('Hapus Merek?')
+                                ->modalDescription('Data yang dihapus tidak bisa dikembalikan.')
+                                ->action(function (Get $get, Set $set) {
+                                    $id = $get('merek_id');
+                                    if ($id) {
+                                        MerekKaos::find($id)?->delete();
+                                        $set('merek_id', null);
+                                    }
+                                })
+                        ),
 
                     Select::make('type_id')
                         ->label('Type')
                         ->relationship('type', 'type') // pastikan relasi 'type' di model Kaos ada
-                        ->required(),
+                        ->required()
+                        ->createOptionForm([
+                            TextInput::make('type') // Nama field harus sesuai kolom di tabel 'types'
+                                ->required()
+                                ->maxLength(255),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            // Logika untuk menyimpan data baru ke database
+                            return TypeKaos::create($data)->id;
+                        })->editOptionForm([
+                            TextInput::make('type')->required(),
+                        ])->suffixAction(
+                            \Filament\Forms\Components\Actions\Action::make('delete_type')
+                                ->icon('heroicon-m-trash')
+                                ->color('danger')
+                                ->requiresConfirmation()
+                                ->modalHeading('Hapus Tipe?')
+                                ->modalDescription('Data yang dihapus tidak bisa dikembalikan.')
+                                ->action(function (Get $get, Set $set) {
+                                    $id = $get('type_id');
+                                    if ($id) {
+                                        TypeKaos::find($id)?->delete();
+                                        $set('type_id', null);
+                                    }
+                                })
+                        ),
 
                     Textarea::make('description')
                         ->label('Deskripsi')
                         ->rows(4)
                         ->maxLength(1000),
-               ])
+                ])
                 ->columns(2), // tampil 2 kolom untuk layout lebih rapi
             Repeater::make('variants')->columnSpanFull()
                 ->label('Varian Kaos')
                 ->relationship('variants') // relasi hasMany di model Kaos
                 ->schema([
                     Select::make('warna_id')
-                    ->label('Warna')
-                    ->relationship('warna', 'label')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->allowHtml() // Penting: ini harus ada
-                    ->getOptionLabelFromRecordUsing(fn($record) => 
-                        "<div style='display: flex; align-items: center; gap: 4px;'>
+                        ->label('Warna')
+                        ->relationship('warna', 'label')
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->allowHtml() // Penting: ini harus ada
+                        ->getOptionLabelFromRecordUsing(
+                            fn($record) =>
+                            "<div style='display: flex; align-items: center; gap: 4px;'>
                             <div style='
                                 width: 20px; 
                                 height: 20px; 
@@ -97,7 +152,7 @@ class KaosResource extends Resource
                             '></div>
                             <span>{$record->label}</span>
                         </div>"
-                ),
+                        ),
 
                     TextInput::make('harga_jual')
                         ->label('Harga Jual')

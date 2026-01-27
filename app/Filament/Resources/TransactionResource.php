@@ -234,12 +234,12 @@ class TransactionResource extends Resource
                             ->label('Ukuran kaos')
                             ->badge(),
 
-                        TextEntry::make('kaos_varian.harga_jual')
+                        TextEntry::make('harga_satuan')
                             ->label('Harga jual')
                             ->money('IDR', true),
 
-                        TextEntry::make('kaos_varian.stok_kaos')
-                            ->label('Stok kaos'),
+                        TextEntry::make('qty')
+                            ->label('Quantity'),
 
                         ImageEntry::make('kaos_varian.image_path')->label('Foto kaos')
                             ->disk('s3')
