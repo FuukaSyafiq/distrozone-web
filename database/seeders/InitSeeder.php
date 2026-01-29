@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\UkuranKaos;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +17,7 @@ class InitSeeder extends Seeder
         $this->call(ProvinsiSeeder::class);
         $this->call(KotaSeeder::class);
         $this->call(WarnaSeeder::class);
+        $this->call(UkuranSeeder::class);
         // $this->call(KaosSeeder::class);
         $this->call(OngkirSeeder::class);
         $this->call(JamOperasionalSeeder::class);
@@ -36,5 +38,6 @@ class InitSeeder extends Seeder
         // KaosSeeder::down();
         WarnaSeeder::down();
         RoleSeeder::down();
+        UkuranKaos::delete();
     }
 }

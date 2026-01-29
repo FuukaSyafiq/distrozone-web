@@ -10,12 +10,17 @@
     <div wire:loading.remove>
         @if($method)
         <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <img src="{{ Storage::disk('s3')->url($method->logo) }}" class="h-8 w-auto object-contain"
-                        alt="Logo Bank">
-                    <span class="font-bold text-gray-800">{{ $method->nama_bank }}</span>
+            <div
+                class="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-2xl border border-gray-100 mb-4 transition-all hover:border-teal-500/50 group">
+                <div class="w-full h-40 mb-4 flex items-center justify-center overflow-hidden">
+                    <img src="{{ Storage::disk('s3')->url($method->logo) }}"
+                        class="h-full w-full object-contain transform group-hover:scale-110 transition-transform duration-300"
+                        alt="Logo {{ $method->nama_bank }}">
                 </div>
+
+                <span class="font-black text-xl text-gray-900 uppercase tracking-tighter italic">
+                    {{ $method->nama_bank }}
+                </span>
             </div>
 
             <div class="bg-white p-3 rounded-lg border border-dashed border-gray-300 mb-4">

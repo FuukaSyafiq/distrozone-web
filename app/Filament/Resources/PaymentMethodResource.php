@@ -32,6 +32,11 @@ class PaymentMethodResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -40,7 +45,7 @@ class PaymentMethodResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TextInput::make('nomor_rekening')
-                    ->required()
+                    ->required()->numeric()
                     ->maxLength(255),
                 TextInput::make('nama_penerima')
                     ->required()
@@ -93,7 +98,7 @@ class PaymentMethodResource extends Resource
                     TextEntry::make('nomor_rekening')->label('Nomor Rekening'),
                     TextEntry::make('nama_penerima')->label('Nama Penerima'),
                     ImageEntry::make('logo')->label('Logo')->disk('s3'),
-                        TextEntry::make('instruksi')->label('Instruksi'),
+                    TextEntry::make('instruksi')->label('Instruksi'),
                     IconEntry::make('is_active')->label('Is Active')->boolean(),
                 ]
             );

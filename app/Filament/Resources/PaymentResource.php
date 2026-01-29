@@ -21,6 +21,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section as InfolistSection;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use App\Models\KaosVariant;
 use App\Models\Keranjang;
 use App\Models\KeranjangDetail;
 use Filament\Tables\Actions\Action;
@@ -32,7 +33,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action as ActionTable;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PembayaranAnnounce;
+use App\Mail\SelesaiAnnounce;
 use App\Mail\MengirimAnnounce;
+use App\Mail\MenolakAnnounce;
 
 class PaymentResource extends Resource
 {
@@ -78,7 +81,7 @@ class PaymentResource extends Resource
         return $table
             ->modifyQueryUsing(
                 fn($query) =>
-                    $query->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::DIKIRIM))
+                $query->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::DIKIRIM))
             )
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
@@ -159,7 +162,7 @@ class PaymentResource extends Resource
                             $record->transaksi->status = TransaksiStatus::DIKIRIM;
                             $record->transaksi->save();
                             Mail::to($record->transaksi->customer->email)
-                                ->send(new MengirimAnnounce($record->transaksi));
+                                ->send(new SelesaiAnnounce($record->transaksi));
                         }),
                     ActionEntry::make('ditolak')
                         ->label('Tolak')
@@ -172,10 +175,15 @@ class PaymentResource extends Resource
                         )
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            foreach ($record->transaksi->details as $d) {
+                                KaosVariant::where('id', $d->id_kaos_varian)->increment('stok_kaos', $d->qty);
+                            }
                             $record->status = PembayaranStatus::DITOLAK;
                             $record->save();
                             $record->transaksi->status = TransaksiStatus::GAGAL;
                             $record->transaksi->save();
+                            Mail::to($record->transaksi->customer->email)
+                                ->send(new MenolakAnnounce($record->transaksi));
                         }),
                     ActionEntry::make('selesai')
                         ->label('Selesai')
@@ -193,9 +201,9 @@ class PaymentResource extends Resource
                             }
                             $record->transaksi->status = TransaksiStatus::SUKSES;
                             $record->transaksi->save();
-                    Mail::to($record->transaksi->customer->email)
-                        ->send(new MengirimAnnounce($record->transaksi));
-                }),
+                            Mail::to($record->transaksi->customer->email)
+                                ->send(new SelesaiAnnounce($record->transaksi));
+                        }),
                 ]),
             InfolistSection::make('Bukti transfer')->columns(3)
                 ->schema([

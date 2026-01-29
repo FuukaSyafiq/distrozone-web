@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="max-w-2xl mx-auto my-10 py-5 bg-white border border-gray-200 rounded-lg shadow-md">
+    <div class="max-w-xl mx-auto my-10 py-5 bg-white border border-gray-200 rounded-lg shadow-md">
         <div class="p-6 border-b border-gray-200">
             <h2 class="text-2xl font-bold text-center">Daftar</h2>
         </div>
@@ -34,9 +34,9 @@
                     </div>
                 </div>
 
-                <div class="p-6 border-t border-gray-200">
+                <div class="p-6 border-t border-gray-200 w-full">
                     <button type="submit"
-                        class="w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
+                        class="w-full py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
                         Sign up
                     </button>
                 </div>

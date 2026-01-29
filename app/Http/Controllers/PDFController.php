@@ -54,6 +54,7 @@ class PDFController extends Controller
         // Get transaction (single)
         $pembayaran = Pembayaran::where('id_transaksi', $id)->first();
         $transaksi_detail = TransaksiDetail::where('id_transaksi', $id)->get();
+        
 
         // Get the image path based on the bukti_file value
         // $image = Image::where('id', $pembayaran->bukti_transfer)->first();

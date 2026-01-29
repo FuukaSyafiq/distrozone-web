@@ -21,54 +21,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-
-        $files = $files = Storage::disk('public')->files('foto_karyawan');
-        foreach ($files as $filePath) {
-
-            // skip kalau bukan file
-
-            $absolutePath = Storage::disk('public')->path($filePath);
-
-            // upload ke S3
-            $path = Storage::disk('s3')->put(
-                'foto_karyawan',
-                new File($absolutePath)
-            );
-            // contoh simpan ke DB
-            Image::create([
-                'path' => $path,                       // path S3
-                'file_name' => basename($filePath),
-                'mime_type' => mime_content_type($absolutePath),
-                'size' => filesize($absolutePath)
-            ]);
-        }
         $password = FacadesHash::make('password');
         // dd(Image::getImageByFilename("mbak-cantik.jpeg")->id);
         $users = [
-
-            // ===== KASIR =====
-            [
-                'nama' => 'Mbak Lua',
-                'password' => $password,
-                'role_id' => Role::getIdByRole('KASIR'),
-                'alamat_lengkap' => 'Kelapa Gading, Jakarta Utara, DKI Jakarta',
-                'no_telepon' => '08327827334',
-                'email' => 'lua@lua.my.id',
-                'nik' => '352352353455433',
-                'foto_user' => Image::getImageByFilename('mbak-cantik.jpeg')->path,
-                'kota_id' => Kota::getKota('JAKARTA')->id,
-                'nik_verified' => NikVerified::APPROVED,
-                'email_verified_at' => now(),
-            ],
-
             // ===== ADMIN =====
             [
-                'nama' => 'Bos Fajrul',
+                'nama' => 'Bos Distrozone',
                 'password' => $password,
                 'role_id' => Role::getIdByRole('ADMIN'),
                 'alamat_lengkap' => 'Bogor Tengah, Kota Bogor, Jawa Barat',
                 'no_telepon' => '0833479824632',
-                'email' => 'fajrul@fajrul.com',
+                'email' => 'lettucelaugh@autistiche.org',
                 'nik' => '34352352352354',
                 'foto_user' => null,
                 'kota_id' => Kota::getKota('BOGOR')->id,
@@ -83,9 +46,9 @@ class UserSeeder extends Seeder
                 'role_id' => Role::getIdByRole('KASIR'),
                 'alamat_lengkap' => 'Beji, Kota Depok, Jawa Barat',
                 'no_telepon' => '083226872332',
-                'email' => 'robert@robert.dev',
+                'email' => 'aduh@cumallover.me',
                 'nik' => '34352454352352354',
-                'foto_user' => Image::getImageByFilename('china1.jpeg')->path,
+                'foto_user' => null,
                 'kota_id' => Kota::getKota('DEPOK')->id,
                 'nik_verified' => NikVerified::APPROVED,
                 'email_verified_at' => now(),
@@ -93,15 +56,15 @@ class UserSeeder extends Seeder
 
             // ===== CUSTOMER =====
             [
-                'nama' => 'Mas Aril',
+                'nama' => 'Mas Syafiq',
                 'password' => $password,
                 'role_id' => Role::getIdByRole('CUSTOMER'),
                 'alamat_lengkap' => 'Kertonegoro, Kabupaten Ngawi, Jawa Timur',
                 'no_telepon' => '088234974632',
-                'email' => 'aril@yahoo.com',
+                'email' => 'syafiqparadisam@gmail.com',
                 'nik' => '3434351952352354',
-                'foto_user' => Image::getImageByFilename('bos.jpeg')->path,
-                'kota_id' => Kota::getKota('NGAWI')->id,
+                'foto_user' => null,
+                'kota_id' => Kota::getKota('BANDUNG')->id,
                 'nik_verified' => NikVerified::PENDING,
                 'email_verified_at' => now(),
             ],

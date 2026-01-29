@@ -30,11 +30,15 @@ class TransaksiController extends Controller
     public function langsung(Request $request)
     {
         $keranjangDetailId = $request->query('keranjang_details');
-
         if (!$keranjangDetailId) {
             return redirect('/');
         }
-
+        $isBuka = JamOperasional::isBuka('ONLINE');
+        if (!$isBuka) {
+            // dd($isBuka);
+            session()->flash('message', "Toko sedang tutup untuk pemesanan online. Silakan coba lagi nanti.");
+            return redirect()->route('cart');
+        }
         // 1. Ambil keranjang aktif milik user
         $keranjang = Keranjang::where('id_customer', auth()->id())
             ->where('status', CartStatus::AKTIF)->where('id_keranjang', $keranjangDetailId)
@@ -44,10 +48,17 @@ class TransaksiController extends Controller
             return redirect('/')->with('error', 'Keranjang tidak ditemukan');
         }
 
+        
+
         return view('checkout.details', [
             'keranjang' => $keranjang->details,
             'keranjangUtama' => $keranjang,
         ]);
+    }
+    public function tolak($id)
+    {
+        Transaksi::where('id_transaksi', $id)->where('id_customer', Auth::id())->update(['status' => TransaksiStatus::GAGAL]);
+        return redirect()->back();
     }
 
     public function selesai($id)
@@ -170,7 +181,7 @@ class TransaksiController extends Controller
 
                 // 3. Kembalikan stok (Opsional tapi sangat disarankan)
                 foreach ($transaksi->details as $detail) {
-                    $detail->kaos_varian->increment('stok', $detail->qty);
+                    $detail->kaos_varian->increment('stok_kaos', $detail->qty);
                 }
 
                 // 4. Kirim Email untuk transaksi ini

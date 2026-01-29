@@ -14,14 +14,19 @@ class UkuranSeeder extends Seeder
     public function run(): void
     {
         $ukuran = [
-            "M",
+            "4XS",
+            "3XS",
+            "XXS",
+            "XS",
             "S",
+            "M",
             "L",
             "XL",
-            "XS",
             "XXL",
             "3XL",
-            "4XL"
+            "4XL",
+            "5XL",
+            "6XL",
         ];
 
         foreach ($ukuran as $u) {
@@ -29,5 +34,9 @@ class UkuranSeeder extends Seeder
                 'ukuran' => $u
             ]);
         }
+    }
+
+    public function down() {
+        UkuranKaos::query()->delete();
     }
 }

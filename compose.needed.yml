@@ -1,7 +1,7 @@
 services:
    minio:
     image: quay.io/minio/minio
-    container_name: minio
+    container_name: minio-minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -9,31 +9,30 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     volumes:
-      - minio_data:/data
-    user: "${UID}:${GID}"
+      - miniodata:/data
     command: server /data --console-address ":9001"
     restart: unless-stopped
     networks:
-          - laravel-development
+          - distrozone
+
    postgres:
     image: postgres:18.1-alpine3.23
     restart: unless-stopped
-    container_name: postgres-docker
+    container_name: postgres-postgres
     environment:
-      - POSTGRES_DB=${DB_DATABASE:-distrozone}
       - POSTGRES_USER=${DB_USERNAME:-postgres}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-root}
     networks:
-      - laravel-development
+      - distrozone
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgresdb:/var/lib/postgresql/data
 
 networks:
-  laravel-development:
+  distrozone:
 
 volumes:
-  minio_data:
-  postgres:
+  miniodata:
+  postgresdb:
 

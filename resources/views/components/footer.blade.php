@@ -1,7 +1,7 @@
 <!-- Footer -->
 <footer class="bg-gray-900 w-full text-gray-300 ">
     <div class="max-w-7xl mx-auto px-6 py-12">
-        <div class="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-3 justify-center gap-10">
             <!-- Brand -->
             <div>
                 <h2 class="text-2xl font-bold text-white mb-4">
@@ -28,17 +28,6 @@
                     @endif
                 </ul>
             </div>
-
-            <!-- Bantuan -->
-            <div>
-                <h3 class="text-lg font-semibold text-white mb-4">
-                    Bantuan
-                </h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="https://distrozonesyafiq.tawk.help" target="_blank" class="hover:text-white transition">FAQ</a></li>
-                </ul>
-            </div>
-
             <!-- Kontak & Sosial -->
             <div>
                 <h3 class="text-lg font-semibold text-white mb-4">
@@ -53,10 +42,12 @@
                     <li class="flex items-center gap-2">
                         <span>📧</span>syafiq_1971@disroot.org
                     </li>
-
+                    <li class="flex items-center gap-2">
+                        <span><x-bi-whatsapp /></span><a target="_blank" href="https://wa.me/628816977857">Chat Support kami di whatsapp</a>
+                    </li>
                 </ul>
 
-           </div>
+            </div>
 
         </div>
     </div>

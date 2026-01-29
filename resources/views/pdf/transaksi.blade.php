@@ -51,7 +51,18 @@
             <p><strong>Ongkir : </strong>Rp. {{
                 number_format($transaksi->ongkir, 0, ',',
                 '.')}}</p>
-
+            <div class="mt-6">
+                <p><strong>Bukti Transfer :</strong></p>
+                @if($pembayaran->bukti_transfer)
+                    <div class="mt-2 border border-gray-300 p-2 inline-block rounded">
+                        <img src="{{ Storage::disk('s3')->url($pembayaran->bukti_transfer) }}" 
+                            alt="Bukti Transfer" 
+                            class="w-44 h-auto shadow-sm">
+                    </div>
+                @else
+                    <p class="italic text-gray-500 text-sm">Belum ada bukti transfer diunggah</p>
+                @endif
+            </div>
         </div>
     </div>
 

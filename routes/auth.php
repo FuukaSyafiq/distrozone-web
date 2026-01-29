@@ -43,13 +43,16 @@ Route::middleware(['web'])->group(
             ->name('password.store');
     }
 );
-Route::middleware('auth')->group(function () {
-   
-});
+
+
+Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['auth','signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
-  
+
     // Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
     // Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
 
@@ -67,9 +70,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')

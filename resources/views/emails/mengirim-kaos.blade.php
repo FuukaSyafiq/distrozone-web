@@ -28,6 +28,8 @@
 
 <p><strong>🚚 Status Pengiriman:</strong> Pesanan Anda sudah dikirim!</p>
 
+<p>Jika pesanan anda sudah sampai jangan lupa untuk mengklik tombol selesai di web kami</p>
+
 <p>Terima kasih telah berbelanja di Distrozone! 🙏</p>
 
 <p>Salam,<br>

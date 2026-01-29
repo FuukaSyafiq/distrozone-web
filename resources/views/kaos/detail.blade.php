@@ -140,9 +140,11 @@
 							btn.className =
 							'px-4 py-2 border-2 rounded-lg font-medium transition-all border-gray-200 hover:border-gray-300 text-gray-700';
 							
+
 							btn.textContent = size.ukuran;
 							console.log(size);
 							btn.onclick = () => {
+							changeImage(`http://minio:9000/distrozone/${size.image_path}`);
 							console.log('Selected size variant ID:', size.harga_jual);
         
 							harga.textContent =  "Rp. "  + formatCurrency(size.harga_jual)

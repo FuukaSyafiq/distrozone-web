@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\KasirResource\Pages;
 
 use App\Filament\Resources\KasirResource;
+use App\Helpers\NikVerified;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Storage;
@@ -17,42 +18,10 @@ class CreateKasir extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['verified'] = true;
+        $data['nik_verified'] = NikVerified::APPROVED;
         $data['role_id'] = Role::getIdByRole('KASIR');
         $data['password'] = Hash::make($data['password']);
-        $imageId = null;
-        if (isset($data['foto_karyawan'])) {
-            $localPath = $data['foto_karyawan'];
-            try {
-
-                $absPath = Storage::disk('local')->path($localPath);
-
-                if (!file_exists($absPath) || !is_readable($absPath)) {
-                    throw new \Exception("File lokal tidak ditemukan: $absPath");
-                }
-                // pindahkan ke S3
-                $s3Path = Storage::disk('s3')->put(
-                    'foto_karyawan',
-                    new File($absPath)
-                );
-                if (! $s3Path) {
-                    throw new \Exception('Gagal upload file ke S3');
-                }
-                $image = Image::create([
-                    "path" =>  $s3Path,
-                    "file_name" => basename($localPath),
-                    "mime_type" =>  mime_content_type($absPath),
-                    "size" => filesize($absPath),
-                ]);
-
-                $imageId = $image->id;
-            } catch (\Throwable $err) {
-                Storage::disk('local')->delete($localPath);
-            } finally {
-                Storage::disk('local')->delete($localPath);
-            }
-        }
-        $data['foto_id'] =  $imageId;
+     
         return $data;
     }
 }

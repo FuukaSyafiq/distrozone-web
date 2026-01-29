@@ -55,23 +55,14 @@ class KasirResource extends Resource
                 SectionForm::make('Identitas')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('nama')->default("testing")
+                        TextInput::make('nama')
                             ->label('Nama')->required(),
                         TextInput::make('password')->required(fn(string $context) => $context === 'create')
-                            ->label('Password')->password()->default("password")->dehydrated(fn($state) => filled($state))
+                            ->label('Password')->password()->dehydrated(fn($state) => filled($state))
                             ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                         TextInput::make('email')->email()->required()
-                            ->label('Email')->default("testing@gmail.com"),
-                        Select::make('kota_id')
-                            ->label('Kota')
-                            ->options(
-                                Kota::query()
-                                    ->orderBy('kota')
-                                    ->pluck('kota', 'id')
-                            )
-                            ->searchable()
-                            ->required(),
-                        TextInput::make('no_telepon')->default("089123821321")
+                            ->label('Email'),
+                        TextInput::make('no_telepon')
                             ->label('No telepon')
                             ->tel()
                             ->numeric()
@@ -80,10 +71,16 @@ class KasirResource extends Resource
                             ->live()
                             ->helperText('Harus diawali 0 dan 9–15 digit angka')
                             ->required(),
-                        TextInput::make('nik')->tel()->numeric()->required()->default("35165232645332")
-                            ->label('NIK')->maxLength(16)->helperText('NIK Harus 16 digit angka'),
-                        TextArea::make('alamat_lengkap')->default("sukodono")
-                            ->label('Alamat')->required()
+                        TextInput::make('nik')
+                            ->label('NIK')
+                            ->required()
+                            // Menggunakan mask agar user hanya bisa mengetik angka dan panjangnya terkunci di 16
+                            ->mask('9999999999999999')
+                            // Menggunakan rules digits agar validasi Laravel memastikan tepat 16 angka
+                            ->rules(['digits:16'])
+                            // Menghilangkan spinner angka (panah atas bawah) agar lebih bersih
+                            ->extraInputAttributes(['style' => '-moz-appearance: textfield; appearance: textfield;'])
+                            ->helperText('NIK Harus 16 digit angka'),
                     ]),
 
                 SectionForm::make('Foto')
@@ -95,7 +92,7 @@ class KasirResource extends Resource
                                     : [],
                             ])
                             ->visible(fn($record) => filled($record?->foto_id)),
-                        FileUpload::make('foto_karyawan')
+                        FileUpload::make('foto_user')
                             ->label('Upload Foto')
                             ->image()
                             ->imageEditor()
@@ -118,13 +115,6 @@ class KasirResource extends Resource
                     ->label('No telepon'),
                 TextColumn::make('nik')
                     ->label('NIK'),
-                TextColumn::make('kota.kota')
-                    ->label('Kota'),
-                TextColumn::make('kota.provinsi.provinsi')
-                    ->label('Provinsi'),
-                TextColumn::make('alamat_lengkap')
-                    ->label('Alamat'),
-
                 ImageColumn::make('foto_user')
                     ->label('Foto')
                     ->disk('s3')
@@ -137,10 +127,9 @@ class KasirResource extends Resource
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make()->before(function ($record) {
-                        $image = Image::where('id', $record->foto_id)->first();
-                        if ($image->path) {
-                            Storage::disk('local')->delete($image->path);
-                            Storage::disk('s3')->delete($image->path);
+                        if ($record->foto_user) {
+                            Storage::disk('local')->delete($record->foto_user);
+                            Storage::disk('s3')->delete($record->foto_user);
                         }
                     })
                 ]),

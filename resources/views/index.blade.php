@@ -173,18 +173,66 @@
     </div>
 
     {{-- FAQ Section - Dibuat lebih Soft --}}
-    <div class="w-full bg-gray-900 py-16 px-4">
-        <div
-            class="max-w-4xl mx-auto rounded-3xl bg-gradient-to-r from-orange-500 to-red-600 p-8 md:p-12 text-center shadow-2xl overflow-hidden relative">
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="min-h-screen bg-gray-900 py-20 px-4" id="faq">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-black text-white italic mb-4 uppercase tracking-tighter">Frequently Asked
+                    Questions
+                </h1>
+                <div class="h-1.5 w-24 bg-gradient-to-r from-orange-500 to-red-600 mx-auto rounded-full"></div>
+                <p class="text-gray-400 mt-6">Segala hal yang perlu kamu tahu tentang belanja di Distro Zone.</p>
+            </div>
 
-            <h2 class="text-3xl font-black text-white mb-4 relative z-10 italic">BUTUH BANTUAN CEPAT?</h2>
-            <p class="text-white/90 mb-8 text-lg relative z-10">Cek FAQ kami untuk jawaban instan mengenai ukuran,
-                pengiriman, dan retur.</p>
-            <a href="https://distrozonesyafiq.tawk.help" target="_blank"
-                class="inline-block px-10 py-4 bg-white text-orange-600 font-bold rounded-xl shadow-lg hover:bg-gray-100 hover:scale-105 transition-all relative z-10 uppercase tracking-widest text-sm">
-                Buka Pusat Bantuan
-            </a>
+            <div class="space-y-4">
+
+                <details
+                    class="group bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden transition-all duration-300 open:ring-2 open:ring-orange-500">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+                        <span class="text-white font-bold uppercase tracking-wide">Kapan pesanan saya dikirim?</span>
+                        <span class="text-orange-500 transition-transform duration-300 group-open:rotate-180">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-gray-700 pt-4">
+                        Pesanan akan dikirim setelah pembayaran terkonfirmasi, biasanya dalam 1-2 hari kerja. Kamu akan
+                        menerima
+                        notifikasi pengiriman.
+                    </div>
+                </details>
+
+                <details
+                    class="group bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden transition-all duration-300 open:ring-2 open:ring-orange-500">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+                        <span class="text-white font-bold uppercase tracking-wide">Bagaimana cara menentukan
+                            ukuran?</span>
+                        <span class="text-orange-500 transition-transform duration-300 group-open:rotate-180">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-gray-700 pt-4">
+                        Kami menyediakan Ukuran setiap kaos. Pastikan kamu mengukur lebar dada kaos
+                        favoritmu di rumah dan bandingkan dengan tabel kami untuk akurasi maksimal.
+                    </div>
+                </details>
+
+            
+            </div>
+
+            <div class="mt-16 text-center">
+                <p class="text-gray-500 mb-6">Masih belum menemukan jawaban?</p>
+                <a href="https://wa.me/628816977857" target="_blank"
+                    class="text-orange-500 font-bold hover:text-red-500 transition-colors uppercase text-sm tracking-widest border-b-2 border-orange-500/30 pb-1">
+                    Chat Support Kami Langsung
+                </a>
+            </div>
         </div>
     </div>
 </x-app-layout>

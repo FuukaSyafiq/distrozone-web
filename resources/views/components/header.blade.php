@@ -37,7 +37,7 @@
                     class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
                     About
                 </a>
-                <a href="https://distrozonesyafiq.tawk.help" target="_blank"
+                <a href="/#faq" target="_blank"
                     class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
                     FAQ
                 </a>
@@ -87,6 +87,7 @@
                 @endguest
 
                 @auth
+                @if (auth()->user()->role_id == \App\Models\Role::getIdByRole("CUSTOMER"))
                 <!-- User Menu -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
@@ -161,6 +162,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 @endauth
 
             </div>

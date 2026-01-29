@@ -32,9 +32,15 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
 
-        // $request->authenticate(); 
         // $user = $request->user();
         $user = \App\Models\User::where('email', $request->email)->first();
+        
+        if ($user->role_id == Role::getIdByRole('CUSTOMER')) {
+            $request->authenticate(); 
+            $request->session()->regenerate();
+            return redirect()->to("/");
+        }
+
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return back()->withErrors(['email' => 'Kredensial tidak cocok dengan data kami.']);
@@ -62,8 +68,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('otp.verify');
         }
 
-        $request->session()->regenerate();
-        return redirect()->to('/');
+      
+        return redirect()->to("/");
     }
 
     /**

@@ -134,30 +134,33 @@
 							@endif
 
 							@foreach ($transaksi->details as $k)
-							
+
 							<div class="flex gap-4 pb-4 mb-4 border-b last:border-b-0 last:pb-0 last:mb-0">
 								<div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
 									<img src="{{ Storage::disk('s3')->url($k->kaos_varian->image_path) }}"
 										alt="{{ $k->kaos_varian->kaos->nama_kaos }}" class="w-full h-full object-cover">
 								</div>
 								<div class="flex-1">
-									<h3 class="font-semibold text-gray-800 mb-1">{{ $k->kaos_varian->kaos->nama_kaos }}</h3>
+									<h3 class="font-semibold text-gray-800 mb-1">{{ $k->kaos_varian->kaos->nama_kaos }}
+									</h3>
 									<p class="text-sm text-gray-600 mb-2">
 										{{ $k->kaos_varian->warna->label }} - {{ $k->kaos_varian->ukuran->ukuran }}
 									</p>
 									<div class="flex justify-between items-center">
 										<span class="text-sm text-gray-600">Quantity: {{ $k->qty }}</span>
-										<span class="font-semibold text-gray-900">Rp{{ number_format($k->subtotal, 0, ',', '.')
+										<span class="font-semibold text-gray-900">Rp{{ number_format($k->subtotal, 0,
+											',', '.')
 											}}</span>
 									</div>
-									<span class="text-xs text-gray-500">Rp. {{ number_format($k->harga_satuan, 0, ',', '.')
+									<span class="text-xs text-gray-500">Rp. {{ number_format($k->harga_satuan, 0, ',',
+										'.')
 										}}</span>
 								</div>
 							</div>
 							@endforeach
 
 							<!-- Details -->
-							<div class="grid grid-cols-2 gap-4 mb-4">
+							<div class="grid grid-cols-3 gap-4 mb-4">
 								<div>
 									<p class="text-xs text-gray-500 mb-1">Jenis Transaksi</p>
 									<p class="text-sm font-medium">{{ $transaksi->jenis_transaksi }}</p>
@@ -165,6 +168,10 @@
 								<div>
 									<p class="text-xs text-gray-500 mb-1">Metode Pembayaran</p>
 									<p class="text-sm font-medium">{{ $transaksi->metode_pembayaran }}</p>
+								</div>
+								<div>
+									<p class="text-xs text-gray-500 mb-1">Estimasi Sampai</p>
+									<p class="text-sm font-medium">{{ \App\Helpers\Estimated::calculate(auth()->user()) }}</p>
 								</div>
 							</div>
 
@@ -201,7 +208,7 @@
 								</form>
 								@endif
 
-								@if ($transaksi->status != \App\Helpers\TransaksiStatus::BELUMBAYAR)
+								@if ($transaksi->status != \App\Helpers\TransaksiStatus::BELUMBAYAR && $transaksi->status != \App\Helpers\TransaksiStatus::GAGAL)
 								<a href="{{ route('transaksi.cetak.pdf', $transaksi->id_transaksi) }}"
 									class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
 									Cetak
@@ -209,6 +216,15 @@
 								@endif
 
 								@if ($transaksi->status == \App\Helpers\TransaksiStatus::BELUMBAYAR)
+								<form action="{{ route('transaksi.tolak', $transaksi->id_transaksi) }}" method="POST">
+									@csrf
+									@method('PUT')
+
+									<button
+										class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
+										Tolak
+									</button>
+								</form>
 								<button
 									onclick="openPaymentModal({{ $transaksi->id_transaksi }}, '{{ $transaksi->kode_transaksi }}', {{ $transaksi->total_harga }})"
 									class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
@@ -273,7 +289,7 @@
 						</div>
 					</div>
 				</div>
-				<livewire:payment-instruction :transaksiId="$transaksiId ?? null"  wire:key="payment-instruction"/>
+				<livewire:payment-instruction :transaksiId="$transaksiId ?? null" wire:key="payment-instruction" />
 
 
 				<!-- Upload File -->

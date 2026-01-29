@@ -23,47 +23,11 @@ class EditKasir extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        dd("tes");
         if (filled($data['password'] ?? null)) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']); // WAJIB
         }
-
-        if (!filled($data['foto_karyawan'] ?? null)) {
-            unset($data['foto_karyawan']); // biarkan foto lama
-            return $data;
-        }
-
-
-        $localPath = $data['foto_karyawan'];
-        $absPath = Storage::disk('local')->path($localPath);
-
-        DB::transaction(function () use ($absPath, $localPath, &$data) {
-            // upload baru
-            $s3Path = Storage::disk('s3')->put(
-                'foto_karyawan',
-                new File($absPath)
-            );
-        
-            $image = Image::create([
-                'path' => $s3Path,
-                'file_name' => basename($localPath),
-                'mime_type' => mime_content_type($absPath),
-                'size' => filesize($absPath),
-            ]);
-
-            $oldImage = $this->record->image;
-
-            // hapus record image
-            if ($oldImage) {
-                Storage::disk('s3')->delete($oldImage->path);
-                $oldImage->delete();
-            }
-
-            $data['foto_id'] = $image->id;
-
-        });
         return $data;
     }
 

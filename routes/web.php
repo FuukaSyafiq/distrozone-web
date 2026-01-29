@@ -6,6 +6,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KaosController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\OtpController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,7 @@ Route::middleware(['web'])->group(function () {
 				'ukuran' => $v->ukuran->ukuran,
 				'harga_jual' => $v->harga_jual,
 				'kaos_id'  => $v->kaos_id,
+				'image_path' => $v->image_path
 			]);
 	});
 	Route::get('/otp/verify', [OtpController::class, 'show'])->name('otp.verify');
@@ -45,10 +47,11 @@ Route::middleware(['web', 'auth'])->group(function () {
 	Route::get('cart', [KeranjangController::class, 'create'])->name('cart');
 	Route::post('cart-check', [KeranjangController::class, 'check'])->name('cart.check');
 	Route::post('beli-langsung-check/{id_varian}', [KeranjangController::class, 'belilangsung'])->name('beli.langsung.check');
-
+	Route::put('tolak-transaksi/{id}', [TransaksiController::class, 'tolak'])->name('transaksi.tolak');
 	Route::get('checkout', [TransaksiController::class, 'create'])->name('checkout');
 	Route::post('pesan', [TransaksiController::class, 'pesan'])->name('payment.confirm');
 	Route::post('bayar/{id}', [TransaksiController::class, 'bayar'])->name('payment.bayar');
+	Route::put('/edit-foto-profile', [ProfileController::class, 'editFotoProfile'])->name('edit.foto.profile');
 });
 Route::delete('/images/{image}', [ImageController::class, 'destroy'])
 	->name('images.destroy');

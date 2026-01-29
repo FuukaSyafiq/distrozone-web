@@ -48,7 +48,7 @@
             "app/Helpers/GenerateMessage.php",
             "app/Helpers/UserStatus.php",
             "app/Helpers/Bank.php",
-            "app/Helpers/Telegram.php"
+            "app/Helpers/Estimated.php"
         ]
     },
     "autoload-dev": {

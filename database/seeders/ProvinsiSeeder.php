@@ -24,34 +24,28 @@ class ProvinsiSeeder extends Seeder
             'BENGKULU',
             'LAMPUNG',
             'KEPULAUAN BANGKA BELITUNG',
-
             'DKI JAKARTA',
             'JAWA BARAT',
             'JAWA TENGAH',
             'DI YOGYAKARTA',
             'JAWA TIMUR',
             'BANTEN',
-
             'BALI',
             'NUSA TENGGARA BARAT',
             'NUSA TENGGARA TIMUR',
-
             'KALIMANTAN BARAT',
             'KALIMANTAN TENGAH',
             'KALIMANTAN SELATAN',
             'KALIMANTAN TIMUR',
             'KALIMANTAN UTARA',
-
             'SULAWESI UTARA',
             'SULAWESI TENGAH',
             'SULAWESI SELATAN',
             'SULAWESI TENGGARA',
             'GORONTALO',
             'SULAWESI BARAT',
-
             'MALUKU',
             'MALUKU UTARA',
-            
             'PAPUA',
             'PAPUA BARAT',
             'PAPUA SELATAN',

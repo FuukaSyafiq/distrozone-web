@@ -258,7 +258,7 @@ class KaosResource extends Resource
                         TextEntry::make('stok_kaos')
                             ->label('Stok kaos'),
                         ImageEntry::make('image_path')->label('Foto kaos')
-                            ->disk('s3')
+                            ->disk('s3')->visibility('public')
                             ->height(100),
                     ]),
             ]);

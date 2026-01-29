@@ -102,7 +102,7 @@
 
         <!-- Additional Actions -->
         <div class="flex gap-3 mt-4">
-            <a href="{{ \App\Helpers\Telegram::linkWithMessage() }}"
+            <a href="https://wa.me/628816977857" target="_blank"
                 class="flex-1 flex items-center justify-center gap-2 py-2 px-4 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <x-heroicon-o-chat-bubble-left-ellipsis class="w-5 h-5" />
                 <span class="text-sm font-medium">Chat</span>

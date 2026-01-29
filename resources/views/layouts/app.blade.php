@@ -17,7 +17,7 @@
         }
     </style>
     <!-- Scripts -->
-    @vite(['resources/css/app.css'])
+   @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 
@@ -41,7 +41,6 @@
     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, {{ session('toast.ttl') }})" x-show="show">
         {{ session('toast.message') }}
     </div>
-    @vite(['resources/js/app.js'])
     @if (session('success'))
     <script>
         // Contoh simple alert
