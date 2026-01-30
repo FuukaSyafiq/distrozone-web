@@ -94,7 +94,12 @@ class TransactionResource extends Resource
                 TextColumn::make('metode_pembayaran')
                     ->label('Metode pembayaran'),
                 TextColumn::make('status')
-                    ->label('Status')->badge(),
+                    ->label('Status')->badge()->label('Status transaksi')->badge()->color(fn(string $state): string => match ($state) {
+                'SUKSES' => 'success', // Warna Hijau
+                'GAGAL' => 'danger',   // Warna Merah
+                'MENUNGGU' => 'warning',  // Warna Kuning (Opsional)
+                default => 'gray',       // Warna abu-abu jika status lain
+            }),
                 TextColumn::make('jenis_transaksi')
                     ->label('Jenis transaksi')->badge(),
                 TextColumn::make('ongkir')
@@ -161,7 +166,12 @@ class TransactionResource extends Resource
                         TextEntry::make('ongkir.tarif_per_kg')
                             ->label('Tarif ongkir / kg')->money('IDR', true),
                         TextEntry::make('status')
-                            ->label('Status transaksi')->badge(),
+                            ->label('Status transaksi')->badge()->label('Status transaksi')->badge()->color(fn(string $state): string => match ($state) {
+                                'SUKSES' => 'success', // Warna Hijau
+                                'GAGAL' => 'danger',   // Warna Merah
+                                'MENUNGGU' => 'warning',  // Warna Kuning (Opsional)
+                                default => 'gray',       // Warna abu-abu jika status lain
+                            }),
                         TextEntry::make('kasir.nama')
                             ->label('Kasir'),
 

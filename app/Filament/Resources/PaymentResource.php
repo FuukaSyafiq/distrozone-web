@@ -81,7 +81,9 @@ class PaymentResource extends Resource
         return $table
             ->modifyQueryUsing(
                 fn($query) =>
-                $query->whereHas('transaksi', fn($q) => $q->where('status', '!=', TransaksiStatus::DIKIRIM))
+                $query->whereHas('transaksi', function ($q) {
+                    $q->where('jenis_transaksi', 'ONLINE');
+                })
             )
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
@@ -95,13 +97,25 @@ class PaymentResource extends Resource
                 TextColumn::make('transaksi.total_harga')
                     ->label('Total harga')->money('IDR', true),
                 TextColumn::make('status')
-                    ->label('Status pembayaran')->badge(),
+                    ->label('Status pembayaran')->badge()->color(fn(string $state): string => match ($state) {
+                        'DITERIMA' => 'success', // Warna Hijau
+                        'DITOLAK' => 'danger',   // Warna Merah
+                        'PENDING' => 'warning',  // Warna Kuning (Opsional)
+                        default => 'gray',       // Warna abu-abu jika status lain
+                    }),
                 TextColumn::make('transaksi.status')
-                    ->label('Status transaksi')->badge(),
+                    ->label('Status transaksi')->badge()->color(fn(string $state): string => match ($state) {
+                        'SUKSES' => 'success', // Warna Hijau
+                        'GAGAL' => 'danger',   // Warna Merah
+                        'DIKIRIM' => 'success',   // Warna Merah
+
+                        'MENUNGGU' => 'warning',  // Warna Kuning (Opsional)
+                        default => 'gray',       // Warna abu-abu jika status lain
+                    }),
                 TextColumn::make('no_invoice')
                     ->label('No invoice'),
                 TextColumn::make('created_at')
-                    ->label('Tanggal'),
+                    ->label('Tanggal')->date('d M Y')->sortable(),
                 ImageColumn::make('bukti_transfer')->disk('s3')
                     ->label('Bukti transfer'),
 
@@ -159,6 +173,7 @@ class PaymentResource extends Resource
 
                             $record->status = PembayaranStatus::DITERIMA;
                             $record->save();
+                            $record->transaksi->id_kasir = auth()->user()->id_user;
                             $record->transaksi->status = TransaksiStatus::DIKIRIM;
                             $record->transaksi->save();
                             Mail::to($record->transaksi->customer->email)

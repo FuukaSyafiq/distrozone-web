@@ -18,7 +18,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Livewire\ProfileForm;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web'])->group(
+Route::middleware(['web', 'guest'])->group(
     function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');

@@ -7,7 +7,7 @@
 	<div class="container mx-auto px-4 py-8">
 		<!-- Breadcrumb -->
 		<nav class="flex mb-6 text-sm">
-			<a href="/" class="text-teal-600 hover:text-teal-700">Home</a>
+			<a href="{{ url()->previous()  }}" class="text-teal-600 hover:text-teal-700">Back</a>
 			<span class="mx-2 text-gray-400">&gt;</span>
 			<span class="text-gray-600">{{ Str::limit($kaos->nama_kaos, 30) }}</span>
 		</nav>

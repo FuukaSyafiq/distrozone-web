@@ -1,4 +1,4 @@
-<nav class="bg-white w-full shadow-md sticky top-0 z-50">
+<nav class="w-full shadow-md sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-white/20">
     <div class="mx-auto w-full px-4 md:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between gap-4">
 
@@ -37,8 +37,7 @@
                     class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
                     About
                 </a>
-                <a href="/#faq" target="_blank"
-                    class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
+                <a href="/#faq" class="text-gray-600 hover:text-orange-500 font-medium transition-colors duration-200">
                     FAQ
                 </a>
             </div>
@@ -55,23 +54,45 @@
                 </button>
 
                 <!-- Shopping Cart -->
+                @if (auth()->check() && auth()->user()->role->role == \App\Models\Role::getIdByRole('CUSTOMER'))
                 <a href="/cart" class="relative p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group">
-                    @if (auth()->check())
                     <x-heroicon-c-shopping-cart class="w-6 h-6 group-hover:scale-110 transition-transform" />
 
-                    @endif
                     <!-- Cart Badge -->
-                    @if(auth()->check())
                     @if($cartCount > 0)
                     <span
                         class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                         {{$cartCount }}
                     </span>
                     @endif
-                    @endif
 
                 </a>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id != \App\Models\Role::getIdByRole('CUSTOMER'))
+                @if (auth()->user()->role_id == \App\Models\Role::getIdByRole('ADMIN'))
+                <div class="hidden md:flex gap-2">
+                    <a href="/admin"
+                        class="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all duration-200 transform hover:scale-105 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                        Admin Panel
+                    </a>
 
+                    @else
+                    <a href="/kasir"
+                        class="px-5 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-all duration-200 transform hover:scale-105 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                            </path>
+                        </svg>
+                        Mode Kasir </a>
+                    @endif
+                </div>
+                @endif
                 @guest
                 <!-- Guest Buttons -->
                 <div class="hidden md:flex gap-2">

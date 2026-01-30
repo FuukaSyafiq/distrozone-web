@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\TrashedFilter;
 
 class WarnaKaosResource extends Resource
 {
@@ -30,11 +31,11 @@ class WarnaKaosResource extends Resource
             ->schema([
                 TextInput::make('key')->label('Key'),
                 TextInput::make('label')->label('Label'),
-            ColorPicker::make('hex')
-                ->label('Hex')
-                ->required()
-                ->default('#ff0000'), // default warna
-        ]);
+                ColorPicker::make('hex')
+                    ->label('Hex')
+                    ->required()
+                    ->default('#ff0000'), // default warna
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -43,22 +44,25 @@ class WarnaKaosResource extends Resource
             ->columns([
                 TextColumn::make('key')->label('Key'),
                 TextColumn::make('label')->label('Label'),
+                TextColumn::make('label')->searchable(),
                 TextColumn::make('hex')->label('Hex')->formatStateUsing(function ($state) {
                     return '<div style="
                         width: 30px;
                         height: 20px;
-                        background-color: '.$state.';
+                        background-color: ' . $state . ';
                         border: 1px solid #ccc;
                         border-radius: 3px;
                     "></div>';
                 })
-                ->html()
+                    ->html()
             ])
             ->filters([
-                //
+                TrashedFilter::make()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

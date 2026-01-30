@@ -7,6 +7,7 @@ use App\Filament\Resources\KasirResource\RelationManagers;
 use App\Models\Kasir;
 use App\Models\User;
 use App\Models\Role;
+use Filament\Tables\Actions\RestoreAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\View;
@@ -24,6 +25,7 @@ use Filament\Tables;
 use Filament\Infolists\Components\Section as SectionEntry;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
@@ -120,12 +122,14 @@ class KasirResource extends Resource
                     ->disk('s3')
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
+
             ])
             ->actions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
+                    RestoreAction::make(),
                     DeleteAction::make()->before(function ($record) {
                         if ($record->foto_user) {
                             Storage::disk('local')->delete($record->foto_user);

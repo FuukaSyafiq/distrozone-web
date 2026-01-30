@@ -40,9 +40,10 @@ class Dashboard extends BaseDashboard
                                 ])->placeholder('SEMUA'),
                             Select::make('kasir')
                                 ->options(
-                                    User::query()
-                                        ->pluck('nama', 'nama') // Menampilkan Nama, menyimpan Nama ke filter
-                                        ->toArray()
+                                    // User::query()
+                                    //     ->pluck('nama', 'nama') // Menampilkan Nama, menyimpan Nama ke filter
+                                    //     ->toArray()
+                        User::all()->pluck('nama', 'nama')->toArray()
                                 )
                                 ->searchable() // Tambahkan ini agar mudah mencari jika user banyak
                                 ->placeholder('SEMUA KASIR')

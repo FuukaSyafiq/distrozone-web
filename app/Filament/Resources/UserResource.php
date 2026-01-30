@@ -41,7 +41,7 @@ class UserResource extends Resource
         return auth()->user()->role_id === Role::getIdByRole('ADMIN');
     }
 
-   protected static ?string $navigationGroup = 'Customer';
+    protected static ?string $navigationGroup = 'Customer';
 
     public static function canCreate(): bool
     {
@@ -93,7 +93,6 @@ class UserResource extends Resource
                     ->disk('s3')
             ])
             ->filters([
-                //
             ])
             ->actions([
                 ActionGroup::make([

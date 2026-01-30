@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class KaosVariant extends Model
 {
     use HasFactory;
-
+    use SoftDeletes;
     public $incrementing = true;
     protected $table = "kaos_varian";
     protected $keyType = 'int';
@@ -19,7 +20,7 @@ class KaosVariant extends Model
         'harga_jual',
         'harga_pokok',
         'stok_kaos',
-        'image_path'
+        'image_path',
     ];
 
     public static function getKaosVarian(string $namaKaos)

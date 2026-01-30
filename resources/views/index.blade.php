@@ -1,25 +1,32 @@
 <x-app-layout>
     {{-- Hero Section / Carousel --}}
-    <div class="relative w-full bg-gray-50 overflow-hidden">
-        <div class="container mx-auto px-4 py-6">
-            <div class="carousel relative group">
-                <div class="relative overflow-hidden rounded-2xl shadow-2xl">
-                    <div class="flex transition-transform duration-700 ease-in-out" id="carouselSlides">
-                        <div class="min-w-full relative">
-                            <div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent z-10"></div>
-                            <img src="{{ asset('carousel.png') }}" alt="Promo Terbaru"
-                                class="w-full h-[300px] md:h-[450px] object-cover transform hover:scale-105 transition-transform duration-1000">
-
-                            <div class="absolute bottom-10 left-10 z-20 text-white">
-                                <h2 class="text-4xl font-black italic tracking-tighter uppercase">New Arrival</h2>
-                                <p class="text-lg opacity-90">Koleksi terbaru Distrozone kini tersedia.</p>
-                            </div>
-                        </div>
+  <div class="relative w-screen h-screen bg-gray-900 overflow-hidden">
+        <div class="relative w-full h-full">
+            <div class="flex h-full transition-transform duration-700 ease-in-out">
+                <div class="min-w-full h-full relative">
+                    <div class="absolute inset-0 bg-black/50 z-10"></div>
+    
+                    <img src="/cewedistrozone.png" alt="Distrozone Hero"
+                        class="absolute inset-0 w-full h-full object-cover">
+    
+                    <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
+                        <h1
+                            class="text-6xl md:text-8xl font-black italic tracking-tighter uppercase text-white drop-shadow-2xl">
+                            DISTROZONE
+                        </h1>
+                        <p class="mt-4 text-lg md:text-2xl text-gray-200 max-w-2xl font-light tracking-wide drop-shadow-lg">
+                            Gayamu, Ceritamu. Temukan koleksi distro eksklusif dengan kualitas premium hanya di Distrozone.
+                        </p>
+    
+                        <a href="#product"
+                            class="mt-8 px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded-sm">
+                            Shop Now
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
     <div class="container mx-auto px-4">
         {{-- Search Bar Section - Dibuat lebih ramping & Floating --}}
@@ -46,7 +53,7 @@
                         <div class="absolute -top-4 -left-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl"></div>
                         <div
                             class="relative rounded-3xl overflow-hidden shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-500">
-                            <img src="{{ asset('carousel.png') }}" alt="Tentang Distrozone"
+                            <img src="/kerenkeren.png" alt="Tentang Distrozone"
                                 class="w-full h-80 object-cover">
                             <div
                                 class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-8">
@@ -118,7 +125,7 @@
         </div>
 
         {{-- Product Grid --}}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mb-20">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mb-20" id="product">
             @foreach($kaoss as $kaos)
             @php $variant = $kaos->variants; @endphp
             <a href="/kaos/{{ $kaos->id_kaos }}" class="group">

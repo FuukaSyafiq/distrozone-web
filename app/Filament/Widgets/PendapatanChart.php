@@ -21,24 +21,28 @@ class PendapatanChart extends ChartWidget
 
     protected function getData(): array
     {
-        $filters = $this->filters;
+        // Pastikan $filters tidak null, jika null jadikan array kosong
+        $filters = $this->filters ?? [];
 
-        // Tentukan rentang waktu (default 30 hari terakhir jika filter kosong)
-        $start = $filters['startDate'] ? Carbon::parse($filters['startDate']) : now()->startOfMonth();
-        $end = $filters['endDate'] ? Carbon::parse($filters['endDate']) : now()->endOfMonth();
+        // Gunakan null coalescing (??) untuk menghindari "Trying to access array offset on null"
+        $startDate = $filters['startDate'] ?? null;
+        $endDate = $filters['endDate'] ?? null;
+
+        // Tentukan rentang waktu aman
+        $start = $startDate ? Carbon::parse($startDate) : now()->startOfMonth();
+        $end = $endDate ? Carbon::parse($endDate) : now()->endOfMonth();
 
         // Query dasar
         $query = Pendapatan::query()
             ->when($filters['jenis'] ?? null, fn($q, $jenis) => $q->where('jenis', $jenis));
 
-        if ($filters['kasir'] ?? null) {
-            $query =   $query->whereHas('transaksi.kasir', function ($q) use ($filters) {
+        // Gunakan helper optional atau check isset untuk kasir
+        if (isset($filters['kasir']) && $filters['kasir']) {
+            $query->whereHas('transaksi.kasir', function ($q) use ($filters) {
                 $q->where('nama', $filters['kasir']);
             });
         }
 
-        // Kita ambil data per hari menggunakan Trend (atau query manual)
-        // Di sini saya pakai query manual agar kamu tidak perlu install package tambahan
         $data = $query->whereBetween('tanggal', [$start, $end])
             ->orderBy('tanggal')
             ->get()
@@ -66,7 +70,6 @@ class PendapatanChart extends ChartWidget
             'labels' => $data->keys()->toArray(),
         ];
     }
-
     protected function getType(): string
     {
         return 'line';

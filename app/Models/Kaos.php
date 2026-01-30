@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Kaos extends Model
 {
@@ -11,7 +12,7 @@ class Kaos extends Model
     protected $table = 'kaos';
 
     protected $primaryKey = 'id_kaos';
-
+    use SoftDeletes;
     public $incrementing = true;
 
     protected $keyType = 'int';

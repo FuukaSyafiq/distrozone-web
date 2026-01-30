@@ -35,6 +35,12 @@ class KaosController extends Controller
     public function search(Request $request)
     {
         $q = $request->query('q');
+        if ($q == "") {
+            $kaoss = Kaos::getAllKaos();
+
+            return view('index', ['kaoss' => $kaoss, 'title' => 'Koleksi Kaos Kami']);
+        }
+
         $kaoss = Kaos::searchKaos($q);
 
         return view('index', ['kaoss' => $kaoss, 'title' => $q]);

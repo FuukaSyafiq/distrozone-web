@@ -4,14 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Role;
+use Filament\Models\Contracts\HasAvatar;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable implements HasName, MustVerifyEmail
+class User extends Authenticatable implements HasName, MustVerifyEmail,HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable;
     /**
@@ -19,9 +22,20 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
      *
      * @var array<int, string>
      */
-
+    use SoftDeletes;
     protected $primaryKey = 'id_user';
     public $incrementing = true;
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        // Jika kolom foto_user kosong, return null (nanti muncul inisial nama)
+        if (!$this->foto_user) {
+            return null;
+        }
+
+        // Karena kamu pakai MinIO/S3, ambil URL dari disk s3
+        return Storage::disk('s3')->url($this->foto_user);
+    }
 
     protected $keyType = 'int';
     protected $fillable = [
@@ -39,7 +53,7 @@ class User extends Authenticatable implements HasName, MustVerifyEmail
         "status",
         "otp_code",
         "otp_expires_at",
-        "otp_verified"
+        "otp_verified",
     ];
 
     /**
