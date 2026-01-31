@@ -197,7 +197,7 @@
 							<!-- Actions -->
 							<div class="flex justify-end space-x-2">
 								@if ($transaksi->status == "DIKIRIM")
-								<form action="{{ route('payment.bayar', $transaksi->id_transaksi) }}" method="POST">
+								<form action="{{ route('payment.selesai', $transaksi->id_transaksi) }}" method="POST">
 									@csrf
 									@method('PUT')
 

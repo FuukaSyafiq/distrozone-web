@@ -76,16 +76,12 @@ class UserResource extends Resource
                     ->label('Email'),
                 TextColumn::make('no_telepon')
                     ->label('No telepon'),
-                TextColumn::make('nik')
-                    ->label('NIK'),
                 TextColumn::make('kota.kota')
                     ->label('Kota'),
                 TextColumn::make('kota.provinsi.provinsi')
                     ->label('Provinsi'),
                 TextColumn::make('alamat_lengkap')
                     ->label('Alamat'),
-                TextColumn::make('nik_verified')->badge()
-                    ->label('Status NIK'),
                 TextColumn::make('status')->badge()
                     ->label('Status'),
                 ImageColumn::make('foto_user')
@@ -97,47 +93,6 @@ class UserResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    ActionTable::make('nik_verified')
-                        ->label(fn($record) => match (true) {
-                            $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::ACTIVE => 'Suspend',
-                            $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::SUSPENDED => 'Activate',
-                            $record->nik_verified == NikVerified::PENDING && $record->status === UserStatus::ACTIVE => 'Verifikasi'
-                        })
-                        ->icon(
-                            fn($record) =>
-                            $record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED
-                                ? 'heroicon-o-check-circle'
-                                : 'heroicon-o-pause-circle'
-                        )
-                        ->color(
-                            fn($record) =>
-                            $record->status === 'ACTIVE'  && $record->nik_verified == NikVerified::APPROVED
-                                ? 'warning'
-                                : 'success'
-                        )
-                        ->requiresConfirmation()
-                        ->action(function ($record) {
-                            if ($record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED) {
-                                $record->status = UserStatus::SUSPENDED;
-                            } else if ($record->status == UserStatus::SUSPENDED && $record->nik_verified == NikVerified::APPROVED) {
-                                $record->status = UserStatus::ACTIVE;
-                            }
-                            if ($record->nik_verified == NikVerified::PENDING)
-                                $record->nik_verified = NikVerified::APPROVED;
-                            $record->save();
-                        }),
-                    ActionTable::make('blokir')
-                        ->label('Blokir')
-                        ->icon('heroicon-o-no-symbol')
-                        ->color('danger')
-                        ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified)
-                        ->requiresConfirmation()
-                        ->action(function ($record) {
-                            $record->update([
-                                'status' => 'BANNED',
-                            ]);
-                            $record->save();
-                        }),
                 ]),
             ])
             ->bulkActions([
@@ -177,8 +132,6 @@ class UserResource extends Resource
                             ->label('Email'),
                         TextEntry::make('no_telepon')
                             ->label('No telepon'),
-                        TextEntry::make('nik')
-                            ->label('NIK'),
                         TextEntry::make('kota.kota')
                             ->label('Kota'),
                         TextEntry::make('kota.provinsi.provinsi')
@@ -188,47 +141,7 @@ class UserResource extends Resource
                         TextEntry::make('nik_verified')->badge()
                             ->label('Nik Terverifikasi'),
                     ])->footerActions([
-                        Action::make('nik_verified')
-                            ->label(fn($record) => match (true) {
-                                $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::ACTIVE => 'Suspend',
-                                $record->nik_verified == NikVerified::APPROVED && $record->status === UserStatus::SUSPENDED => 'Activate',
-                                $record->nik_verified == NikVerified::PENDING && $record->status === UserStatus::ACTIVE => 'Verifikasi'
-                            })
-                            ->icon(
-                                fn($record) =>
-                                $record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED
-                                    ? 'heroicon-o-check-circle'
-                                    : 'heroicon-o-pause-circle'
-                            )
-                            ->color(
-                                fn($record) =>
-                                $record->status === 'ACTIVE'  && $record->nik_verified == NikVerified::APPROVED
-                                    ? 'warning'
-                                    : 'success'
-                            )
-                            ->requiresConfirmation()
-                            ->action(function ($record) {
-                                if ($record->status === UserStatus::ACTIVE && $record->nik_verified == NikVerified::APPROVED) {
-                                    $record->status = UserStatus::SUSPENDED;
-                                } else if ($record->status == UserStatus::SUSPENDED && $record->nik_verified == NikVerified::APPROVED) {
-                                    $record->status = UserStatus::ACTIVE;
-                                }
-                                if ($record->nik_verified == NikVerified::PENDING)
-                                    $record->nik_verified = NikVerified::APPROVED;
-                                $record->save();
-                            }),
-                        Action::make('blokir')
-                            ->label('Blokir')
-                            ->icon('heroicon-o-no-symbol')
-                            ->color('danger')
-                            ->visible(fn($record) => $record->status !== 'BANNED' && $record->verified == NikVerified::APPROVED)
-                            ->requiresConfirmation()
-                            ->action(function ($record) {
-                                $record->update([
-                                    'status' => 'BANNED',
-                                ]);
-                                $record->save();
-                            }),
+                       
                     ]),
                 Section::make('Foto customer')
                     ->schema([

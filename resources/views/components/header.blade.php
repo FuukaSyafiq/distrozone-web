@@ -54,7 +54,7 @@
                 </button>
 
                 <!-- Shopping Cart -->
-                @if (auth()->check() && auth()->user()->role->role == \App\Models\Role::getIdByRole('CUSTOMER'))
+                @if (auth()->check() && auth()->user()->role_id == \App\Models\Role::getIdByRole('CUSTOMER'))
                 <a href="/cart" class="relative p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group">
                     <x-heroicon-c-shopping-cart class="w-6 h-6 group-hover:scale-110 transition-transform" />
 
@@ -117,7 +117,7 @@
                         <img src="{{ Storage::disk('s3')->url(auth()->user()->foto_user) }}" alt="Profile"
                             class="w-12 h-12 rounded-full border-4 border-white dark:border-gray-800 shadow-lg object-cover">
                         @else
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama ?? 'User') }}&size=128&background=6366f1&color=fff"
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama) }}&size=128&background=6366f1&color=fff"
                             alt="Profile"
                             class="w-12 h-12 rounded-full border-4 border-white dark:border-gray-800 shadow-lg">
                         @endif

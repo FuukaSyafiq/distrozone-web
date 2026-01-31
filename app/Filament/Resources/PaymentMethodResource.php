@@ -45,7 +45,7 @@ class PaymentMethodResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TextInput::make('nomor_rekening')
-                    ->required()->numeric()
+                    ->numeric()
                     ->maxLength(255),
                 TextInput::make('nama_penerima')
                     ->required()
@@ -53,7 +53,6 @@ class PaymentMethodResource extends Resource
                 FileUpload::make('logo')
                     ->disk('s3')->image()
                     ->imageEditor()
-                    ->required()
                     ->directory('payment-method'),
                 TextInput::make('instruksi')
                     ->maxLength(65535),

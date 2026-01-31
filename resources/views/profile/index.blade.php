@@ -1,7 +1,6 @@
 <x-app-layout>
     @php
     $user = auth()->user();
-    $isVerified = $user->nik_verified === \App\Helpers\NikVerified::APPROVED;
     @endphp
 
     <style>
@@ -69,26 +68,6 @@
                             </h1>
                             <p class="text-gray-600 dark:text-gray-400">{{ auth()->user()->email }}</p>
                             <div class="flex flex-wrap justify-center sm:justify-start gap-3 mt-3">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                    {{ $isVerified
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
-                                    @if($isVerified)
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    Verified
-                                    @else
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.514 11.59c.75 1.334-.213 2.986-1.742 2.986H3.485c-1.53 0-2.492-1.652-1.743-2.986L8.257 3.1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    Unverified
-                                    @endif
-                                </span>
                                 <span
                                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                     {{ auth()->user()->status }}

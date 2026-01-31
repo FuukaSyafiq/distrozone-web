@@ -43,8 +43,6 @@ class User extends Authenticatable implements HasName, MustVerifyEmail,HasAvatar
         'password',
         'email',
         'role_id',
-        'nik_verified',
-        'nik',
         'foto_user',
         "password",
         "no_telepon",

@@ -5,7 +5,7 @@
     <title>Detail Transaction</title>
     <!-- Import Tailwind classes via Curlwind -->
     <link rel="stylesheet"
-        href="https://cdn.curlwind.com?classes=text-center,text-2xl,font-bold,text-lg,italic,mb-4,mb-6,mt-6,p-6,mx-auto,my-24,my-auto,my-6,w-4/5,border,border-black,bg-gray-200,py-2,px-4,w-48,h-auto">
+        href="https://cdn.curlwind.com?classes=text-center,text-2xl,font-bold,text-lg,italic,mb-4,mb-6,mt-6,p-6,mx-auto,my-24,my-auto,my-6,w-4/5,border,border-black,bg-gray-200,py-2,px-4,w-48,w-full,h-auto">
 </head>
 
 <body>
@@ -42,7 +42,7 @@
                 @endif
 
                 <p><strong>Alamat : </strong>{{ $transaksi->customer->alamat_lengkap }}</p>
-            </div> 
+            </div>
             @endif
             <p><strong>Metode pembayaran : </strong>{{ $transaksi->metode_pembayaran }}</p>
             <p><strong>Total harga : </strong>Rp. {{
@@ -51,16 +51,30 @@
             <p><strong>Ongkir : </strong>Rp. {{
                 number_format($transaksi->ongkir, 0, ',',
                 '.')}}</p>
-            <div class="mt-6">
-                <p><strong>Bukti Transfer :</strong></p>
+            <div class="mt-6"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                <p style="font-weight: bold; color: #374151; margin: 0 0 10px 0;">Bukti Transfer :</p>
+
                 @if($pembayaran->bukti_transfer)
-                    <div class="mt-2 border border-gray-300 p-2 inline-block rounded">
-                        <img src="{{ Storage::disk('s3')->url($pembayaran->bukti_transfer) }}" 
-                            alt="Bukti Transfer" 
-                            class="w-44 h-auto shadow-sm">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                    <div
+                        style="border: 1px solid #d1d5db; padding: 8px; display: inline-block; border-radius: 8px; background-color: white; overflow: hidden;">
+                        <a href="{{ Storage::disk('s3')->url($pembayaran->bukti_transfer) }}" target="_blank"
+                            title="Klik untuk memperbesar" style="text-decoration: none;">
+                            <img src="{{ Storage::disk('s3')->url($pembayaran->bukti_transfer) }}" alt="Bukti Transfer"
+                                style="height: 250px; display: block; cursor: zoom-in; transition: opacity 0.3s;"
+                                onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                        </a>
                     </div>
+                    <p style="font-size: 12px; color: #9ca3af; font-style: italic; margin-top: 5px;">Klik gambar untuk
+                        memperbesar
+                    </p>
+                </div>
                 @else
-                    <p class="italic text-gray-500 text-sm">Belum ada bukti transfer diunggah</p>
+                <p
+                    style="font-style: italic; color: #6b7280; font-size: 14px; padding: 10px 20px; background-color: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 6px;">
+                    Belum ada bukti transfer diunggah
+                </p>
                 @endif
             </div>
         </div>

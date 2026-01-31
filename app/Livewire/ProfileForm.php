@@ -14,12 +14,10 @@ class ProfileForm extends Component
     public $editing = false;
     public $userId;
     public $no_telepon;
-    public $nik;
     public $kota;
     public $kotaSelected;
     public $provinsi;
     public $email;
-    public $nik_verified;
     public $email_verified_at;
 
 
@@ -37,8 +35,6 @@ class ProfileForm extends Component
 
         $this->email = $user->email;
         $this->no_telepon = $user->no_telepon;
-        $this->nik_verified = $user->nik_verified;
-        $this->nik = $user->nik;
     }
 
     public function updatedKotaSelected($id)
@@ -53,7 +49,6 @@ class ProfileForm extends Component
     {
         $user = auth()->user();
         $emailChanged = $user->email !== $this->email;
-        $nikChanged   = $user->nik !== $this->nik;
         $data = [
             'nama'        => $this->nama,
             'email'       => $this->email,
@@ -65,31 +60,8 @@ class ProfileForm extends Component
         /**
          * NIK RULE
          */
-        $canEditNik = in_array(
-            $user->nik_verified,
-            [NikVerified::EMPTY, NikVerified::REJECTED]
-        );
-
-        if ($nikChanged) {
-            if (! $canEditNik) {
-                $this->dispatch('toast', message: 'NIK tidak dapat diubah saat sudah diverifikasi');
-                return;
-            }
-
-            $data['nik'] = $this->nik;
-            $data['nik_verified'] = NikVerified::PENDING;
-        }
 
         $user->update($data);
-
-        if ($user->nik_verified !== NikVerified::APPROVED) {
-            match ($user->nik_verified) {
-                NikVerified::EMPTY    => $this->dispatch('toast', message: 'Silakan isi NIK'),
-                NikVerified::PENDING  => $this->dispatch('toast', message: 'NIK sedang diverifikasi'),
-                NikVerified::REJECTED => $this->dispatch('toast', message: 'NIK ditolak, silakan perbaiki'),
-                default => null,
-            };
-        }
 
         $this->editing = false;
         if ($emailChanged) {

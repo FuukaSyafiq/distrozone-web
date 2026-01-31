@@ -98,13 +98,12 @@ class KeranjangController extends Controller
                 return redirect()->route('cart');
             }
 
-            $paymentmethods = PaymentMethod::where('is_active', true)->get();
+            $paymentmethods = PaymentMethod::where('is_active', true)->where('nama_bank', '!=', 'TUNAI')->get();
 
-            if ($user->nik_verified != NikVerified::APPROVED || !$user->email_verified_at || !$user->alamat_lengkap || !$user->kota_id) {
+            if (!$user->email_verified_at || !$user->alamat_lengkap || !$user->kota_id) {
                 $status = [];
 
                 // Cek masing-masing kondisi secara spesifik
-                if ($user->nik_verified != NikVerified::APPROVED) $status[] = "NIK atau Menunggu Konfirmasi ";
                 if (!$user->email_verified_at) $status[] = "Email";
                 if (!$user->alamat_lengkap) $status[] = "Alamat Lengkap";
                 if (!$user->kota_id) $status[] = "Pilihan Kota";
@@ -167,13 +166,14 @@ class KeranjangController extends Controller
         $cartItems = KeranjangDetail::with(['kaos_varian', 'keranjang'])
             ->whereIn('id_keranjang_detail', $detailIds)
             ->get();
-        $paymentmethods = PaymentMethod::where('is_active', true)->get();
+        $paymentmethods = PaymentMethod::where('is_active', true)
+            ->where('nama_bank', '!=', 'TUNAI')
+            ->get();
 
-        if ($user->nik_verified != NikVerified::APPROVED || !$user->email_verified_at || !$user->alamat_lengkap || !$user->kota_id) {
+        if (!$user->email_verified_at || !$user->alamat_lengkap || !$user->kota_id) {
             $status = [];
 
             // Cek masing-masing kondisi secara spesifik
-            if ($user->nik_verified != NikVerified::APPROVED) $status[] = "NIK atau Menunggu Konfirmasi ";
             if (!$user->email_verified_at) $status[] = "Email";
             if (!$user->alamat_lengkap) $status[] = "Alamat Lengkap";
             if (!$user->kota_id) $status[] = "Pilihan Kota";

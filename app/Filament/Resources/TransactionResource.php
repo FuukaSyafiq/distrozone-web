@@ -217,8 +217,6 @@ class TransactionResource extends Resource
                             ->label('Provinsi'),
                         TextEntry::make('customer.alamat_lengkap')
                             ->label('Alamat'),
-                        TextEntry::make('customer.nik')
-                            ->label('NIK'),
                         TextEntry::make('customer.email')
                             ->label('Email'),
                     ]),

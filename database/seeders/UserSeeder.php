@@ -62,7 +62,6 @@ class UserSeeder extends Seeder
                 'alamat_lengkap' => 'Kertonegoro, Kabupaten Ngawi, Jawa Timur',
                 'no_telepon' => '088234974632',
                 'email' => 'syafiqparadisam@gmail.com',
-                'nik' => '3434351952352354',
                 'foto_user' => null,
                 'kota_id' => Kota::getKota('BANDUNG')->id,
                 'nik_verified' => NikVerified::PENDING,

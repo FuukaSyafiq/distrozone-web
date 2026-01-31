@@ -123,7 +123,6 @@ class PendapatanResource extends Resource
                             $query->whereYear('created_at', $data['value']);
                         }
                     }),
-
             ])
             ->actions([])
             ->bulkActions([

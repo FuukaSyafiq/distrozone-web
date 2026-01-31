@@ -63,7 +63,23 @@ class TransaksiController extends Controller
 
     public function selesai($id)
     {
-        Transaksi::where('id_transaksi', $id)->where('id_customer', Auth::id())->update(['status' => TransaksiStatus::SUKSES]);
+        // 1. Cari transaksi milik user ini yang statusnya masih PENDING (keamanan tambahan)
+        $transaksi = Transaksi::where('id_transaksi', $id)
+            ->where('id_customer', Auth::id())
+            ->where('status', TransaksiStatus::DIKIRIM) // Pastikan hanya yang pending yang bisa di-selesai-kan
+            ->firstOrFail();
+
+        // 2. Jalankan penghapusan keranjang (seperti di logika pertama kamu)
+        foreach ($transaksi->details as $detail) {
+            KeranjangDetail::where('id_kaos_varian', $detail->id_kaos_varian)
+                ->whereHas('keranjang', function ($q) {
+                    $q->where('id_customer', Auth::id());
+                })
+                ->delete();
+        }
+
+        // 3. Update status transaksi
+        $transaksi->update(['status' => TransaksiStatus::SUKSES]);
 
         return redirect()->back();
     }

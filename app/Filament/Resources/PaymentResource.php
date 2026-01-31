@@ -79,12 +79,6 @@ class PaymentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(
-                fn($query) =>
-                $query->whereHas('transaksi', function ($q) {
-                    $q->where('jenis_transaksi', 'ONLINE');
-                })
-            )
             ->columns([
                 TextColumn::make('transaksi.kode_transaksi')
                     ->label('Kode transaksi'),
