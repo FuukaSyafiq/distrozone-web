@@ -52,8 +52,8 @@ Route::middleware(['web', 'auth'])->group(function () {
 	Route::post('pesan', [TransaksiController::class, 'pesan'])->name('payment.confirm');
 	Route::post('bayar/{id}', [TransaksiController::class, 'bayar'])->name('payment.bayar');
 	Route::put('transaksi-selesai/{id}', [TransaksiController::class, 'selesai'])->name('payment.selesai');
-	Route::put('/edit-foto-profile', [ProfileController::class, 'editFotoProfile'])->name('edit.foto.profile');
 });
+
 Route::delete('/images/{image}', [ImageController::class, 'destroy'])
 	->name('images.destroy');
 

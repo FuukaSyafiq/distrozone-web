@@ -5,10 +5,10 @@
             <div class="flex h-full transition-transform duration-700 ease-in-out">
                 <div class="min-w-full h-full relative">
                     <div class="absolute inset-0 bg-black/50 z-10"></div>
-    
+
                     <img src="/cewedistrozone.png" alt="Distrozone Hero"
                         class="absolute inset-0 w-full h-full object-cover">
-    
+
                     <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
                         <h1
                             class="text-6xl md:text-8xl font-black italic tracking-tighter uppercase text-white drop-shadow-2xl">
@@ -17,7 +17,7 @@
                         <p class="mt-4 text-lg md:text-2xl text-gray-200 max-w-2xl font-light tracking-wide drop-shadow-lg">
                             Gayamu, Ceritamu. Temukan koleksi distro eksklusif dengan kualitas premium hanya di Distrozone.
                         </p>
-    
+
                         <a href="#product"
                             class="mt-8 px-8 py-3 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors rounded-sm">
                             Shop Now
@@ -47,7 +47,7 @@
             </form>
             {{-- Masukkan kode ini tepat di bawah penutup form Search Bar dan di atas Section Title --}}
 
-            <section id="about" class="py-20">
+           <section id="about" class="py-20">
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="w-full md:w-1/2 relative">
                         <div class="absolute -top-4 -left-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl"></div>
@@ -230,7 +230,7 @@
                     </div>
                 </details>
 
-            
+
             </div>
 
             <div class="mt-16 text-center">

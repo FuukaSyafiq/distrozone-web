@@ -62,10 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{id}', [TransaksiController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/confirm', [TransaksiController::class, 'confirm'])->name('orders.confirm');
 
-
-    Route::delete('/images/{image}', [ImageController::class, 'destroy'])
-        ->name('images.destroy');
-    Route::get('/cetak/pendapatan/{ids}', [PDFController::class, 'cetakpendapatan'])->name('pendapatan.cetak.pdf');
+   Route::get('/cetak/pendapatan/{ids}', [PDFController::class, 'cetakpendapatan'])->name('pendapatan.cetak.pdf');
     Route::get('/cetak/transaksi/{id}', [PDFController::class, 'cetaktransaksi'])->name('transaksi.cetak.pdf');
 
     Route::get('profile', [ProfileController::class, 'create'])->name('profile');

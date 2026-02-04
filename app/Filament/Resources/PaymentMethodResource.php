@@ -34,7 +34,7 @@ class PaymentMethodResource extends Resource
 
     public static function canAccess(): bool
     {
-        return false;
+        return true;
     }
 
     public static function form(Form $form): Form

@@ -15,31 +15,26 @@ class InitSeeder extends Seeder
      */
     public function run(): void
     {
-
-
-        $pass = Hash::make("password");
-        print_r($pass);
-        
-        // $this->call(ProvinsiSeeder::class);
-        // $this->call(KotaSeeder::class);
-        // $this->call(WarnaSeeder::class);
-        // $this->call(UkuranSeeder::class);
-        // $this->call(OngkirSeeder::class);
-        // $this->call(JamOperasionalSeeder::class);
-        // $this->call(RoleSeeder::class);
-        // $this->call(UserSeeder::class);
+         $this->call(ProvinsiSeeder::class);
+         $this->call(KotaSeeder::class);
+         $this->call(WarnaSeeder::class);
+         $this->call(UkuranSeeder::class);
+         $this->call(OngkirSeeder::class);
+         $this->call(JamOperasionalSeeder::class);
+         $this->call(RoleSeeder::class);
+         $this->call(UserSeeder::class);
     }
 
 
     public static function down()
     {
-        // ProvinsiSeeder::down();
-        // KotaSeeder::down();
-        // UserSeeder::down();
-        // JamOperasionalSeeder::down();
-        // OngkirSeeder::down();
-        // WarnaSeeder::down();
-        // RoleSeeder::down();
-        // UkuranKaos::delete();
+         ProvinsiSeeder::down();
+         KotaSeeder::down();
+         UserSeeder::down();
+         JamOperasionalSeeder::down();
+         OngkirSeeder::down();
+         WarnaSeeder::down();
+         RoleSeeder::down();
+         UkuranKaos::delete();
     }
 }
