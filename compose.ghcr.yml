@@ -49,12 +49,6 @@ services:
       - MAIL_FROM_NAME=${MAIL_FROM_NAME:-}
     networks:
       - distrozone
-    healthcheck:
-      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     depends_on:
       - postgres
 

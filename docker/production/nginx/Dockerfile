@@ -25,7 +25,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Stage 2: Nginx production image
 FROM nginx:alpine
 
-COPY ./docker/production/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/production/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /var/www/public /var/www/public
 
 WORKDIR /var/www/public
