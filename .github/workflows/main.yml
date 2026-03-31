@@ -49,8 +49,7 @@ jobs:
       - name: Build and push php-fpm
         uses: docker/build-push-action@v6
         with:
-          context: .
-          dockerfile: docker/common/php-fpm/Dockerfile
+          context: docker/common/php-fpm/Dockerfile
           target: production
           push: true
           tags: ${{ steps.meta-php.outputs.tags }}
@@ -61,8 +60,7 @@ jobs:
       - name: Build and push nginx
         uses: docker/build-push-action@v6
         with:
-          context: .
-          dockerfile: docker/production/nginx/Dockerfile
+          context: docker/production/nginx/Dockerfile
           push: true
           tags: ${{ steps.meta-nginx.outputs.tags }}
           labels: ${{ steps.meta-nginx.outputs.labels }}
