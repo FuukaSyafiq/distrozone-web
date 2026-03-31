@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
     npm \
     php-cli \
+    php-xml \
+    php-intl \
+    php-mbstring \
     unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
