@@ -1,14 +1,17 @@
 # Stage 1: Build assets
 FROM node:22-alpine AS builder
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    nodejs \
+    npm \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 WORKDIR /var/www
 
 COPY package*.json ./
-RUN npm ci --ignore-scripts
 
-COPY composer.json composer.lock ./
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN npm install
 
 COPY . .
 RUN npm run build
