@@ -4,7 +4,7 @@ FROM node:22-alpine AS builder
 WORKDIR /var/www
 
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --ignore-scripts
 
 COPY . .
 RUN npm run build
