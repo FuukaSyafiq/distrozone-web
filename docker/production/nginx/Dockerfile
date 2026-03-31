@@ -1,17 +1,10 @@
 # Stage 1: Build assets
-FROM debian AS builder
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    nodejs \
-    npm \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+FROM node:22-alpine AS builder
 
 WORKDIR /var/www
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci --ignore-scripts
 
 COPY composer.json composer.lock ./
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
