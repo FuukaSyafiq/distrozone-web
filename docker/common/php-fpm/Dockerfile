@@ -46,21 +46,25 @@ WORKDIR /var/www
 # In other cases, it would be possible to copy composer files
 # first, to leverage Docker's layer caching mechanism.
 # -----------------------------------------------------------
-ENV APP_ENV=production
 COPY composer.json composer.lock ./
+
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
 COPY . .
 
-RUN mkdir -p bootstrap/cache storage/framework/{cache/data,sessions,views} storage/logs \
-    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+RUN mkdir -p \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
+
 
 RUN php -r "file_exists('.env') || copy('.env.example', '.env');"
-
-RUN composer dump-autoload --optimize --no-dev
+RUN chmod -R 777 storage bootstrap/cache
+RUN composer dump-autoload --optimize --no-dev --no-interaction
 
 
 # Stage 2: Production environment
