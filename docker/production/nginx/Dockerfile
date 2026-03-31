@@ -1,5 +1,5 @@
 # Stage 1: Build assets
-FROM node:22-alpine AS builder
+FROM debian AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
