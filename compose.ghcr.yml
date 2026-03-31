@@ -15,9 +15,9 @@ services:
 
   php-fpm:
     image: ghcr.io/fuukasyafiq/distrozone-php-fpm:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
-      - laravel-public-assets:/var/www/public/build
       - laravel-storage-production:/var/www/storage
     environment:
       - APP_ENV=production

@@ -1,32 +1,29 @@
 #!/bin/sh
 set -e
 
+# Create required directories
+mkdir -p /var/www/storage/framework/{cache,sessions,views}
+mkdir -p /var/www/storage/logs
+mkdir -p /var/www/storage/app/public
+mkdir -p /var/www/storage/fonts
+chown -R www-data:www-data /var/www/storage
+
 # Initialize storage directory if empty
-# -----------------------------------------------------------
-# If the storage directory is empty, copy the initial contents
-# and set the correct permissions.
-# -----------------------------------------------------------
 if [ ! "$(ls -A /var/www/storage)" ]; then
   echo "Initializing storage directory..."
   cp -R /var/www/storage-init/. /var/www/storage
   chown -R www-data:www-data /var/www/storage
 fi
 
-# Remove storage-init directory
-rm -rf /var/www/storage-init
+# Remove storage-init directory (may fail if owned by root, ignore)
+rm -rf /var/www/storage-init 2>/dev/null || true
 
 # Run Laravel migrations
-# -----------------------------------------------------------
-# Ensure the database schema is up to date.
-# -----------------------------------------------------------
 php artisan migrate --force
 
 # Clear and cache configurations
-# -----------------------------------------------------------
-# Improves performance by caching config and routes.
-# -----------------------------------------------------------
 php artisan config:cache
 php artisan route:cache
 
 # Run the default command
-exec "$@"
+php-fpm

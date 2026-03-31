@@ -32,9 +32,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/distrozone-php-fpm
           tags: |
-            type=ref,event=branch
             type=sha,prefix=
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Extract metadata for nginx
         id: meta-nginx
@@ -42,9 +41,8 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/distrozone-nginx
           tags: |
-            type=ref,event=branch
             type=sha,prefix=
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Build and push php
         uses: docker/build-push-action@v6
@@ -62,7 +60,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/common/php-fpm/Dockerfile
+          file: docker/production/nginx/Dockerfile
           push: true
           tags: ${{ steps.meta-nginx.outputs.tags }}
           labels: ${{ steps.meta-nginx.outputs.labels }}
