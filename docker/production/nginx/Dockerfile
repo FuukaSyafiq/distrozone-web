@@ -13,6 +13,10 @@ COPY package*.json ./
 
 RUN npm install
 
+COPY composer.json composer.lock ./
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
 COPY . .
 RUN npm run build
 
