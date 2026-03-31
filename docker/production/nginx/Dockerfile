@@ -15,7 +15,7 @@ COPY . /var/www
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
-    && npm ci --ignore-scripts \
+    && npm ci --omit=dev && npm cache clean --force \
     && npm run build
 
 # Stage 2: Nginx production image
