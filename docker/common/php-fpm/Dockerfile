@@ -48,7 +48,7 @@ WORKDIR /var/www
 # -----------------------------------------------------------
 COPY . /var/www
 
-RUN mkdir -p bootstrap/cache && chmod -R 777 bootstrap/cache
+RUN mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} storage/logs && chmod -R 777 bootstrap/cache storage
 
 # Install Composer and dependencies
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
