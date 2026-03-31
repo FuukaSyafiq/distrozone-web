@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghcr.io/FuukaSyafiq/distrozone-nginx:latest
+    image: ghcr.io/fuukasyafiq/distrozone-nginx:latest
     restart: unless-stopped
     volumes:
       - laravel-storage-production:/var/www/storage:ro
@@ -14,7 +14,7 @@ services:
         condition: service_healthy
 
   php-fpm:
-    image: ghcr.io/FuukaSyafiq/distrozone-php-fpm:latest
+    image: ghcr.io/fuukasyafiq/distrozone-php-fpm:latest
     restart: unless-stopped
     volumes:
       - laravel-public-assets:/var/www/public/build
