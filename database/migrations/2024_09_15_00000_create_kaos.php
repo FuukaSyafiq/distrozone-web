@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kaos', function (Blueprint $table) {
-            $table->id("id_kaos");
-            $table->unsignedInteger("merek_id");
-            $table->string("nama_kaos")->unique();
-            $table->text("description")->nullable();
-            $table->unsignedInteger("type_id");
-           $table->timestamps();
+            $table->id('id_kaos');
+            $table->unsignedInteger('merek_id');
+            $table->string('nama_kaos')->unique();
+            $table->text('description')->nullable();
+            $table->unsignedInteger('type_id');
+            $table->softDeletes();
+            $table->timestamps();
 
-            $table->foreign("merek_id")->references("id")->on("merek_kaos")->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign("type_id")->references("id")->on("type_kaos")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('merek_id')->references('id')->on('merek_kaos')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('type_id')->references('id')->on('type_kaos')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
