@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('instruksi')->nullable(); // Cara bayar (misal: Masukkan kartu, pilih transfer...)
             $table->boolean('is_active')->default(true); // Untuk mematikan/menghidupkan metode ini
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

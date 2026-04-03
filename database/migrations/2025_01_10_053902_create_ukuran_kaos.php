@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('ukuran_kaos', function (Blueprint $table) {
             $table->id();
-            $table->string("ukuran");
+            $table->string('ukuran');
+            $table->softDeletes();
         });
     }
 

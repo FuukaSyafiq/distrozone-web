@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('merek_kaos', function (Blueprint $table) {
             $table->id();
             $table->string('merek');
+            $table->softDeletes();
         });
     }
 
